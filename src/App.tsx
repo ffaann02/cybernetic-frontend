@@ -2,6 +2,11 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css';
+import { Button } from 'primereact/button';                             
 
 function App() {
   const [count, setCount] = useState(0)
@@ -9,6 +14,7 @@ function App() {
   return (
     <>
       <div>
+        <Button>hello</Button>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
