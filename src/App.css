@@ -1,4 +1,3 @@
-@layer tailwind-base, primereact, tailwind-utilities;
 
 @layer tailwind-base {
   @tailwind base;
@@ -7,4 +6,8 @@
 @layer tailwind-utilities {
   @tailwind components;
   @tailwind utilities;
+}
+
+body ::-webkit-scrollbar {
+  display: none;
 }
