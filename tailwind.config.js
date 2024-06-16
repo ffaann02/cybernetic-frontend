@@ -10,6 +10,9 @@ export default {
         '1/1': '1 / 1',
       }
     },
+    fontFamily:{
+      ibm: ['IBM Plex Sans Thai', 'sans-serif'],
+    }
 
   },
 }
