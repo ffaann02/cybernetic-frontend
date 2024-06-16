@@ -59,11 +59,13 @@ const Login = () => {
   // console.log(errorMessages);
 
   return (
-    <div className="w-full flex-grow flex flex-col max-h-screen p-24">
-      <div className="grid flex-grow grid-cols-12 border rounded-xl w-full h-full">
+    <div className="w-full flex-grow flex flex-col max-h-screen p-24 bg-gradient-to-r from-cyan-400 to-blue-400">
+      <div className="grid flex-grow grid-cols-12 border-t-2 border-t-cyan-400 rounded-xl w-full h-full 
+      bg-white/80 shadow-xl shadow-slate-200">
         <div className="col-span-4 px-8 py-8 flex flex-col gap-y-4">
           <h1 className="text-2xl">ยินดีต้อนรับ</h1>
           <div className="p-inputgroup">
+            
             <span className="p-inputgroup-addon">
               <i className="pi pi-user"></i>
             </span>
@@ -71,10 +73,12 @@ const Login = () => {
               id="username"
               name="username"
               placeholder="Username"
+              invalid={errorMessages.length > 0}
               value={login.username}
               onChange={handleChange}
               style={{ width: "100%" }}
-              className="font-ibm w-full px-4 rounded-l-none py-3 rounded-lg border text-lg text-slate-600 placeholder:text-slate-500 bg-cyan-50"
+              className="font-ibm w-full px-4 rounded-l-none py-3 rounded-lg border text-lg
+               text-slate-600 placeholder:text-slate-500 bg-white"
             />
           </div>
           
@@ -86,11 +90,12 @@ const Login = () => {
               id="password"
               name="password"
               placeholder="Password"
-              aria-describedby="username-help"
+              invalid={errorMessages.length > 0}
               type="password"
               value={login.password}
               onChange={handleChange}
-              className="font-ibm w-full px-4 rounded-l-none py-3 rounded-lg border text-lg text-slate-600 placeholder:text-slate-500 bg-cyan-50"
+              className="font-ibm w-full px-4 rounded-l-none py-3 rounded-lg border text-lg text-slate-600
+               placeholder:text-slate-500 bg-white"
             />
           </div>
           <ul className={`${errorMessages.length>0 ? "block":"hidden"} ml-6 flex gap-y-2 flex-col`}>
