@@ -16,7 +16,7 @@ const HomeMap: React.FC<HomeProps> = ({ gridSize, playerPosition }) => {
           {grid.map((_, i) => (
             <div
               key={i}
-              className={`relative border flex-grow aspect-square ${
+              className={`relative border flex-grow aspect-square transition-all duration-100 ease-linear ${
                 playerPosition.x === i && playerPosition.y === j ? 'bg-blue-500' : 'bg-green-200'
               }`}
             >

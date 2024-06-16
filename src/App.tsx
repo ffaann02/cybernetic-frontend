@@ -1,23 +1,19 @@
-import "./App.css";
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeflex/primeflex.css";
-import "primeicons/primeicons.css";
-import Home from "./scene/Home";
+// import { createBrowserHistory } from 'history';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+// const history = createBrowserHistory();
 
 function App() {
   return (
     <>
-      <div className="w-full overflow-y-scroll max-h-screen bg-neutral-400 mx-auto p-6">
-        <div className="bg-white mx-auto max-w-7xl">
-          <div className="w-full bg-blue-100">
-            {/* <Home
-              gridSize={GRID_SIZE}
-              playerPosition={DEFAULT_PLAYER_POSITION}
-            /> */}
-            <Home/>
-          </div>
-        </div>
+      <div className="w-full min-h-screen flex flex-col font-ibm">
+        <Router>
+          <Routes>
+            {/* <Route path="/" element={<Home />} /> */}
+            <Route path="/login" element={<Login/>} />
+            {/* <Route path="/register" element={<Register />} /> */}
+          </Routes>
+        </Router>
       </div>
     </>
   );
