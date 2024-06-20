@@ -13,6 +13,16 @@ const items = [
     position: [2, 0, 0],
     rotation: 1,
   },
+  {
+    name: "Tank",
+    position: [4, 2, 3],
+    rotation: 45,
+  },
+  {
+    name: "StreetLight",
+    position: [10, 0, 1],
+    rotation: -45,
+  },
 ];
 
 export const Experience = () => {
