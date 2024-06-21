@@ -1,14 +1,23 @@
 import { Canvas } from "@react-three/fiber";
-import React from "react";
-import { Experience } from "../components/Experience";
+import React, { Suspense } from "react";
+import { HomeEnvironment } from "../components/scene-environments/Home";
+import { PerspectiveCamera } from "@react-three/drei";
+import CharacterController from "../constant/CharacterController";
+import { Physics } from "@react-three/rapier";
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
   return (
-    <Canvas style={{ height: "100%", width: "100%" }} shadows camera={{ position: [10, 10, 10], fov: 60 }}>
+    <Canvas dpr={[1, 2]} style={{ height: "100%", width: "100%" }} shadows>
       <color attach="background" args={["lightblue"]} />
-      <Experience />
+      <PerspectiveCamera makeDefault position={[0, 6, 10]} />
+      <Suspense fallback={null}>
+        <Physics debug={true}>
+          <CharacterController />
+          <HomeEnvironment />
+        </Physics>
+      </Suspense>
     </Canvas>
   );
 };
