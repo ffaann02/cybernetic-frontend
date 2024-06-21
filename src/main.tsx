@@ -10,7 +10,7 @@ import { AuthProvider } from "./contexts/AuthContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <PrimeReactProvider>
-    <GoogleOAuthProvider clientId="1059259648320-q7qosqd7kvplsf50qnu7j8vc5adegtk7.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GCP_CLIENT_ID}>
       <AuthProvider>
         <App />
       </AuthProvider>
