@@ -1,6 +1,7 @@
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { Home } from "../../map/Home";
 import { Item } from "../shared/Item";
+import { RigidBody } from "@react-three/rapier";
 
 const items = [
   {
@@ -42,9 +43,11 @@ export const HomeEnvironment = () => {
       />
 
       {items.map((item, index) => (
-        <Item item={item} key={index} />
+        <RigidBody lockTranslations>
+          <Item item={item} key={index} />
+          as
+        </RigidBody>
       ))}
-      <OrbitControls />
       <Home />
       <Environment preset="sunset" />
     </>
