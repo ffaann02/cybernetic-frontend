@@ -11,9 +11,9 @@ const Home: React.FC<HomeProps> = () => {
   return (
     <Canvas dpr={[1, 2]} style={{ height: "100%", width: "100%" }} shadows>
       <color attach="background" args={["lightblue"]} />
-      <PerspectiveCamera makeDefault position={[0, 6, 10]} />
+      {/* <PerspectiveCamera makeDefault position={[0, 6, 10]} /> */}
       <Suspense fallback={null}>
-        <Physics debug={true}>
+        <Physics debug={false}>
           <CharacterController />
           <HomeEnvironment />
         </Physics>
