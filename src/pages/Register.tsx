@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { object, string, ref } from "yup";
+import { useGoogleLogin } from "@react-oauth/google";
+import axiosInstance from "../api/axios";
+import useAxios from "../hooks/useAxios";
 
 interface RegisterProps {
   username: string;
@@ -15,6 +18,9 @@ interface RegisterProps {
 }
 
 const Register = () => {
+
+  const { axiosFetch } = useAxios();
+
   const [register, setRegister] = useState<RegisterProps>({
     username: "",
     email: "",
@@ -52,17 +58,65 @@ const Register = () => {
     if (loading) return;
     try {
       await registerValidationSchema.validate(register, { abortEarly: false });
-      console.log("Registration data is valid");
-      setErrorMessages([]);
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 3000);
+      const response = await axiosFetch({
+        axiosInstance,
+        method: "post",
+        url: "/auth/signup",
+        requestConfig: {
+          email: register.email,
+          username: register.username,
+          password: register.password
+        },
+      });
+      console.log("Registration data is valid");
+      console.log(response);
+      setErrorMessages([]);
+      setLoading(false);
     } catch (err: any) {
-      console.log(err.inner);
-      setErrorMessages(err.inner.map((e: any) => e.message));
+      console.log(err);
+      // Error occurred by response
+      setLoading(false);
+      if (err.response && err.response.status) {
+        if (err.response.status === 400 && err.response.data.conflict === "email") {
+          setErrorMessages(["อีเมลนี้ถูกใช้งานแล้ว"]);
+        }
+        else if (err.response.status === 400 && err.response.data.conflict === "username") {
+          setErrorMessages(["ชื่อผู้ใช้นี้ถูกใช้งานแล้ว"]);
+        }
+        else if (err.response.status === 500) {
+          setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+        }
+      }
+      // Error occurred by validation
+      else {
+        console.log(err.inner);
+        setErrorMessages(err.inner.map((e: any) => e.message));
+      }
     }
   };
+
+  const handleGoogleSignUp = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      console.log('Code Response:', codeResponse); // Inspect this log
+      try {
+        const tokenResponse = await axiosFetch({
+          axiosInstance,
+          method: "get",
+          url: `/auth/google/signup`,
+          requestConfig: {
+            params: { code: codeResponse.code }
+          }
+        });
+        console.log('Token Response:', tokenResponse);
+      } catch (err) {
+        console.log('Error:', err);
+        setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+      }
+    },
+    flow: "auth-code",
+  });
+
 
   return (
     <div className="w-full flex-grow flex flex-col p-24 bg-gradient-to-r from-cyan-400 to-blue-400">
@@ -131,9 +185,8 @@ const Register = () => {
             </div>
           </div>
           <ul
-            className={`${
-              errorMessages.length > 0 ? "block" : "hidden"
-            } ml-6 flex gap-y-2 flex-col`}
+            className={`${errorMessages.length > 0 ? "block" : "hidden"
+              } ml-6 flex gap-y-2 flex-col`}
           >
             {errorMessages.map((error, index) => (
               <li key={index} className="text-red-400 text-sm list-disc">
@@ -170,7 +223,7 @@ const Register = () => {
               <div className="justify-center flex">
                 <Button
                   className="bg-neutral-100 font-ibm px-4 w-fit border border-neutral-300 hover:bg-neutral-200 hover:border-neutral-400 transition-all duration-200 ease-linear text-slate-500"
-                  onClick={() => console.log("Sign in with Google")}
+                  onClick={() => handleGoogleSignUp()}
                 >
                   <div className="flex justify-center w-full gap-x-1">
                     <img

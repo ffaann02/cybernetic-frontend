@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { object, string } from "yup";
+import axiosInstance from "../api/axios";
+import { useGoogleLogin } from "@react-oauth/google";
+import useAxios from "../hooks/useAxios";
 
 interface LoginProps {
   username: string;
@@ -13,6 +16,9 @@ interface LoginProps {
 }
 
 const Login = () => {
+
+  const { axiosFetch } = useAxios();
+
   const [login, setLogin] = useState<LoginProps>({
     username: "",
     password: "",
@@ -44,17 +50,61 @@ const Login = () => {
     if (loading) return;
     try {
       await loginValidationSchema.validate(login, { abortEarly: false });
-      console.log("password Correct");
-      setErrorMessages([]);
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 3000);
+      const response = await axiosFetch({
+        axiosInstance,
+        method: "post",
+        url: "/auth/login",
+        requestConfig: {
+          username: login.username, 
+          password: login.password 
+        },
+      });
+      console.log("password Correct");
+      console.log(response);
+      setErrorMessages([]);
+      setLoading(false);
     } catch (err: any) {
-      console.log(err.inner);
-      setErrorMessages(err.inner.map((e: any) => e.message));
+      console.log(err);
+      // Error occurred by response
+      setLoading(false);
+      if(err.response && err.response.status){
+        if(err.response.status === 400){
+          setErrorMessages(["ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"]);
+        }
+        else if(err.response.status === 500){
+          setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+        }
+      }
+      // Error occurred by validation
+      else{
+        console.log(err.inner);
+        setErrorMessages(err.inner.map((e: any) => e.message));
+      }
     }
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      console.log('Code Response:', codeResponse); // Inspect this log
+      try {
+        const tokenResponse = await axiosFetch({
+          axiosInstance,
+          method: "get",
+          url: `/auth/google/login`,
+          requestConfig: {
+            params: { code: codeResponse.code }
+          }
+        });
+        console.log('Token Response:', tokenResponse);
+      } catch (err) {
+        console.log('Error:', err);
+        setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+      }
+    },
+    flow: "auth-code",
+  });
+  
 
   // console.log(errorMessages);
 
@@ -137,7 +187,7 @@ const Login = () => {
               duration-200 ease-linear text-slate-500"
               onClick={() => console.log("Sign in with Google")}
             >
-              <div className="flex justify-center w-full gap-x-2 ">
+              <div className="flex justify-center w-full gap-x-2 " onClick={() => handleGoogleLogin()}>
                 <img
                   src="https://cdn4.iconfinder.com/data/icons/logos-brands-7/512/google_logo-google_icongoogle-512.png"
                   className="w-6 h-6"
