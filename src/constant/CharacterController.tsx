@@ -1,15 +1,17 @@
 import { CameraControls } from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
+import { GameContext } from "../contexts/GameContext";
 
 const CharacterController: React.FC = () => {
   const controls = useRef<any>(null);
   const character = useRef<any>(null);
   const rigidBody = useRef<any>(null);
   const pressedKeys = useRef<Set<string>>(new Set());
+  const { speed } = useContext(GameContext);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -47,26 +49,28 @@ const CharacterController: React.FC = () => {
 
     if (rigidBody.current) {
       const velocity = new THREE.Vector3();
+      const numSpeed:number = speed;
       if (pressedKeys.current.has("w") || pressedKeys.current.has("ArrowUp")) {
-        velocity.z -= 5;
+
+        velocity.z -= numSpeed;
       }
       if (
         pressedKeys.current.has("s") ||
         pressedKeys.current.has("ArrowDown")
       ) {
-        velocity.z += 5;
+        velocity.z += numSpeed;
       }
       if (
         pressedKeys.current.has("a") ||
         pressedKeys.current.has("ArrowLeft")
       ) {
-        velocity.x -= 5;
+        velocity.x -= numSpeed;
       }
       if (
         pressedKeys.current.has("d") ||
         pressedKeys.current.has("ArrowRight")
       ) {
-        velocity.x += 5;
+        velocity.x += numSpeed;
       }
       const currentPos = rigidBody.current.translation() as THREE.Vector3;
       const newPos = new THREE.Vector3(

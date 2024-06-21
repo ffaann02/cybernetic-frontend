@@ -1,6 +1,6 @@
 import { Environment } from "@react-three/drei";
 import { Home } from "../../map/Home";
-import { Item } from "../shared/Item";
+import { Item } from "./shared/Item";
 import { RigidBody } from "@react-three/rapier";
 
 const items = [
