@@ -1,19 +1,20 @@
 import { Canvas } from "@react-three/fiber";
-import React, { Suspense } from "react";
+import React, { Suspense, useContext } from "react";
 import { HomeEnvironment } from "../components/scene-environments/Home";
-import { PerspectiveCamera } from "@react-three/drei";
 import CharacterController from "../constant/CharacterController";
 import { Physics } from "@react-three/rapier";
+import { GameContext } from "../contexts/GameContext";
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
+  const {debug} = useContext(GameContext);
   return (
-    <Canvas dpr={[1, 2]} style={{ height: "100%", width: "100%" }} shadows>
+    <Canvas dpr={[1, 2]} style={{ height: "100%", width: "100%" }} shadows className="z-0">
       <color attach="background" args={["lightblue"]} />
       {/* <PerspectiveCamera makeDefault position={[0, 6, 10]} /> */}
       <Suspense fallback={null}>
-        <Physics debug={false}>
+        <Physics debug={debug}>
           <CharacterController />
           <HomeEnvironment />
         </Physics>
