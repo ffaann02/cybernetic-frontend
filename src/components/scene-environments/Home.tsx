@@ -46,7 +46,7 @@ export const HomeEnvironment = () => {
       />
 
       {items.map((item, index) => (
-        <RigidBody lockTranslations>
+        <RigidBody lockTranslations name="item">
           <Item item={item} key={index} />
         </RigidBody>
       ))}
