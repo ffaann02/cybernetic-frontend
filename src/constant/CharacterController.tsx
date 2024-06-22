@@ -66,7 +66,7 @@ const CharacterController: React.FC = () => {
       jumpCooldown.current = true;
       setTimeout(() => {
         jumpCooldown.current = false;
-      }, 500); // Cooldown period of 0.5 seconds
+      }, 1000);
 
       rigidBody.current.applyImpulse(
         new THREE.Vector3(impulse.x, speed * 75, impulse.z)

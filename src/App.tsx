@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import { GameContext, GameProvider } from "./contexts/GameContext";
 import DebugToolsBar from "./components/ui/DebugToolsBar";
 import { useDebugTools } from "./hooks/useDebugsTool";
+import CreateCharacter from "./pages/CreateCharacter";
 
 function App() {
   const { currentScene } = useContext(GameContext);
@@ -33,6 +34,7 @@ function App() {
               />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/create-character" element={<CreateCharacter/>} />
               <Route path="*" element={<div>404</div>} />
             </Routes>
           </Router>
