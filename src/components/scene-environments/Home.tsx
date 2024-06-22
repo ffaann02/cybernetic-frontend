@@ -29,30 +29,31 @@ const items = [
 ];
 
 export const HomeEnvironment = () => {
-  const {camera} = useContext(GameContext);
+  const { camera } = useContext(GameContext);
   return (
     <>
+      <Environment preset="dawn" environmentIntensity={0.5} />
       <directionalLight
-        position={[40, 15, 20]}
-        intensity={0.02}
+        intensity={1}
+        scale={10}
         castShadow
-        shadow-camera-near={0}
-        shadow-camera-far={100}
-        shadow-camera-left={-30}
-        shadow-camera-right={30}
+        shadow-mapSize-height={4096}
+        shadow-mapSize-width={4096}
+        rotation={[0, 0, 0]}
+        position={[-2, 8, 3]}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
         shadow-camera-top={20}
-        shadow-camera-bottom={0}
-        shadow-bias={-0.001}
+        shadow-camera-bottom={-20}
       />
 
       {items.map((item, index) => (
-        <RigidBody lockTranslations name="item">
+        <RigidBody name="item" lockTranslations lockRotations>
           <Item item={item} key={index} />
         </RigidBody>
       ))}
       <Home />
-      {camera===2 && <OrbitControls/>}
-      <Environment preset="sunset" />
+      {camera === 2 && <OrbitControls />}
     </>
   );
 };

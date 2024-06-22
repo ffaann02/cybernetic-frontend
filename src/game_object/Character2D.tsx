@@ -30,9 +30,11 @@ const Character2D = ({
     <mesh
       key="main_character"
       position={[1, 3.8, 4]}
-      scale={[direction === "left" ? -1 : 1, 1, 0.00001]}
+      scale={[direction === "left" ? -1 : 1, 1, 1]}
+    //   castShadow
     >
-      <boxGeometry args={[4, 4, 0.001]} />
+      <boxGeometry args={[4, 4, 0.001]}
+      />
       <meshStandardMaterial
         map={animators[animation].texture}
         transparent={true}

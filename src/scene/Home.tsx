@@ -30,7 +30,7 @@ const Home: React.FC<HomeProps> = () => {
         shadows
         className="z-0"
       >
-        <color attach="background" args={["lightblue"]} />
+        <color attach="background" args={["gray"]} />
         {camera === 2 && (
           <PerspectiveCamera makeDefault position={[0, 6, 10]} />
         )}

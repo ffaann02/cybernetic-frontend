@@ -12,10 +12,19 @@ interface ItemProps {
 }
 
 export const Item: React.FC<ItemProps> = ({ item }) => {
-  const { name, position, rotation,scale } = item;
+  const { name, position, rotation, scale } = item;
   const { scene } = useGLTF(`/models/map_object/${name}.gltf`);
+
   // Skinned meshes cannot be re-used in threejs without cloning them
-  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const clone = useMemo(() => {
+    const clonedScene = SkeletonUtils.clone(scene);
+    clonedScene.traverse((object) => {
+      if ((object as any).isMesh) {
+        object.castShadow = true;
+      }
+    });
+    return clonedScene;
+  }, [scene]);
 
   return (
     <primitive
