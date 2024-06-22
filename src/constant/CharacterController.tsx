@@ -1,37 +1,88 @@
-import { CameraControls } from "@react-three/drei";
+import { CameraControls, useKeyboardControls } from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
-import { useRef, useEffect, useContext } from "react";
+import { useRef, useContext, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
 
+export const Controls = {
+  forward: "forward",
+  backward: "backward",
+  left: "left",
+  right: "right",
+  jump: "jump",
+};
+
 const CharacterController: React.FC = () => {
   const controls = useRef<any>(null);
   const character = useRef<any>(null);
   const rigidBody = useRef<any>(null);
-  const pressedKeys = useRef<Set<string>>(new Set());
+  const isOnFloor = useRef(false);
+  const jumpCooldown = useRef(false); // Cooldown state for jumping
+
   const { speed, camera } = useContext(GameContext);
+  const [direction, setDirection] = useState<"left" | "right">("right");
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      pressedKeys.current.add(event.key);
-    };
+  const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
+  const forwardPressed = useKeyboardControls(
+    (state) => state[Controls.forward]
+  );
+  const backwardPressed = useKeyboardControls(
+    (state) => state[Controls.backward]
+  );
+  const leftPressed = useKeyboardControls((state) => state[Controls.left]);
+  const rightPressed = useKeyboardControls((state) => state[Controls.right]);
 
-    const handleKeyUp = (event: KeyboardEvent) => {
-      pressedKeys.current.delete(event.key);
-    };
+  //   const jump = () => {
+  //     if (isOnFloor.current) {
+  //       const jumpForce = new THREE.Vector3(0, speed, 0);
+  //       rigidBody.current.applyImpulse(jumpForce);
+  //       isOnFloor.current = false;
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+  const handleMovement = (delta: number) => {
+    const onAirFraction = isOnFloor.current ? 1 : 0.3;
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
+    const impulse = new THREE.Vector3();
 
-  useFrame((_, delta) => {
+    if (forwardPressed) {
+      impulse.z -= speed * delta * onAirFraction;
+    }
+    if (backwardPressed) {
+      impulse.z += speed * delta * onAirFraction;
+    }
+    if (leftPressed) {
+      setDirection("left");
+      impulse.x -= speed * delta * onAirFraction;
+    }
+    if (rightPressed) {
+      setDirection("right");
+      impulse.x += speed * delta * onAirFraction;
+    }
+
+    if (jumpPressed && !jumpCooldown.current && isOnFloor.current) {
+      jumpCooldown.current = true;
+      setTimeout(() => {
+        jumpCooldown.current = false;
+      }, 500); // Cooldown period of 0.5 seconds
+
+      rigidBody.current.applyImpulse(
+        new THREE.Vector3(impulse.x, speed * 75, impulse.z)
+      );
+    }
+
+    const newPos = new THREE.Vector3(
+      rigidBody.current.translation().x + impulse.x,
+      rigidBody.current.translation().y,
+      rigidBody.current.translation().z + impulse.z
+    );
+
+    rigidBody.current.setTranslation(newPos, true);
+  };
+
+  const cameraFollow = () => {
     if (controls.current) {
       const cameraDistanceY = window.innerWidth < 1024 ? 10 : 8;
       const cameraDistanceZ = window.innerWidth < 1024 ? 14 : 12;
@@ -46,53 +97,37 @@ const CharacterController: React.FC = () => {
         true
       );
     }
+  };
 
-    if (rigidBody.current) {
-      const velocity = new THREE.Vector3();
-      const numSpeed: number = speed;
-      if (pressedKeys.current.has("w") || pressedKeys.current.has("ArrowUp")) {
-        velocity.z -= numSpeed;
-      }
-      if (
-        pressedKeys.current.has("s") ||
-        pressedKeys.current.has("ArrowDown")
-      ) {
-        velocity.z += numSpeed;
-      }
-      if (
-        pressedKeys.current.has("a") ||
-        pressedKeys.current.has("ArrowLeft")
-      ) {
-        velocity.x -= numSpeed;
-      }
-      if (
-        pressedKeys.current.has("d") ||
-        pressedKeys.current.has("ArrowRight")
-      ) {
-        velocity.x += numSpeed;
-      }
-      const currentPos = rigidBody.current.translation() as THREE.Vector3;
-      const newPos = new THREE.Vector3(
-        currentPos.x + velocity.x * delta,
-        currentPos.y + velocity.y * delta,
-        currentPos.z + velocity.z * delta
-      );
-      rigidBody.current.setTranslation(newPos, true);
-    }
+  useFrame((_, delta) => {
+    cameraFollow();
+    handleMovement(delta);
   });
 
   return (
     <group>
-      {camera===1 && <CameraControls ref={controls} />}
+      {camera === 1 && <CameraControls ref={controls} />}
       <RigidBody
         ref={rigidBody}
         colliders={false}
         linearDamping={10}
         position={[2, -2, 2]}
         lockRotations
+        mass={50}
+        gravityScale={9.8}
+        onCollisionEnter={({ other }) => {
+          if (other.rigidBodyObject && other.rigidBodyObject.name === "floor") {
+            isOnFloor.current = true;
+          }
+        }}
+        onCollisionExit={({ other }) => {
+          if (other.rigidBodyObject && other.rigidBodyObject.name === "floor") {
+            isOnFloor.current = false;
+          }
+        }}
       >
         <group ref={character}>
-          <Character2D />
+          <Character2D direction={direction} />
           <CapsuleCollider
             args={[
               1, // radius

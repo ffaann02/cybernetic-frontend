@@ -5,7 +5,7 @@ export const Home = () => {
   const map = useGLTF("models/map.glb");
 
   return (
-    <RigidBody colliders="trimesh" type="fixed">
+    <RigidBody colliders="trimesh" type="fixed" name="floor">
       <primitive object={map.scene} />
     </RigidBody>
   );
