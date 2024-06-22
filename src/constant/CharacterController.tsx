@@ -6,6 +6,7 @@ import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
 import { useCharacterAnimation } from "../hooks/useCharacterAnimation";
+import useAudio from "../hooks/useAudio";
 
 export const Controls = {
   forward: "forward",
@@ -36,6 +37,8 @@ const CharacterController: React.FC = () => {
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
   const { animationState, updateAnimationState } = useCharacterAnimation();
 
+  const jumpSound = useAudio("jump", 0.5);
+
   const handleMovement = (delta: number) => {
     const onAirFraction = isOnFloor.current ? 1 : 0.3;
 
@@ -58,6 +61,7 @@ const CharacterController: React.FC = () => {
 
     if (jumpPressed && !jumpCooldown.current && isOnFloor.current) {
       jumpCooldown.current = true;
+      jumpSound();
       setTimeout(() => {
         jumpCooldown.current = false;
       }, 1000);
@@ -93,11 +97,11 @@ const CharacterController: React.FC = () => {
       const playerWorldPos = vec3(rigidBody.current.translation());
       controls.current.setLookAt(
         playerWorldPos.x + 1,
-        playerWorldPos.y + cameraDistanceY + 2,
-        playerWorldPos.z + cameraDistanceZ,
+        playerWorldPos.y + cameraDistanceY + 4,
+        playerWorldPos.z + cameraDistanceZ + 2,
         playerWorldPos.x + 1,
-        playerWorldPos.y + 4,
-        playerWorldPos.z,
+        playerWorldPos.y - 2,
+        playerWorldPos.z - 8,
         true
       );
     }
