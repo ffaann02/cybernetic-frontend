@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
+import { useCharacterAnimation } from "../hooks/useCharacterAnimation";
 
 export const Controls = {
   forward: "forward",
@@ -33,14 +34,7 @@ const CharacterController: React.FC = () => {
   );
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
-
-  //   const jump = () => {
-  //     if (isOnFloor.current) {
-  //       const jumpForce = new THREE.Vector3(0, speed, 0);
-  //       rigidBody.current.applyImpulse(jumpForce);
-  //       isOnFloor.current = false;
-  //     }
-  //   };
+  const { animationState, updateAnimationState } = useCharacterAnimation();
 
   const handleMovement = (delta: number) => {
     const onAirFraction = isOnFloor.current ? 1 : 0.3;
@@ -80,6 +74,16 @@ const CharacterController: React.FC = () => {
     );
 
     rigidBody.current.setTranslation(newPos, true);
+
+    updateAnimationState(
+      forwardPressed,
+      backwardPressed,
+      leftPressed,
+      rightPressed,
+      jumpPressed,
+      isOnFloor.current,
+      jumpCooldown.current
+    );
   };
 
   const cameraFollow = () => {
@@ -127,7 +131,7 @@ const CharacterController: React.FC = () => {
         }}
       >
         <group ref={character}>
-          <Character2D direction={direction} />
+          <Character2D direction={direction} animation={animationState} />
           <CapsuleCollider
             args={[
               1, // radius
