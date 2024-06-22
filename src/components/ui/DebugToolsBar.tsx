@@ -5,7 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 
 const DebugToolsBar = () => {
-  const { currentScene, speed, debug, sceneList, setGameState } =
+  const { currentScene, speed, debug, sceneList, camera, cameraList, setGameState } =
     useContext(GameContext);
 
   const handleDebugChange = (e: any) => {
@@ -17,6 +17,12 @@ const DebugToolsBar = () => {
   const handleSceneChange = (e: any) => {
     if (setGameState) {
       setGameState((prevState) => ({ ...prevState, currentScene: e.value }));
+    }
+  };
+
+  const handleCameraChange = (e: any) => {
+    if (setGameState) {
+      setGameState((prevState) => ({ ...prevState, camera: e.value }));
     }
   };
 
@@ -38,11 +44,17 @@ const DebugToolsBar = () => {
         <div className="mt-4 px-4 grid grid-cols-2 gap-y-4">
           <label className="my-auto">Collider</label>
           <InputSwitch checked={debug} onChange={handleDebugChange} className="ml-auto"/>
-          <label className="my-auto mr-10">Current Scene</label>
+          <label className="my-auto mr-10">Scene</label>
           <Dropdown
             value={currentScene}
             options={sceneList}
             onChange={handleSceneChange}
+          />
+          <label className="my-auto mr-10">Camera</label>
+          <Dropdown
+            value={camera}
+            options={cameraList}
+            onChange={handleCameraChange}
           />
           <label className="my-auto">Speed</label>
           <InputNumber

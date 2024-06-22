@@ -1,7 +1,9 @@
-import { Environment } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Home } from "../../map/Home";
 import { Item } from "./shared/Item";
 import { RigidBody } from "@react-three/rapier";
+import { useContext } from "react";
+import { GameContext } from "../../contexts/GameContext";
 
 const items = [
   {
@@ -27,6 +29,7 @@ const items = [
 ];
 
 export const HomeEnvironment = () => {
+  const {camera} = useContext(GameContext);
   return (
     <>
       <directionalLight
@@ -45,10 +48,10 @@ export const HomeEnvironment = () => {
       {items.map((item, index) => (
         <RigidBody lockTranslations>
           <Item item={item} key={index} />
-          as
         </RigidBody>
       ))}
       <Home />
+      {camera===2 && <OrbitControls/>}
       <Environment preset="sunset" />
     </>
   );

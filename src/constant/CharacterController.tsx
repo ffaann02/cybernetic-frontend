@@ -11,7 +11,7 @@ const CharacterController: React.FC = () => {
   const character = useRef<any>(null);
   const rigidBody = useRef<any>(null);
   const pressedKeys = useRef<Set<string>>(new Set());
-  const { speed } = useContext(GameContext);
+  const { speed, camera } = useContext(GameContext);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -49,9 +49,8 @@ const CharacterController: React.FC = () => {
 
     if (rigidBody.current) {
       const velocity = new THREE.Vector3();
-      const numSpeed:number = speed;
+      const numSpeed: number = speed;
       if (pressedKeys.current.has("w") || pressedKeys.current.has("ArrowUp")) {
-
         velocity.z -= numSpeed;
       }
       if (
@@ -75,7 +74,7 @@ const CharacterController: React.FC = () => {
       const currentPos = rigidBody.current.translation() as THREE.Vector3;
       const newPos = new THREE.Vector3(
         currentPos.x + velocity.x * delta,
-        currentPos.y + velocity.y * delta, // add y velocity to the current position
+        currentPos.y + velocity.y * delta,
         currentPos.z + velocity.z * delta
       );
       rigidBody.current.setTranslation(newPos, true);
@@ -84,7 +83,7 @@ const CharacterController: React.FC = () => {
 
   return (
     <group>
-      <CameraControls ref={controls} />
+      {camera===1 && <CameraControls ref={controls} />}
       <RigidBody
         ref={rigidBody}
         colliders={false}

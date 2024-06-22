@@ -8,13 +8,17 @@ interface GameContextProps {
     | React.Dispatch<React.SetStateAction<GameContextProps>>
     | undefined;
   sceneList: string[];
+  camera: number;
+  cameraList: number[];
 }
 
 const initialGameContext: GameContextProps = {
   currentScene: "home",
   speed: 7.5,
   debug: false,
-  sceneList: ["home","test"],
+  sceneList: ["home", "test"],
+  camera: 1,
+  cameraList: [1, 2, 3],
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -28,6 +32,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     speed: gameState.speed,
     debug: gameState.debug,
     sceneList: gameState.sceneList,
+    camera: gameState.camera,
+    cameraList: gameState.cameraList,
     setGameState,
   };
 
