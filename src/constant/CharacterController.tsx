@@ -21,7 +21,7 @@ const CharacterController: React.FC = () => {
   const character = useRef<any>(null);
   const rigidBody = useRef<any>(null);
   const isOnFloor = useRef(false);
-  const jumpCooldown = useRef(false); // Cooldown state for jumping
+  const jumpCooldown = useRef(false);
 
   const { speed, camera } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
@@ -144,6 +144,12 @@ const CharacterController: React.FC = () => {
             position={[1, 4, 4]}
           />
         </group>
+        <mesh castShadow position={[0.75, 4, 4.25]} scale={[
+          1,0.1,0.75
+        ]}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshStandardMaterial transparent={true} opacity={0}/>
+        </mesh>
       </RigidBody>
     </group>
   );
