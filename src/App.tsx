@@ -9,6 +9,7 @@ import { GameContext, GameProvider } from "./contexts/GameContext";
 import DebugToolsBar from "./components/ui/DebugToolsBar";
 import { useDebugTools } from "./hooks/useDebugsTool";
 import CreateCharacter from "./pages/CreateCharacter";
+import Welcome from "./scene/Welcome";
 
 function App() {
   const { currentScene } = useContext(GameContext);
@@ -26,6 +27,7 @@ function App() {
                 element={
                   <div className="h-screen">
                     <SceneRouter currentScene={currentScene}>
+                      <Scene title="welcome" scene={<Welcome/>} />
                       <Scene title="home" scene={<Home />} />
                       <Scene title="test" scene={<Test />} />
                     </SceneRouter>
