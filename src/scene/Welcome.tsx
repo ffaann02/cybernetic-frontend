@@ -12,7 +12,7 @@ const Welcome: React.FC<HomeProps> = () => {
 
   return (
     <>
-      <div className="absolute z-10 w-1/3 h-screen right-0">hello</div>
+      {/* <div className="absolute z-10 w-1/3 h-screen right-0">hello</div> */}
       <Canvas
         style={{ height: "100%", width: "100%" }}
         shadows
