@@ -1,14 +1,14 @@
 import { Canvas } from "@react-three/fiber";
 import React, { Suspense, useContext, useMemo } from "react";
-import { HomeEnvironment } from "../components/scene-environments/Home";
 import CharacterController, { Controls } from "../controllers/CharacterController";
 import { Physics } from "@react-three/rapier";
 import { GameContext } from "../contexts/GameContext";
 import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
+import { TutorialEnvironment } from "../components/scene-environments/Tutorial";
 
 interface HomeProps {}
 
-const Home: React.FC<HomeProps> = () => {
+const Tutorial: React.FC<HomeProps> = () => {
   const { debug, camera } = useContext(GameContext);
 
   const controlMap = useMemo(
@@ -37,7 +37,7 @@ const Home: React.FC<HomeProps> = () => {
         <Suspense fallback={null}>
           <Physics debug={debug} gravity={[0, -9.81, 0]}>
             <CharacterController />
-            <HomeEnvironment />
+            <TutorialEnvironment />
           </Physics>
         </Suspense>
       </Canvas>
@@ -45,4 +45,4 @@ const Home: React.FC<HomeProps> = () => {
   );
 };
 
-export default Home;
+export default Tutorial;

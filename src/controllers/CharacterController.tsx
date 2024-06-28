@@ -100,8 +100,8 @@ const CharacterController: React.FC = () => {
       const playerWorldPos = vec3(rigidBody.current.translation());
       controls.current.setLookAt(
         playerWorldPos.x + 1,
-        playerWorldPos.y + cameraDistanceY + 4,
-        playerWorldPos.z + cameraDistanceZ + 2,
+        playerWorldPos.y + cameraDistanceY + 5,
+        playerWorldPos.z + cameraDistanceZ + 3,
         playerWorldPos.x + 1,
         playerWorldPos.y - 2,
         playerWorldPos.z - 8,

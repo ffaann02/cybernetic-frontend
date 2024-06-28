@@ -34,17 +34,17 @@ const Jump3 = () => {
         <RightHand />
       </div>
       {/* LEFT LEG */}
-      <div className="absolute top-[58%] right-[38%] transform -translate-x-1/2 w-6 z-[5] rotate-[5deg] bg-transparent">
+      <div className="absolute top-[58%] right-[37%] transform -translate-x-1/2 w-6 z-[5] rotate-[-10deg] bg-transparent">
         <LeftTopLeg />
       </div>
-      <div className="absolute top-[66%] right-[40%] transform -translate-x-1/2 w-8 rotate-[40deg] z-[5] bg-transparent">
+      <div className="absolute top-[68%] right-[34%] transform -translate-x-1/2 w-8 rotate-[10deg] z-[5] bg-transparent">
         <LeftFoot />
       </div>
       {/* RIGHT LEG */}
-      <div className="absolute top-[56%] left-[50.5%] transform -translate-x-1/2 w-6 rotate-[-60deg] z-[5] bg-transparent">
+      <div className="absolute top-[58%] left-[48%] transform -translate-x-1/2 w-6 rotate-[-30deg] z-[5] bg-transparent">
         <RightTopLeg />
       </div>
-      <div className="absolute top-[64%] left-[54%] transform -translate-x-1/2 w-8 rotate-[20deg] z-[5] bg-transparent">
+      <div className="absolute top-[67%] left-[48%] transform -translate-x-1/2 w-8 rotate-[30deg] z-[5] bg-transparent">
         <RightFoot />
       </div>
     </>

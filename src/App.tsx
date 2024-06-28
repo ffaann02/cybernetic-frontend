@@ -10,6 +10,7 @@ import DebugToolsBar from "./components/ui/DebugToolsBar";
 import { useDebugTools } from "./hooks/useDebugsTool";
 import CreateCharacter from "./pages/CreateCharacter";
 import Welcome from "./scene/Welcome";
+import Tutorial from "./scene/Tutorial";
 
 function App() {
   const { currentScene } = useContext(GameContext);
@@ -29,6 +30,7 @@ function App() {
                     <SceneRouter currentScene={currentScene}>
                       <Scene title="welcome" scene={<Welcome/>} />
                       <Scene title="home" scene={<Home />} />
+                      <Scene title="tutorial" scene={<Tutorial/>} />
                       <Scene title="test" scene={<Test />} />
                     </SceneRouter>
                   </div>

@@ -34,10 +34,10 @@ const Jump2 = () => {
         <RightHand />
       </div>
       {/* LEFT LEG */}
-      <div className="absolute top-[59%] right-[39%] transform -translate-x-1/2 w-6 z-[5] rotate-[5deg] bg-transparent">
+      <div className="absolute top-[59%] right-[37.5%] transform -translate-x-1/2 w-6 z-[5] rotate-[-5deg] bg-transparent">
         <LeftTopLeg />
       </div>
-      <div className="absolute top-[70%] right-[38%] transform -translate-x-1/2 w-8 rotate-[10deg] z-[5] bg-transparent">
+      <div className="absolute top-[70%] right-[35.5%] transform -translate-x-1/2 w-8 rotate-[10deg] z-[5] bg-transparent">
         <LeftFoot />
       </div>
       {/* RIGHT LEG */}
