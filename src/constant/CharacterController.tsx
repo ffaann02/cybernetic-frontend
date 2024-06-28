@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
-import { useCharacterAnimation } from "../hooks/useCharacterAnimation";
+import { AnimationState, useCharacterAnimation } from "../hooks/useCharacterAnimation";
 import useAudio from "../hooks/useAudio";
 
 export const Controls = {
@@ -35,9 +35,11 @@ const CharacterController: React.FC = () => {
   );
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
-  const { animationState, updateAnimationState } = useCharacterAnimation();
+  const { animationState, setAnimationState, updateAnimationState } = useCharacterAnimation();
 
   const jumpSound = useAudio("jump", 0.5);
+
+  
 
   const handleMovement = (delta: number) => {
     const onAirFraction = isOnFloor.current ? 1 : 0.3;
@@ -62,6 +64,7 @@ const CharacterController: React.FC = () => {
     if (jumpPressed && !jumpCooldown.current && isOnFloor.current) {
       jumpCooldown.current = true;
       jumpSound();
+      setAnimationState(AnimationState.Jumping);
       setTimeout(() => {
         jumpCooldown.current = false;
       }, 1000);
@@ -144,7 +147,7 @@ const CharacterController: React.FC = () => {
             position={[1, 4, 4]}
           />
         </group>
-        <mesh castShadow position={[0.75, 4, 4.25]} scale={[
+        <mesh castShadow position={[0.5, 4, 4.3]} scale={[
           1,0.1,0.75
         ]}>
           <sphereGeometry args={[0.8, 32, 32]} />
