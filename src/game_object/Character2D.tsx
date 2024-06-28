@@ -2,10 +2,10 @@ import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { useState } from "react";
 import { PlainAnimator } from "three-plain-animator";
-import idleSprite from "/images/idle.png";
-import runningSprite from "/images/homer.png";
+import idleSprite from "/images/idle.png"
+import runningSprite from "/images/running.png";
+import jumpSprite from "/images/jump.png";
 import { AnimationState } from "../hooks/useCharacterAnimation";
-
 
 const Character2D = ({
   direction,
@@ -14,12 +14,14 @@ const Character2D = ({
   direction: "left" | "right";
     animation: AnimationState
 }) => {
+  
   const idleSpriteTexture = useLoader(THREE.TextureLoader, idleSprite);
   const runningSpriteTexture = useLoader(THREE.TextureLoader, runningSprite);
+  const jumpSpriteTexture = useLoader(THREE.TextureLoader, jumpSprite);
   const [animators] = useState<{ [key in AnimationState]: PlainAnimator }>({
     idle: new PlainAnimator(idleSpriteTexture, 3, 1, 3, 4),
-    running: new PlainAnimator(runningSpriteTexture, 4, 4, 10, 10),
-    jumping: new PlainAnimator(runningSpriteTexture, 4, 4, 10, 10),
+    running: new PlainAnimator(runningSpriteTexture, 6, 1, 6, 8),
+    jumping: new PlainAnimator(jumpSpriteTexture, 3, 1, 3, 4)
   });
 
   useFrame(() => {
@@ -29,7 +31,7 @@ const Character2D = ({
   return (
     <mesh
       key="main_character"
-      position={[1.2, 4, 3.8]}
+      position={[1, 4, 3.8]}
       scale={[direction === "left" ? -1 : 1, 1, 1]}
     //   castShadow
     >

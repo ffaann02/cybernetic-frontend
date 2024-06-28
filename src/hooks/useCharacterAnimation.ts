@@ -29,11 +29,19 @@ export const useCharacterAnimation = () => {
       leftPressed ||
       rightPressed
     ) {
-      setAnimationState(AnimationState.Running);
+      if (!isOnFloor) {
+        setAnimationState(AnimationState.Jumping);
+      } else {
+        setAnimationState(AnimationState.Running);
+      }
     } else {
-      setAnimationState(AnimationState.Idle);
+      if (!isOnFloor) {
+        setAnimationState(AnimationState.Jumping);
+      } else {
+        setAnimationState(AnimationState.Idle);
+      }
     }
   };
 
-  return { animationState, updateAnimationState };
+  return { animationState, setAnimationState, updateAnimationState };
 };
