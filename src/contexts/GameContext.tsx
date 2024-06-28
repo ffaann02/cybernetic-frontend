@@ -13,7 +13,7 @@ interface GameContextProps {
 }
 
 const initialGameContext: GameContextProps = {
-  currentScene: "welcome",
+  currentScene: "home",
   speed: 7.5,
   debug: false,
   sceneList: ["home", "test","welcome"],

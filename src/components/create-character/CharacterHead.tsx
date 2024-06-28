@@ -1,4 +1,3 @@
-import React from "react";
 const CharacterHead = () => {
   return (
     <div>
@@ -31,8 +30,8 @@ const CharacterHead = () => {
             y2="385.19"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0" stop-color="#7a7769" />
-            <stop offset="0.04" stop-color="#888273" />
+            {/* <stop offset="0" stop-color="#7a7769" /> */}
+            {/* <stop offset="0.04" stop-color="#888273" /> */}
             <stop offset="0.17" stop-color="#b5a695" />
             <stop offset="0.29" stop-color="#d6c0ad" />
             <stop offset="0.39" stop-color="#eacfbc" />
@@ -135,20 +134,47 @@ const CharacterHead = () => {
               fill="url(#linear-gradient-2)"
               d="M94.85,257.76a47.42,47.42,0,1,1-47.43-47.43c.69,0,1.38,0,2.06,0a47.4,47.4,0,0,1,45.37,47.38Z"
             />
-            <circle className="cls-3" fill="url(#linear-gradient-3)" cx="47.42" cy="257.75" r="24.65" />
-            <circle className="cls-4" fill="url(#linear-gradient-4)" cx="350.02" cy="257.76" r="47.42" />
-            <circle className="cls-5" fill="url(#linear-gradient-5)" cx="357.94" cy="257.75" r="24.65" />
-            <circle className="cls-6" fill="url(#linear-gradient-6)" cx="211.04" cy="239.26" r="163.62" />
-            <path
-              fill="#fff"
-              className="cls-7"
-              d="M370.74,233.48a48.55,48.55,0,0,1-97.1,0Z"
+            <circle
+              className="cls-3"
+              fill="url(#linear-gradient-3)"
+              cx="47.42"
+              cy="257.75"
+              r="24.65"
             />
-            <path
-              className="cls-8"
-              fill="#231f20"
-              d="M346.46,233.48a24.27,24.27,0,1,1-48.54,0Z"
+            <circle
+              className="cls-4"
+              fill="url(#linear-gradient-4)"
+              cx="350.02"
+              cy="257.76"
+              r="47.42"
             />
+            <circle
+              className="cls-5"
+              fill="url(#linear-gradient-5)"
+              cx="357.94"
+              cy="257.75"
+              r="24.65"
+            />
+            <circle
+              className="cls-6"
+              fill="url(#linear-gradient-6)"
+              cx="211.04"
+              cy="239.26"
+              r="163.62"
+            />
+            {/* <div> */}
+              <path
+                fill="#fff"
+                className="cls-7"
+                d="M370.74,233.48a48.55,48.55,0,0,1-97.1,0Z"
+                style={{height:"20px"}}
+              />
+              <path
+                className="cls-8"
+                fill="#231f20"
+                d="M346.46,233.48a24.27,24.27,0,1,1-48.54,0Z"
+              />
+            {/* </div> */}
             <path
               fill="#fff"
               className="cls-7"

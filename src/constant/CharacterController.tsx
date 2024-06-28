@@ -147,7 +147,7 @@ const CharacterController: React.FC = () => {
         <mesh castShadow position={[0.75, 4, 4.25]} scale={[
           1,0.1,0.75
         ]}>
-          <sphereGeometry args={[1, 32, 32]} />
+          <sphereGeometry args={[0.8, 32, 32]} />
           <meshStandardMaterial transparent={true} opacity={0}/>
         </mesh>
       </RigidBody>
