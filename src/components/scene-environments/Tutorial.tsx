@@ -5,6 +5,7 @@ import { RigidBody } from "@react-three/rapier";
 import { useContext } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import Wall from "./shared/Wall";
+import { ItemWithUrl } from "./shared/ItemWithUrl";
 
 const items = [
   {
@@ -53,6 +54,9 @@ export const TutorialEnvironment = () => {
           <Item item={item} key={index} />
         </RigidBody>
       ))}
+
+      <ItemWithUrl item={{ name: "Tank", position: [8, 1, 0], rotation: 0 }} />
+
       <Home />
 
       <Wall

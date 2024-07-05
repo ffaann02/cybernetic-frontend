@@ -2,7 +2,8 @@ import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "re
 
 interface User {
     userId: string;
-    username: string;
+    email: string;
+    characterName: string | null;
 }
 
 interface AuthContextProps {
