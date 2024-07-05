@@ -2,13 +2,14 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { object, string, ref } from "yup";
 import { useGoogleLogin } from "@react-oauth/google";
 import axiosInstance from "../api/axios";
 import useAxios from "../hooks/useAxios";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 interface RegisterProps {
   username: string;
@@ -38,6 +39,8 @@ const registerValidationSchema = object({
 
 const Register = () => {
   const { axiosFetch } = useAxios();
+  const { setItem } = useLocalStorage();
+  const navigate = useNavigate();
 
   const [register, setRegister] = useState<RegisterProps>({
     username: "",
@@ -68,8 +71,7 @@ const Register = () => {
           password: register.password,
         },
       });
-      console.log("Registration data is valid");
-      console.log(response);
+      checkCharacter(response.userId, response.email);
       setErrorMessages([]);
       setLoading(false);
     } catch (err: any) {
@@ -92,6 +94,7 @@ const Register = () => {
       }
       // Error occurred by validation
       else {
+        setLoading(false);
         console.log(err.inner);
         setErrorMessages(err.inner.map((e: any) => e.message));
       }
@@ -102,22 +105,66 @@ const Register = () => {
     onSuccess: async (codeResponse) => {
       console.log("Code Response:", codeResponse);
       try {
-        const tokenResponse = await axiosFetch({
+        const response = await axiosFetch({
           axiosInstance,
           method: "get",
-          url: `/auth/google/signup`,
+          url: `/auth/google/login`,
           requestConfig: {
             params: { code: codeResponse.code },
           },
         });
-        console.log("Token Response:", tokenResponse);
-      } catch (err) {
-        console.log("Error:", err);
-        setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+        checkCharacter(response.userId, response.email);
+        setErrorMessages([]);
+        setLoading(false);
+      } catch (err: any) {
+        setLoading(false);
+        if (err.response && err.response.status) {
+          if (err.response.status === 400) {
+            setErrorMessages(["อีเมลดังกล่าวได้ลงทะเบียนไว้แล้ว กรุณาใช้ username และ password เข้าสู่ระบบ"]);
+          } else if (err.response.status === 500) {
+            setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+          }
+        }
       }
     },
     flow: "auth-code",
   });
+
+  const checkCharacter = async (userId: string, email: string) => {
+    try {
+      const response = await axiosFetch({
+        axiosInstance,
+        method: "get",
+        url: `/character/info`,
+        requestConfig: {
+          params: { userId: userId },
+        },
+      });
+      console.log(response.character)
+      const data = {
+        userId: userId,
+        email: email,
+        characterName: response.character.characterName
+      }
+      setItem("CYBERNETIC_USER", data);
+      navigate("/");
+    } catch (err: any) {
+      console.log(err);
+      if (err.response && err.response.status) {
+        if (err.response.status === 404) {
+          const data = {
+            userId: userId,
+            email: email,
+          }
+          setItem("CYBERNETIC_USER", data);
+          navigate("/create-character");
+        } else if (err.response.status === 500) {
+          setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง ไม่สามารถเข้าถึงข้อมูลตัวละครได้ กรุณาลองใหม่อีกครั้ง"]); 
+        }
+      }
+    }
+  }
+
 
   return (
     <div className="w-full flex-grow flex flex-col min-h-screen py-16 2xl:py-14 bg-gradient-to-r from-cyan-400 to-blue-400">

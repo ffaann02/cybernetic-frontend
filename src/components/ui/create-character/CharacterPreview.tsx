@@ -13,6 +13,7 @@ import Running6 from "./SpriteFrame/Running/Running6";
 import Jump1 from "./SpriteFrame/Jump/Jump1";
 import Jump2 from "./SpriteFrame/Jump/Jump2";
 import Jump3 from "./SpriteFrame/Jump/Jump3";
+import { useFirebaseStorage } from "../../../hooks/useFirebaseStorage";
 
 const CharacterPreview = () => {
   const [currentFrame, setCurrentFrame] = useState<number>(0);
@@ -35,6 +36,8 @@ const CharacterPreview = () => {
     <Jump2 />,
     <Jump3 />,
   ];
+
+  const { uploadImage } = useFirebaseStorage();
 
   const IdleExportToPng = async () => {
     const captureImage = async (
@@ -187,9 +190,11 @@ const CharacterPreview = () => {
         ctx.drawImage(img2, img1.width, 0);
         ctx.drawImage(img3, img1.width * 2, 0);
 
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async(blob) => {
           if (blob) {
+            console.log(blob)
             saveAs(blob, "jump.png");
+            await uploadImage(blob, 'jump.png', 'character/u111362252');
           }
         }, "image/png");
       }
@@ -197,6 +202,21 @@ const CharacterPreview = () => {
       console.error("Error exporting PNG:", err);
     }
   };
+
+  // const uploadImage = async (blob: Blob) => {
+  //   const formData = new FormData();
+  //   formData.append('image', blob, 'jump.png');
+  //   try{
+  //     const response = await axiosInstance.post('/test/firebase/upload', formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data'
+  //       }
+  //     });
+  //     console.log(response);
+  //   } catch (err) {
+  //     console.error('Error uploading image:', err);
+  //   }
+  // };
 
   useEffect(() => {
     const interval = setInterval(() => {
