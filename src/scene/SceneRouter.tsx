@@ -2,20 +2,17 @@ import React, { ReactElement, useContext, useEffect } from "react";
 import { GameContext } from "../contexts/GameContext";
 
 interface SceneRouterProps {
-  currentScene: string;
   children: React.ReactNode;
 }
 
 interface SceneProps {
   title: string;
   scene: React.ReactElement<any>;
+  waitLoadingScene?: boolean;
 }
 
-const SceneRouter: React.FC<SceneRouterProps> = ({
-  currentScene,
-  children,
-}) => {
-  const { setGameState } = useContext(GameContext);
+const SceneRouter: React.FC<SceneRouterProps> = ({ children }) => {
+  const { currentScene, setGameState } = useContext(GameContext);
   useEffect(()=>{
     const mapSceneList = React.Children.toArray(children).map(
       (child: any) => child.props.title
