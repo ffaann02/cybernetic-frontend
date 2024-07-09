@@ -112,11 +112,12 @@ const Login = () => {
   });
 
   const checkCharacter = async (userId: string, email: string) => {
+    console.log(`userId: ${userId}, email: ${email}`)
     try {
       const response = await axiosFetch({
         axiosInstance,
         method: "get",
-        url: `/character/info`,
+        url: `/user/character`,
         requestConfig: {
           params: { userId: userId },
         },
