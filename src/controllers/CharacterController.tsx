@@ -1,6 +1,11 @@
-import { CameraControls, useKeyboardControls } from "@react-three/drei";
+import {
+  CameraControls,
+  KeyboardControls,
+  KeyboardControlsEntry,
+  useKeyboardControls,
+} from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
-import { useRef, useContext, useState } from "react";
+import { useRef, useContext, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
@@ -11,22 +16,25 @@ import {
 } from "../hooks/useCharacterAnimation";
 import useAudio from "../hooks/useAudio";
 
-export const Controls = {
-  forward: "forward",
-  backward: "backward",
-  left: "left",
-  right: "right",
-  jump: "jump",
-};
+export enum Controls {
+  forward = 'forward',
+  backward = 'backward',
+  left = 'left',
+  right = 'right',
+  jump = 'jump',
+  coding = 'coding',
+  interact = 'interact',
+}
 
 const CharacterController: React.FC = () => {
   const controls = useRef<any>(null);
   const character = useRef<any>(null);
   const rigidBody = useRef<any>(null);
-  const isOnFloor = useRef(false);
+  const isOnFloor = useRef(true);
   const jumpCooldown = useRef(false);
 
-  const { speed, camera } = useContext(GameContext);
+  const { speed, camera, isCoding, setIsCoding, currentHit } =
+    useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
@@ -38,9 +46,12 @@ const CharacterController: React.FC = () => {
   );
   const leftPressed = useKeyboardControls((state) => state[Controls.left]);
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
+
+  const codingPressed = useKeyboardControls((state) => state[Controls.coding]);
+  const interactPressed = useKeyboardControls((state) => state[Controls.interact]);
+
   const { animationState, setAnimationState, updateAnimationState } =
     useCharacterAnimation();
-
   const jumpSound = useAudio("jump", 0.5);
 
   const handleMovement = (delta: number) => {
@@ -48,17 +59,18 @@ const CharacterController: React.FC = () => {
 
     const impulse = new THREE.Vector3();
 
-    if (forwardPressed) {
+    if (forwardPressed && !isCoding) {
       impulse.z -= speed * delta * onAirFraction;
     }
-    if (backwardPressed) {
+    if (backwardPressed && !isCoding) {
       impulse.z += speed * delta * onAirFraction;
     }
-    if (leftPressed) {
+    if (leftPressed && !isCoding) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
     }
-    if (rightPressed) {
+
+    if (rightPressed && !isCoding) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
     }
@@ -69,11 +81,26 @@ const CharacterController: React.FC = () => {
       setAnimationState(AnimationState.Jumping);
       setTimeout(() => {
         jumpCooldown.current = false;
+        setAnimationState(AnimationState.Idle);
       }, 1000);
 
       rigidBody.current.applyImpulse(
         new THREE.Vector3(impulse.x, speed * 75, impulse.z)
       );
+    }
+
+    if (codingPressed && currentHit === "computer") {
+      setIsCoding(prev=>!prev);
+    }
+
+    if(codingPressed && currentHit !== "computer"){
+      setIsCoding(false);
+    }
+
+    if (interactPressed) {
+      if (currentHit === "computer") {
+        console.log("Interacting with computer");
+      }
     }
 
     const newPos = new THREE.Vector3(
@@ -96,17 +123,25 @@ const CharacterController: React.FC = () => {
   };
 
   const cameraFollow = () => {
+    let adjustZoom = { x: 0, y: 0, z: 0 };
+    if (isCoding) {
+      adjustZoom = { x: 1, y: -4, z: -4 };
+    }
+    else{
+      adjustZoom = { x: 0, y: 0, z: 0 };
+    }
+
     if (controls.current) {
       const cameraDistanceY = window.innerWidth < 1024 ? 10 : 8;
       const cameraDistanceZ = window.innerWidth < 1024 ? 14 : 12;
       const playerWorldPos = vec3(rigidBody.current.translation());
       controls.current.setLookAt(
-        playerWorldPos.x + 1,
-        playerWorldPos.y + cameraDistanceY + 5,
-        playerWorldPos.z + cameraDistanceZ + 3,
-        playerWorldPos.x + 1,
+        playerWorldPos.x + 1 + adjustZoom.x,
+        playerWorldPos.y + cameraDistanceY + 5 + adjustZoom.y,
+        playerWorldPos.z + cameraDistanceZ + 3 + adjustZoom.z,
+        playerWorldPos.x + 1 + adjustZoom.x,
         playerWorldPos.y - 2,
-        playerWorldPos.z - 8,
+        playerWorldPos.z - 8 + adjustZoom.z,
         true
       );
     }
@@ -118,44 +153,34 @@ const CharacterController: React.FC = () => {
   });
 
   return (
-    <group>
-      {camera === 1 && <CameraControls ref={controls} />}
-      <RigidBody
-        name="player"
-        ref={rigidBody}
-        colliders={false}
-        linearDamping={10}
-        position={[2, -2, 2]}
-        lockRotations
-        mass={50}
-        gravityScale={9.8}
-        onCollisionEnter={({ other }) => {
-          if (other.rigidBodyObject && other.rigidBodyObject.name === "floor") {
-            isOnFloor.current = true;
-          }
-        }}
-        onCollisionExit={({ other }) => {
-          if (other.rigidBodyObject && other.rigidBodyObject.name === "floor") {
-            isOnFloor.current = false;
-          }
-        }}
-      >
-        <group ref={character}>
-          <Character2D direction={direction} animation={animationState} />
-          <CapsuleCollider
-            args={[
-              1, // radius
-              1, // height
-            ]}
-            position={[1, 4, 4]}
-          />
-        </group>
-        <mesh castShadow position={[0.5, 4, 4.3]} scale={[1, 0.1, 0.75]}>
-          <sphereGeometry args={[0.8, 32, 32]} />
-          <meshStandardMaterial transparent={true} opacity={0} />
-        </mesh>
-      </RigidBody>
-    </group>
+      <group>
+        {camera === 1 && <CameraControls ref={controls} />}
+        <RigidBody
+          name="player"
+          ref={rigidBody}
+          colliders={false}
+          linearDamping={10}
+          position={[2, -2, 2]}
+          lockRotations
+          mass={50}
+          gravityScale={9.8}
+        >
+          <group ref={character}>
+            <Character2D direction={direction} animation={animationState} />
+            <CapsuleCollider
+              args={[
+                1, // radius
+                1, // height
+              ]}
+              position={[1, 4, 4]}
+            />
+          </group>
+          <mesh castShadow position={[0.5, 4, 4.3]} scale={[1, 0.1, 0.75]}>
+            <sphereGeometry args={[0.8, 32, 32]} />
+            <meshStandardMaterial transparent={true} opacity={0} />
+          </mesh>
+        </RigidBody>
+      </group>
   );
 };
 

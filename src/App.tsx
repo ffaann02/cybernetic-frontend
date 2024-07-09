@@ -14,6 +14,7 @@ import Tutorial from "./scene/Tutorial";
 import RequireAuth from "./components/RequireAuth";
 import OnlineLobby from "./pages/OnlineLobby";
 import OnlineRoom from "./pages/OnlineRoom";
+import GlobalGameUI from "./components/ui/GlobalGameUI";
 function App() {
   const { currentScene } = useContext(GameContext);
   const showDebugTools = useDebugTools();
@@ -24,6 +25,7 @@ function App() {
     <div className="w-full min-h-screen flex flex-col font-ibm relative">
       {showDebugTools && <DebugToolsBar />}
       <Router>
+        <GlobalGameUI/>
         <Routes>
           <Route
             path="/"
