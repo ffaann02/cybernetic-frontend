@@ -16,7 +16,7 @@ interface GameContextProps {
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "level-selection",
+  currentScene: "tutorial",
   previousScene: "level-selection",
   speed: 7.5,
   debug: true,
