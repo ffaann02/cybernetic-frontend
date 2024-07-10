@@ -11,19 +11,7 @@ interface HomeProps {}
 const Home: React.FC<HomeProps> = () => {
   const { debug, camera } = useContext(GameContext);
 
-  const controlMap = useMemo(
-    () => [
-      { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
-      { name: Controls.backward, keys: ["ArrowDown", "KeyS"] },
-      { name: Controls.left, keys: ["ArrowLeft", "KeyA"] },
-      { name: Controls.right, keys: ["ArrowRight", "KeyD"] },
-      { name: Controls.jump, keys: ["Space"] },
-    ],
-    []
-  );
-
   return (
-    <KeyboardControls map={controlMap}>
       <Canvas
         dpr={[1, 2]}
         style={{ height: "100%", width: "100%" }}
@@ -41,7 +29,6 @@ const Home: React.FC<HomeProps> = () => {
           </Physics>
         </Suspense>
       </Canvas>
-    </KeyboardControls>
   );
 };
 
