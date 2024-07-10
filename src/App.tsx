@@ -59,7 +59,6 @@ function App() {
                 <Route path="/online-lobby" element={<OnlineLobby />} />
                 <Route path="/online-room/:roomid" element={<OnlineRoom />} />
               </Route>
-
               <Route path="*" element={<div>404</div>} />
             </Routes>
           </Router>

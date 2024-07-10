@@ -11,17 +11,20 @@ const AskForInputKeyDown = ({ title }: { title: string }) => {
   );
 };
 
-const AiModelComputer = () => {
+const AiModelComputer = ({ setIsCoding }) => {
   // Define an array of objects for each section
   const sections = [
-    { title: "Inventory"},
+    { title: "Inventory" },
     { title: "Data Storage" },
     { title: "Train AI Model" },
     { title: "AI Tools" },
     { title: "Level Info" },
   ];
-  
+
   const [currentSection, setCurrentSection] = useState(sections[0]);
+  const handleClose = () => {
+    setIsCoding(false);
+  };
 
   return (
     <div className="absolute w-full z-[100] flex h-screen top-0 p-16 left-1/2 transform -translate-x-1/2">
@@ -32,16 +35,25 @@ const AiModelComputer = () => {
         >
           Intelligence Computer
         </div>
-        <MdCancelPresentation className="absolute top-3 right-3 text-[3rem] text-red-600/80 cursor-pointer" />
+        <MdCancelPresentation
+          className="absolute top-3 right-3 text-[3rem] text-red-600/80 cursor-pointer"
+          onClick={handleClose}
+        />
 
         <div className="flex gap-x-6">
           {sections.map((section) => (
             <button
               key={section.title}
-              className={`px-6 py-4 text-xl border rounded-lg ${currentSection.title === section.title ? 
-                "bg-cyan-400/20 hover: text-white font-semibold":"text-slate-200 bg-white/20 "}
+              className={`px-6 py-4 text-xl border rounded-lg ${
+                currentSection.title === section.title
+                  ? "bg-cyan-400/20 hover: text-white font-semibold"
+                  : "text-slate-200 bg-white/20 "
+              }
                   hover:bg-cyan-400/20 transition-all duration-200 ease-linear hover:shadow-md hover:shadow-blue-400`}
-                onClick={()=>{setCurrentSection(section)}}>
+              onClick={() => {
+                setCurrentSection(section);
+              }}
+            >
               <div className="flex gap-x-2">
                 <LiaRobotSolid className="my-auto text-2xl" />{" "}
                 <p>{section.title}</p>
@@ -55,15 +67,24 @@ const AiModelComputer = () => {
 };
 
 const GlobalGameUI = () => {
-  const { currentHit, setCurrentHit, isCoding } = useContext(GameContext);
+  const { currentHit, setCurrentHit, isCoding, setIsCoding,isInteracting, setIsInteracting } =
+    useContext(GameContext);
   return (
     <>
       {currentHit === "computer" &&
         (isCoding ? (
           <AskForInputKeyDown title="Press E to Leave Computer" />
-        ) : null)}
+        ) : (
+          <AskForInputKeyDown title="Press E to Enter Computer" />
+        ))}
+      {currentHit === "assistant-bot" &&
+        (isInteracting ? (
+          <AskForInputKeyDown title="Press E to Leave Assistant Bot" />
+        ) : (
+          <AskForInputKeyDown title="Press E to Interact with Assistant Bot" />
+        ))}
 
-      <AiModelComputer />
+      {isCoding && <AiModelComputer setIsCoding={setIsCoding} />}
     </>
   );
 };

@@ -8,6 +8,7 @@ import Wall from "./shared/Wall";
 import { ItemWithUrl } from "./shared/ItemWithUrl";
 import Computer from "./shared/Computer";
 import { degreeNumberToRadian } from "../../utils";
+import { Tutorial } from "../../map/Tutorial";
 
 const items = [
   {
@@ -67,13 +68,13 @@ export const TutorialEnvironment = () => {
         shadow-camera-bottom={-20}
       />
 
-      {items.map((item, index) => (
+      {/* {items.map((item, index) => (
         <RigidBody name="item" lockTranslations lockRotations>
           <Item item={item} key={index} />
         </RigidBody>
-      ))}
+      ))} */}
 
-      <Home />
+      <Tutorial/>
 
       <RigidBody
         colliders="trimesh"
@@ -121,22 +122,22 @@ export const TutorialEnvironment = () => {
 
       <Wall
         color="skyblue"
-        position={[0, 1.25, -11.3]}
-        scale={[2.6, 1, 1]}
+        position={[0, 5.7, -11.3]}
+        scale={[2.6, 4, 1]}
         rotation={[0, 0, 0]}
       />
 
       <Wall
         color="skyblue"
-        position={[13, 1.25, -0.05]}
-        scale={[2.3, 1, 1]}
+        position={[13, 5.7, -0.05]}
+        scale={[2.3, 4, 1]}
         rotation={[0, 90, 0]}
       />
 
       <Wall
         color="skyblue"
-        position={[-13, 1.25, -0.05]}
-        scale={[2.3, 1, 1]}
+        position={[-13, 5.7, -0.05]}
+        scale={[2.3, 4, 1]}
         rotation={[0, 90, 0]}
       />
       {camera === 2 && <OrbitControls />}

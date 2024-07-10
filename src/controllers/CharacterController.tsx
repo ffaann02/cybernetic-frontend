@@ -1,7 +1,6 @@
 import {
   CameraControls,
   KeyboardControls,
-  KeyboardControlsEntry,
   useKeyboardControls,
 } from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
@@ -24,6 +23,7 @@ export enum Controls {
   jump = 'jump',
   coding = 'coding',
   interact = 'interact',
+  ESC = 'ESC'
 }
 
 const CharacterController: React.FC = () => {
@@ -33,7 +33,7 @@ const CharacterController: React.FC = () => {
   const isOnFloor = useRef(true);
   const jumpCooldown = useRef(false);
 
-  const { speed, camera, isCoding, setIsCoding, currentHit } =
+  const { speed, camera, isCoding, setIsCoding, currentHit, isInteracting, setIsInteracting } =
     useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -49,28 +49,31 @@ const CharacterController: React.FC = () => {
 
   const codingPressed = useKeyboardControls((state) => state[Controls.coding]);
   const interactPressed = useKeyboardControls((state) => state[Controls.interact]);
+  const escPressed = useKeyboardControls((state) => state[Controls.ESC]);
 
   const { animationState, setAnimationState, updateAnimationState } =
     useCharacterAnimation();
   const jumpSound = useAudio("jump", 0.5);
+
+  const [codingCooldown, setCodingCooldown] = useState(false);
 
   const handleMovement = (delta: number) => {
     const onAirFraction = isOnFloor.current ? 1 : 0.3;
 
     const impulse = new THREE.Vector3();
 
-    if (forwardPressed && !isCoding) {
+    if (forwardPressed && !isCoding && !isInteracting) {
       impulse.z -= speed * delta * onAirFraction;
     }
-    if (backwardPressed && !isCoding) {
+    if (backwardPressed && !isCoding && !isInteracting) {
       impulse.z += speed * delta * onAirFraction;
     }
-    if (leftPressed && !isCoding) {
+    if (leftPressed && !isCoding && !isInteracting) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
     }
 
-    if (rightPressed && !isCoding) {
+    if (rightPressed && !isCoding && !isInteracting) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
     }
@@ -89,18 +92,20 @@ const CharacterController: React.FC = () => {
       );
     }
 
-    if (codingPressed && currentHit === "computer") {
-      setIsCoding(prev=>!prev);
+    if (codingPressed && !codingCooldown && currentHit === "computer") {
+      setCodingCooldown(true);
+      setIsCoding(prev => !prev);
+      setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
     }
 
-    if(codingPressed && currentHit !== "computer"){
+    if (codingPressed && !codingCooldown && currentHit === "assistant-bot") {
+      setCodingCooldown(true);
+      setIsInteracting(prev => !prev);
+      setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
+    }
+    if (escPressed) {
       setIsCoding(false);
-    }
-
-    if (interactPressed) {
-      if (currentHit === "computer") {
-        console.log("Interacting with computer");
-      }
+      setIsInteracting(false);
     }
 
     const newPos = new THREE.Vector3(
@@ -124,7 +129,7 @@ const CharacterController: React.FC = () => {
 
   const cameraFollow = () => {
     let adjustZoom = { x: 0, y: 0, z: 0 };
-    if (isCoding) {
+    if (isCoding || isInteracting) {
       adjustZoom = { x: 1, y: -4, z: -4 };
     }
     else{

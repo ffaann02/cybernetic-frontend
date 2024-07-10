@@ -30,7 +30,7 @@ const SceneRouter: React.FC<SceneRouterProps> = ({ children }) => {
     return scene ? React.cloneElement(scene as ReactElement) : null;
   };
 
-  return <div className="h-screen">{renderScene()}</div>;
+  return <div className="h-screen relative">{renderScene()}</div>;
 };
 
 export default SceneRouter;

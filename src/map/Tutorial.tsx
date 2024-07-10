@@ -21,7 +21,7 @@ export const Tutorial = () => {
       colliders="trimesh"
       type="fixed"
       name="floor"
-      position={[0, -0.1, 0]}
+      position={[0, 0.1, 0]}
     >
       <primitive object={clone} />
     </RigidBody>
