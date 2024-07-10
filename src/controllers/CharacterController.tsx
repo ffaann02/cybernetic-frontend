@@ -165,7 +165,7 @@ const CharacterController: React.FC = () => {
           ref={rigidBody}
           colliders={false}
           linearDamping={10}
-          position={[2, -2, 2]}
+          position={[2, -1, 2]}
           lockRotations
           mass={50}
           gravityScale={9.8}

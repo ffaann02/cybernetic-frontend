@@ -1,12 +1,12 @@
 const CharacterHead = () => {
   return (
-    <div>
+    <div className="w-full h-full">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 415.18 437.95"
-        width="100px"
-        height="100px"
+        width="100%"
+        height="100%"
       >
         <defs>
           {/* <style>

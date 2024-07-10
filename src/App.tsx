@@ -25,7 +25,7 @@ function App() {
   return (
     <>
       <GameProvider>
-        <div className="w-full min-h-screen flex flex-col font-ibm relative">
+        <div className="w-full min-h-screen flex flex-col font-ibm relative overflow-hidden">
           {showDebugTools && <DebugToolsBar />}
           <Router>
           <GlobalGameUI/>

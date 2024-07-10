@@ -14,9 +14,10 @@ interface ItemProps {
     fileType: string;
     textures?: string[]; // Array of texture paths
   };
+  type?: string;
 }
 
-export const Item: React.FC<ItemProps> = ({ item }) => {
+export const Item: React.FC<ItemProps> = ({ item,type }) => {
   const { name, position, rotation, scale, fileType, textures } = item;
   const {currentHit} = useContext(GameContext);
 

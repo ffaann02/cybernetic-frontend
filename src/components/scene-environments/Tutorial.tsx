@@ -12,28 +12,30 @@ import { Tutorial } from "../../map/Tutorial";
 
 const items = [
   {
-    name: "StreetLight",
+    name: "Arrow",
     position: [10, 0, 0],
     rotation: -45,
-    fileType: "gltf",
+    fileType: "glb",
   },
   {
-    name: "Tank",
+    name: "Arrow",
+
     position: [2, 0, 0],
     rotation: 1,
-    fileType: "gltf",
+    fileType: "glb",
   },
   {
-    name: "Tank",
+    name: "Arrow",
+
     position: [2, 0, 3],
     rotation: 45,
-    fileType: "gltf",
+    fileType: "glb",
   },
   {
-    name: "StreetLight",
-    position: [9, 0, 2],
-    rotation: -45,
-    fileType: "gltf",
+    name: "Arrow",
+    position: [2, 0, 2],
+    rotation: 2,
+    fileType: "glb",
   },
 ];
 
@@ -50,7 +52,7 @@ const computer1 = {
 };
 
 export const TutorialEnvironment = () => {
-  const { camera,currentHit,setCurrentHit } = useContext(GameContext);
+  const { camera, currentHit, setCurrentHit } = useContext(GameContext);
   return (
     <>
       <Environment preset="dawn" environmentIntensity={0.5} />
@@ -68,13 +70,24 @@ export const TutorialEnvironment = () => {
         shadow-camera-bottom={-20}
       />
 
-      {/* {items.map((item, index) => (
-        <RigidBody name="item" lockTranslations lockRotations>
-          <Item item={item} key={index} />
+      {items.map((item, index) => (
+        <RigidBody
+          name="item"
+          lockTranslations
+          lockRotations
+          scale={[0.5, 0.5, 0.5]}
+          position={item.position}
+          rotation={[
+            degreeNumberToRadian(90),
+            degreeNumberToRadian(45),
+            degreeNumberToRadian(0),
+          ]}
+        >
+          <Item item={item} key={index} type="check_point" />
         </RigidBody>
-      ))} */}
+      ))}
 
-      <Tutorial/>
+      <Tutorial />
 
       <RigidBody
         colliders="trimesh"
@@ -87,15 +100,21 @@ export const TutorialEnvironment = () => {
           degreeNumberToRadian(-45),
         ]}
         onCollisionEnter={({ other }) => {
-          if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
-            if(setCurrentHit){
+          if (
+            other.rigidBodyObject &&
+            other.rigidBodyObject.name === "player"
+          ) {
+            if (setCurrentHit) {
               setCurrentHit("computer");
             }
           }
         }}
         onCollisionExit={({ other }) => {
-          if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
-            if(setCurrentHit){
+          if (
+            other.rigidBodyObject &&
+            other.rigidBodyObject.name === "player"
+          ) {
+            if (setCurrentHit) {
               setCurrentHit("");
             }
           }
@@ -104,7 +123,7 @@ export const TutorialEnvironment = () => {
         <Item
           item={{
             name: "scifi_computer",
-            position: [0,0,0],
+            position: [0, 0, 0],
             rotation: 0,
             scale: [2, 2, 2],
             fileType: "glb",

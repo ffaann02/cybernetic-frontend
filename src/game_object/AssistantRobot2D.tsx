@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { useState } from "react";
 import { PlainAnimator } from "three-plain-animator";
-import idleSprite from "../assets/assistant-bot/IdleAnim1-01.png";
+import idleSprite from "../assets/assistant-bot/IdleAnim.png";
 import happySprite from "../assets/assistant-bot/HappyAnim.png";
 import angrySprite from "../assets/assistant-bot/AngryAnim.png";
 import chargeSprite from "../assets/assistant-bot/Charge.png";
@@ -32,10 +32,10 @@ const Assistant2D = ({
 
   // Initialize animators
   const [animators] = useState({
-    idle: new PlainAnimator(idleSpriteTexture, 5, 2, 8, 5),
-    // happy: new PlainAnimator(happySpriteTexture, 9, 1, 8, 6),
-    // angry: new PlainAnimator(angrySpriteTexture, 4, 3, 10, 6),
-    // charge: new PlainAnimator(chargeSpriteTexture, 4, 3, 10, 6),
+    idle: new PlainAnimator(idleSpriteTexture, 9, 1, 8, 4),
+    happy: new PlainAnimator(happySpriteTexture, 9, 1, 8, 6),
+    angry: new PlainAnimator(angrySpriteTexture, 4, 3, 10, 6),
+    charge: new PlainAnimator(chargeSpriteTexture, 4, 3, 10, 6),
   });
 
   //   Animate based on the current state

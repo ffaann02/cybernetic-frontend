@@ -12,7 +12,7 @@ const AssistantBotController = () => {
       <RigidBody
         name="assistant-bot"
         type="dynamic"
-        position={[-4, 0, 0]}
+        position={[0, 0, -9]}
         gravity={true}
         linearDamping={10}
         mass={50}
