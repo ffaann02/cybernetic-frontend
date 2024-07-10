@@ -8,6 +8,7 @@ import { GameContext } from "../contexts/GameContext";
 import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
 import { TutorialEnvironment } from "../components/scene-environments/Tutorial";
 import AssistantBotController from "../controllers/AssistantBotController";
+import EnemySimple from "../game_object/enemy/EnemySimple";
 
 interface HomeProps {}
 
@@ -35,7 +36,6 @@ const Tutorial: React.FC<HomeProps> = () => {
     bottom-0 z-[100]"
       >
         <div id="chat-assistant-robot-container" className="bg-red-200">
-
         </div>
       </div> */}
       <KeyboardControls map={controlMap}>
@@ -54,6 +54,11 @@ const Tutorial: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
+              <EnemySimple 
+              speed={3}
+              point1={[-6, 0.5, -10]}
+              point2={[-6,0.5,10]}
+              showPath={true}/>
               <AssistantBotController />
               <TutorialEnvironment />
             </Physics>
