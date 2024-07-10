@@ -30,14 +30,14 @@ const Tutorial: React.FC<HomeProps> = () => {
 
   return (
     <>
-      <div
+      {/* <div
         className="bg-black/50 h-full w-full fixed
     bottom-0 z-[100]"
       >
         <div id="chat-assistant-robot-container" className="bg-red-200">
 
         </div>
-      </div>
+      </div> */}
       <KeyboardControls map={controlMap}>
         <Canvas
           dpr={[1, 2]}
@@ -45,7 +45,7 @@ const Tutorial: React.FC<HomeProps> = () => {
           shadows
           className="z-0"
         >
-          {/* <fog attach="fog" args={['gray', 10, 30]} /> */}
+          <fog attach="fog" args={['skyblue', 15, 30]} />
           <color attach="background" args={["black"]} />
           {camera === 2 && (
             <PerspectiveCamera makeDefault position={[0, 6, 10]} />

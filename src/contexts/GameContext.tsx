@@ -27,7 +27,7 @@ const initialGameContext: GameContextProps = {
   speed: 7.5,
   debug: true,
   sceneList: ["home", "tutorial", "test", "welcome", "level-selection", "game-level-1", "game-level-2", "game-level-3"],
-  camera: 1,
+  camera: 2,
   cameraList: [1, 2, 3],
   currentHit: "",
   isCoding: false,

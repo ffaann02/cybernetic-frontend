@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { SkeletonUtils } from "three-stdlib";
 
 export const Tutorial = () => {
-  const map = useGLTF("models/map.glb");
+  const map = useGLTF("models/tutorial-map-test.glb");
 
   const clone = useMemo(() => {
     const clonedScene = SkeletonUtils.clone(map.scene);
@@ -21,11 +21,12 @@ export const Tutorial = () => {
       colliders="trimesh"
       type="fixed"
       name="floor"
-      position={[0, 0.1, 0]}
+      position={[16, 0.1, 0]}
+      scale={[2, 2, 2]}
     >
       <primitive object={clone} />
     </RigidBody>
   );
 };
 
-useGLTF.preload("models/map.glb");
+useGLTF.preload("models/tutorial-map-test.glb");

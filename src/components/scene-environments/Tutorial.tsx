@@ -55,7 +55,7 @@ export const TutorialEnvironment = () => {
     <>
       <Environment preset="dawn" environmentIntensity={0.5} />
       <directionalLight
-        intensity={1}
+        intensity={8}
         scale={10}
         castShadow
         shadow-mapSize-height={4096}
@@ -113,7 +113,7 @@ export const TutorialEnvironment = () => {
         />
       </RigidBody>
 
-      <Wall
+      {/* <Wall
         color="skyblue"
         position={[0, 1.25, 11.2]}
         scale={[2.6, 1, 1]}
@@ -139,7 +139,7 @@ export const TutorialEnvironment = () => {
         position={[-13, 5.7, -0.05]}
         scale={[2.3, 4, 1]}
         rotation={[0, 90, 0]}
-      />
+      /> */}
       {camera === 2 && <OrbitControls />}
     </>
   );
