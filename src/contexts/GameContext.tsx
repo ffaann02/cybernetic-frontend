@@ -6,11 +6,11 @@ interface GameContextProps {
   speed: number;
   debug: boolean;
   setGameState?:
-  | React.Dispatch<React.SetStateAction<GameContextProps>>
-  | undefined;
+    | React.Dispatch<React.SetStateAction<GameContextProps>>
+    | undefined;
   setScene?: (currentScene: string, nextScene: string) => void;
   sceneList: string[];
-  camera: number;
+  currentCamera: number;
   cameraList: number[];
   currentHit?: string;
   setCurrentHit?: React.Dispatch<React.SetStateAction<string>>;
@@ -20,16 +20,37 @@ interface GameContextProps {
   setIsInteracting: React.Dispatch<React.SetStateAction<boolean>>;
   isChatting?: boolean;
   setIsChatting?: React.Dispatch<React.SetStateAction<boolean>>;
+  isHidden?: boolean;
+  setIsHidden?: React.Dispatch<React.SetStateAction<boolean>>;
+  isUsingSearch?: boolean;
+  setIsUsingSearch?: React.Dispatch<React.SetStateAction<boolean>>;
+  isPlanting?: boolean;
+  setIsPlanting?: React.Dispatch<React.SetStateAction<boolean>>;
+  dataStorage?: any;
+  setDataStorage?: React.Dispatch<React.SetStateAction<any>>;
+  mines?: any;
+  setMines?: React.Dispatch<React.SetStateAction<any>>;
+  cooldowns?: any;
+  setCooldowns?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "tutorial",
+  currentScene: "game-level-1",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
-  sceneList: ["home", "tutorial", "test", "welcome", "level-selection", "game-level-1", "game-level-2", "game-level-3"],
-  camera: 1,
+  sceneList: [
+    "home",
+    "tutorial",
+    "test",
+    "welcome",
+    "level-selection",
+    "game-level-1",
+    "game-level-2",
+    "game-level-3",
+  ],
+  currentCamera: 1,
   cameraList: [1, 2, 3],
   currentHit: "",
   isCoding: false,
@@ -38,6 +59,18 @@ const initialGameContext: GameContextProps = {
   setIsInteracting: () => {},
   isChatting: false,
   setIsChatting: () => {},
+  isHidden: false,
+  setIsHidden: () => {},
+  isUsingSearch: false,
+  setIsUsingSearch: () => {},
+  isPlanting: false,
+  setIsPlanting: () => {},
+  dataStorage: {},
+  setDataStorage: () => {},
+  mines: [],
+  setMines: () => {},
+  cooldowns: { J: 0, K: 0, L: 0 },
+  setCooldowns: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -49,6 +82,13 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isCoding, setIsCoding] = useState<boolean>(false);
   const [isInteracting, setIsInteracting] = useState<boolean>(false);
   const [isChatting, setIsChatting] = useState<boolean>(false);
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+  const [isUsingSearch, setIsUsingSearch] = useState<boolean>(false);
+  const [isPlanting, setIsPlanting] = useState<boolean>(false);
+  const [dataStorage, setDataStorage] = useState<any>({});
+  const [mines, setMines] = useState<any>([]);
+  const [cooldowns, setCooldowns] = useState({ J: 0, K: 0, L: 0 });
+
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
       ...prevState,
@@ -63,7 +103,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     speed: gameState.speed,
     debug: gameState.debug,
     sceneList: gameState.sceneList,
-    camera: gameState.camera,
+    currentCamera: gameState.currentCamera,
     cameraList: gameState.cameraList,
     setGameState,
     currentHit,
@@ -75,7 +115,18 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setScene,
     isChatting,
     setIsChatting,
+    isHidden,
+    setIsHidden,
+    isUsingSearch,
+    setIsUsingSearch,
+    isPlanting,
+    setIsPlanting,
+    dataStorage,
+    setDataStorage,
+    mines,
+    setMines,
+    cooldowns,
+    setCooldowns,
   };
-
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

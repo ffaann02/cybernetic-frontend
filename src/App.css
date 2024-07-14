@@ -12,9 +12,8 @@
   display: none;
 } */
 
-
-span, h1, h2, h3, h4, h5, h6, p {
-  padding-top: 2px;
+*{
+  scrollbar-color: lightblue white;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -26,4 +25,32 @@ span, h1, h2, h3, h4, h5, h6, p {
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+#ui-computer-panel{
+  backdrop-filter: blur(16px);
+}
+
+#aim-blur-active{
+  /* backdrop-filter: blur(16px); */
+  overflow: hidden;
+}
+
+#circle-hole-active{
+  box-shadow: 0 0 0 99999px rgba(0, 0, 0, .5);
+}
+
+#data-storage{
+  scrollbar-color: lightblue white;
+}
+
+.p-menuitem-link{
+  background-color: transparent;
+}
+
+.p-menuitem-link .p-steps-number{
+  margin-top: 6px;
+}
+.p-menuitem-link .p-steps-title{
+  color: white;
 }

@@ -4,7 +4,7 @@ import { HomeEnvironment } from "../components/scene-environments/Home";
 import CharacterController, { Controls } from "../controllers/CharacterController";
 import { Physics } from "@react-three/rapier";
 import { GameContext } from "../contexts/GameContext";
-import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
+import { PerspectiveCamera } from "@react-three/drei";
 
 interface HomeProps {}
 

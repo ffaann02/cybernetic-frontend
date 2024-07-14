@@ -1,8 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import playerImage from "/player-ui.gif";
 import CharacterHead from "../../create-character/CharacterHead";
+import { Sidebar } from "primereact/sidebar";
+import { Dialog } from "primereact/dialog";
+import { GameContext } from "../../../contexts/GameContext";
+import { Toast } from "primereact/toast";
 
 const PlayerMainUI = () => {
+  const {
+    isUsingSearch,
+    setIsHidden,
+    setIsUsingSearch,
+    setIsPlanting,
+    cooldowns,
+    setCooldowns,
+  } = useContext(GameContext);
+
   const [starterItem, setStarterItem] = useState([
     {
       name: "stealth-cloak",
@@ -15,7 +28,7 @@ const PlayerMainUI = () => {
     },
     {
       name: "data-extractor",
-      life_time: 6,
+      life_time: 8,
       cooldown: 10,
       icon: "https://cdn-icons-png.flaticon.com/512/639/639375.png",
       active: false,
@@ -33,13 +46,17 @@ const PlayerMainUI = () => {
     },
   ]);
 
-  const [cooldowns, setCooldowns] = useState({ J: 0, K: 0, L: 0 });
   const [energy, setEnergy] = useState(10);
   const [progress, setProgress] = useState(0);
+  const [openInventory, setOpenInventory] = useState(false);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: any) => {
       const key = event.key.toUpperCase();
+      if (key === "I" || key === "Escape") {
+        setOpenInventory((prevState) => !prevState); // Toggle Sidebar visibility
+        return; // Prevent further execution if the key is "I"
+      }
       const itemIndex = starterItem.findIndex(
         (item) => item.activate_key === key
       );
@@ -56,6 +73,31 @@ const PlayerMainUI = () => {
         const newCooldowns = { ...cooldowns };
         newCooldowns[key] = starterItem[itemIndex].cooldown;
         setCooldowns(newCooldowns);
+
+        switch (starterItem[itemIndex].name) {
+          case "stealth-cloak":
+            setIsHidden(true);
+            setTimeout(
+              () => setIsHidden(false),
+              starterItem[itemIndex].life_time * 1000
+            );
+            break;
+          case "data-extractor":
+            setIsUsingSearch(true);
+            setTimeout(
+              () => setIsUsingSearch(false),
+              starterItem[itemIndex].life_time * 1000
+            );
+            break;
+          case "bomb":
+            setIsPlanting(true);
+            setTimeout(
+              () => setIsPlanting(false),
+              starterItem[itemIndex].life_time * 1000
+            );
+            break;
+          // Add cases for other abilities and their corresponding context state updates
+        }
 
         // Start countdown for cooldown
         const intervalId = setInterval(() => {
@@ -92,12 +134,11 @@ const PlayerMainUI = () => {
         prevEnergy < 10 ? prevEnergy + 1 : prevEnergy
       );
     }, 3000);
-
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    if(energy === 10) return;
+    if (energy === 10) return;
     const progressInterval = setInterval(() => {
       setProgress((prevProgress) => {
         const newProgress = prevProgress + 33.33;
@@ -110,27 +151,71 @@ const PlayerMainUI = () => {
     return () => clearInterval(progressInterval);
   }, [energy]);
 
-  return (
-    <div className="absolute bottom-0 w-full z-[1000] px-0 py-10 h-[30vh]">
-      {/* <div className="w-[17.5rem] h-[17.5rem] rounded-full absolute -left-[3.5%] -bottom-[15%]
-        bg-blue-400/50 border-4 border-white">
+  const aimHitEnemyToast = useRef<any>(null);
+  const showToast = (severityValue, summaryValue, detailValue) => {
+    aimHitEnemyToast.current.show({
+      severity: severityValue,
+      summary: summaryValue,
+      detail: detailValue,
+    });
+  };
 
-        </div> */}
+  return (
+    <div
+      className={`absolute bottom-0 w-full z-[1000] px-0 py-10 ${
+        isUsingSearch ? "h-full" : "h-fit"
+      }`}
+      id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}
+    >
+      <button
+        onClick={() => showToast("success", "Found Enemy", "Data collected!")}
+      >
+        {/* Show message */}
+      </button>
+      <Toast ref={aimHitEnemyToast} />
+      {isUsingSearch && (
+        <div
+          className="absolute max-w-2xl h-[42rem] w-full flex justify-center items-center 
+    top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5rem] border-cyan-400/50 z-[900]"
+          id={isUsingSearch ? "circle-hole-active" : "circle-hole-inactive"}
+        >
+          <div className="rounded-full border-l-4 border-r-4 border-green-400/50 px-1.5 py-2 animate-spin">
+            <div className="bg-red-600/50 w-10 h-10 rounded-full"></div>
+          </div>
+        </div>
+      )}
+      <Dialog
+        header="Header"
+        visible={openInventory}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          if (!openInventory) return;
+          setOpenInventory(false);
+        }}
+      >
+        <p className="m-0">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </Dialog>
       <div className="relative h-full">
-        <div className="absolute left-10 bottom-0 w-fit">
+        <div className="absolute left-10 bottom-2 w-fit">
           {/* <img src={playerImage} className="mt-[4%]" /> */}
           <div className="w-full relative">
             <div className="w-28">
               <CharacterHead />
             </div>
+            <div className="text-white absolute left-[145%] bottom-[90%] ">{energy}/10</div>
             <div className="absolute left-[145%] bottom-[30%] flex flex-col gap-y-4 bg-blue-400/50 rounded-md">
               <div className="w-[35vh] h-14 border rounded-md rounded-b-none px-1.5 py-1.5 flex gap-1 transition-all duration-100 ease-linear">
                 {Array.from({ length: energy }).map((_, index) => (
                   <div className="w-[10%] h-full rounded-md bg-blue-400 transition-all duration-100 ease-linear"></div>
                 ))}
-                <div className="absolute top-4 -right-14 text-white">
-                  {energy}/10
-                </div>
               </div>
               <div
                 className="h-4 bg-orange-300 -mt-4 rounded-b-lg border border-t-0  transition-all duration-100 ease-linear"
@@ -139,7 +224,7 @@ const PlayerMainUI = () => {
             </div>
           </div>
         </div>
-        <div className="flex absolute right-16 bottom-0 gap-x-6">
+        <div className="flex absolute right-16 bottom-4 gap-x-6">
           {starterItem.map((item) => (
             <button
               key={item.name}

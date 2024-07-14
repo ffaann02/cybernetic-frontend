@@ -1,4 +1,4 @@
-import { useGLTF, useFBX, useTexture } from "@react-three/drei";
+import { useGLTF, useFBX, useTexture, Outlines } from "@react-three/drei";
 import { useContext, useMemo } from "react";
 import { OBJLoader, SkeletonUtils } from "three-stdlib";
 import { useLoader } from "@react-three/fiber";
@@ -13,13 +13,23 @@ interface ItemProps {
     scale?: number[];
     fileType: string;
     textures?: string[]; // Array of texture paths
+    color?: string; // Add color prop
   };
   type?: string;
+  meshRef?: any;
+  opacity?: number;
+  isOutlined?: boolean;
 }
 
-export const Item: React.FC<ItemProps> = ({ item,type }) => {
-  const { name, position, rotation, scale, fileType, textures } = item;
-  const {currentHit} = useContext(GameContext);
+export const Item: React.FC<ItemProps> = ({
+  item,
+  type,
+  meshRef,
+  opacity,
+  isOutlined,
+}) => {
+  const { name, position, rotation, scale, fileType, textures, color } = item;
+  const { currentHit } = useContext(GameContext);
 
   // Load the model based on fileType
   let scene;
@@ -41,26 +51,41 @@ export const Item: React.FC<ItemProps> = ({ item,type }) => {
     clonedScene.traverse((child) => {
       if ((child as any).isMesh) {
         child.castShadow = true;
+        if (color) {
+          const material = new THREE.MeshStandardMaterial({
+            color: color, // Default to white if no color is provided
+            opacity: opacity !== undefined ? opacity : 1, // Default to fully opaque if no opacity is provided
+            transparent: opacity !== undefined && opacity < 1, // Set transparent if opacity is less than 1
+          });
+          (child as any).material = material;
+        }
         meshes.push(child);
       }
     });
 
     return meshes;
-  }, [scene]);
+  }, [scene, opacity, color]);
 
   return (
     <>
       {meshes.map((mesh: any, index: number) => (
         <mesh
+          ref={meshRef ? meshRef : null}
           key={index}
           geometry={(mesh as any).geometry}
           material={(mesh as any).material}
           position={position}
-          // rotation={[0, ((rotation || 0) * Math.PI) / 2, 0]}
           scale={scale || [1, 1, 1]}
           castShadow
         >
-          {/* {currentHit==='computer' ? <meshPhongMaterial color={0xff00ff} />:null} */}
+          {isOutlined && (
+            <Outlines
+              thickness={5}
+              color={"red"}
+              angle={180}
+              screenspace={true}
+            />
+          )}
         </mesh>
       ))}
     </>

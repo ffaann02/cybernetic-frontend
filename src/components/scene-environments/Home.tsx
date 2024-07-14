@@ -5,31 +5,31 @@ import { RigidBody } from "@react-three/rapier";
 import { useContext } from "react";
 import { GameContext } from "../../contexts/GameContext";
 
-const items = [
-  {
-    name: "StreetLight",
-    position: [10, 0, 0],
-    rotation: -45,
-  },
-  {
-    name: "Tank",
-    position: [2, 0, 0],
-    rotation: 1,
-  },
-  {
-    name: "Tank",
-    position: [4, 0, 3],
-    rotation: 45,
-  },
-  {
-    name: "StreetLight",
-    position: [10, 0, 1],
-    rotation: -45,
-  },
-];
+// const items = [
+//   {
+//     name: "StreetLight",
+//     position: [10, 0, 0],
+//     rotation: -45,
+//   },
+//   {
+//     name: "Tank",
+//     position: [2, 0, 0],
+//     rotation: 1,
+//   },
+//   {
+//     name: "Tank",
+//     position: [4, 0, 3],
+//     rotation: 45,
+//   },
+//   {
+//     name: "StreetLight",
+//     position: [10, 0, 1],
+//     rotation: -45,
+//   },
+// ];
 
 export const HomeEnvironment = () => {
-  const { camera } = useContext(GameContext);
+  const { currentCamera } = useContext(GameContext);
   return (
     <>
       <Environment preset="dawn" environmentIntensity={0.5} />
@@ -47,13 +47,13 @@ export const HomeEnvironment = () => {
         shadow-camera-bottom={-20}
       />
 
-      {items.map((item, index) => (
+      {/* {items.map((item, index) => (
         <RigidBody name="item" lockTranslations lockRotations>
           <Item item={item} key={index} />
         </RigidBody>
-      ))}
+      ))} */}
       <Home />
-      {camera === 2 && <OrbitControls />}
+      {currentCamera === 2 && <OrbitControls />}
     </>
   );
 };

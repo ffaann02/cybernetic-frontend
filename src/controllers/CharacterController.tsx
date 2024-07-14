@@ -1,11 +1,12 @@
 import {
   CameraControls,
   KeyboardControls,
+  OrbitControls,
   useKeyboardControls,
 } from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
 import { useRef, useContext, useState, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
@@ -16,25 +17,39 @@ import {
 import useAudio from "../hooks/useAudio";
 
 export enum Controls {
-  forward = 'forward',
-  backward = 'backward',
-  left = 'left',
-  right = 'right',
-  jump = 'jump',
-  coding = 'coding',
-  interact = 'interact',
-  ESC = 'ESC'
+  forward = "forward",
+  backward = "backward",
+  left = "left",
+  right = "right",
+  jump = "jump",
+  coding = "coding",
+  interact = "interact",
+  ESC = "ESC",
+  L = "L",
+  E = "E",
 }
 
-const CharacterController: React.FC = () => {
+const CharacterController: React.FC = ({rigidBody}) => {
   const controls = useRef<any>(null);
+  const firstPerson = useRef<any>(null);
   const character = useRef<any>(null);
-  const rigidBody = useRef<any>(null);
   const isOnFloor = useRef(true);
   const jumpCooldown = useRef(false);
 
-  const { speed, camera, isCoding, setIsCoding, currentHit, isInteracting, setIsInteracting } =
-    useContext(GameContext);
+  const {
+    speed,
+    currentCamera,
+    isCoding,
+    setIsCoding,
+    currentHit,
+    isInteracting,
+    setIsInteracting,
+    isUsingSearch,
+    setIsUsingSearch,
+    mines,
+    setMines,
+    cooldowns,
+  } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
@@ -48,8 +63,24 @@ const CharacterController: React.FC = () => {
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
 
   const codingPressed = useKeyboardControls((state) => state[Controls.coding]);
-  const interactPressed = useKeyboardControls((state) => state[Controls.interact]);
+  const interactPressed = useKeyboardControls(
+    (state) => state[Controls.interact]
+  );
   const escPressed = useKeyboardControls((state) => state[Controls.ESC]);
+  const skillLPressed = useKeyboardControls((state) => state[Controls.L]);
+
+  const rotateLeftPressed = useKeyboardControls(
+    (state) => state[Controls.left]
+  );
+  const rotateRightPressed = useKeyboardControls(
+    (state) => state[Controls.right]
+  );
+  const rotateUpPressed = useKeyboardControls(
+    (state) => state[Controls.forward]
+  ); // Assuming 'forward' is used for rotating up
+  const rotateDownPressed = useKeyboardControls(
+    (state) => state[Controls.backward]
+  );
 
   const { animationState, setAnimationState, updateAnimationState } =
     useCharacterAnimation();
@@ -78,7 +109,12 @@ const CharacterController: React.FC = () => {
       impulse.x += speed * delta * onAirFraction;
     }
 
-    if (jumpPressed && !jumpCooldown.current && isOnFloor.current) {
+    if (
+      jumpPressed &&
+      !jumpCooldown.current &&
+      isOnFloor.current &&
+      !isUsingSearch
+    ) {
       jumpCooldown.current = true;
       jumpSound();
       setAnimationState(AnimationState.Jumping);
@@ -94,13 +130,13 @@ const CharacterController: React.FC = () => {
 
     if (codingPressed && !codingCooldown && currentHit === "computer") {
       setCodingCooldown(true);
-      setIsCoding(prev => !prev);
+      setIsCoding((prev) => !prev);
       setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
     }
 
     if (codingPressed && !codingCooldown && currentHit === "assistant-bot") {
       setCodingCooldown(true);
-      setIsInteracting(prev => !prev);
+      setIsInteracting((prev) => !prev);
       setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
     }
     if (escPressed) {
@@ -108,11 +144,22 @@ const CharacterController: React.FC = () => {
       setIsInteracting(false);
     }
 
-    const newPos = new THREE.Vector3(
-      rigidBody.current.translation().x + impulse.x,
-      rigidBody.current.translation().y,
-      rigidBody.current.translation().z + impulse.z
-    );
+    let newPos; // Declare newPos outside the if block
+
+    if (rigidBody.current) {
+      newPos = new THREE.Vector3(
+        rigidBody.current.translation().x + impulse.x,
+        rigidBody.current.translation().y,
+        rigidBody.current.translation().z + impulse.z
+      );
+    } else {
+      // Handle the case where rigidBody.current is null
+      console.error("rigidBody.current is null");
+    }
+
+    if (newPos) {
+      rigidBody.current.setTranslation(newPos, true);
+    }
 
     rigidBody.current.setTranslation(newPos, true);
 
@@ -131,61 +178,119 @@ const CharacterController: React.FC = () => {
     let adjustZoom = { x: 0, y: 0, z: 0 };
     if (isCoding || isInteracting) {
       adjustZoom = { x: 1, y: -4, z: -4 };
-    }
-    else{
+    } else {
       adjustZoom = { x: 0, y: 0, z: 0 };
     }
 
-    if (controls.current) {
+    if (controls.current && rigidBody.current) {
       const cameraDistanceY = window.innerWidth < 1024 ? 10 : 8;
       const cameraDistanceZ = window.innerWidth < 1024 ? 14 : 12;
       const playerWorldPos = vec3(rigidBody.current.translation());
       controls.current.setLookAt(
         playerWorldPos.x + 1 + adjustZoom.x,
-        playerWorldPos.y + cameraDistanceY + 5 + adjustZoom.y,
+        playerWorldPos.y + cameraDistanceY + 7 + adjustZoom.y,
         playerWorldPos.z + cameraDistanceZ + 3 + adjustZoom.z,
         playerWorldPos.x + 1 + adjustZoom.x,
-        playerWorldPos.y - 2,
+        playerWorldPos.y + 3,
         playerWorldPos.z - 8 + adjustZoom.z,
         true
       );
+    }
+
+    if (isUsingSearch && firstPerson.current) {
+      const playerWorldPos = vec3(rigidBody.current.translation());
+      // Define the base aim point, which could be directly in front of the camera
+      let aimX = playerWorldPos.x + 2.25;
+      let aimY = playerWorldPos.y + 5.25; // Base elevation
+      let aimZ = playerWorldPos.z + 4.5; // Base depth
+
+      const cameraRotationSpeed = 2; // Adjust this value as needed for sensitivity
+
+      // Adjust aim point based on keyboard input
+      if (rotateLeftPressed) {
+        aimX -= cameraRotationSpeed;
+      }
+      if (rotateRightPressed) {
+        aimX += cameraRotationSpeed;
+      }
+      if (rotateUpPressed) {
+        aimY += cameraRotationSpeed;
+      }
+      if (rotateDownPressed) {
+        console.log("hello down");
+        aimY -= cameraRotationSpeed;
+      }
+
+      // Use setLookAt to orient the camera towards the new aim point
+      firstPerson.current.setLookAt(aimX, aimY, aimZ, aimX, aimY, aimZ, true);
+    }
+  };
+
+  const [useItemCooldown, setUseItemCooldown] = useState(false);
+  const handleUseItem = () => {
+    if (skillLPressed && !isCoding && !isInteracting && !useItemCooldown) {
+      // Get the current position of the player
+      const currentPosition = vec3(rigidBody.current.translation());
+
+      // Create a new mine object
+      const newMine = {
+        position: currentPosition,
+        // Add any other properties you need for the mine
+      };
+
+      // Update the mines state to include the new mine
+      setMines((prevMines) => [...prevMines, newMine]);
+      setUseItemCooldown(true); // Start cooldown
+      setTimeout(() => setUseItemCooldown(false), 1000); // Reset cooldown after 1 second
     }
   };
 
   useFrame((_, delta) => {
     cameraFollow();
     handleMovement(delta);
+    handleUseItem();
   });
 
   return (
-      <group>
-        {camera === 1 && <CameraControls ref={controls} />}
-        <RigidBody
-          name="player"
-          ref={rigidBody}
-          colliders={false}
-          linearDamping={10}
-          position={[2, -1, 2]}
-          lockRotations
-          mass={50}
-          gravityScale={9.8}
-        >
-          <group ref={character}>
-            <Character2D direction={direction} animation={animationState} />
-            <CapsuleCollider
-              args={[
-                1, // radius
-                1, // height
-              ]}
-              position={[1, 4, 4]}
-            />
-          </group>
-          <mesh castShadow position={[0.5, 4, 4.3]} scale={[1, 0.1, 0.75]}>
-            <sphereGeometry args={[0.8, 32, 32]} />
-            <meshStandardMaterial transparent={true} opacity={0} />
-          </mesh>
-        </RigidBody>
-      </group>
+    <group>
+      {currentCamera === 1 && !isUsingSearch && (
+        <CameraControls ref={controls} />
+      )}
+      {isUsingSearch && <CameraControls ref={firstPerson} />}
+      <RigidBody
+        name="player"
+        ref={rigidBody}
+        colliders={false}
+        linearDamping={10}
+        position={[2, 3, 2]}
+        lockRotations
+        mass={50}
+        gravityScale={9.8}
+        onCollisionEnter={({ other }) => {
+          if (
+            other.rigidBodyObject &&
+            other.rigidBodyObject.name.includes("checkpoint")
+          ) {
+            console.log(other.rigidBodyObject.name);
+          }
+        }}
+      >
+        <group ref={character}>
+          <Character2D direction={direction} animation={animationState} />
+          <CapsuleCollider
+            args={[
+              1, // radius
+              1, // height
+            ]}
+            position={[1, 4, 4]}
+          />
+        </group>
+        <mesh castShadow position={[0.5, 4, 4.3]} scale={[1, 0.1, 0.75]}>
+          <sphereGeometry args={[0.8, 32, 32]} />
+          <meshStandardMaterial transparent={true} opacity={0} />
+        </mesh>
+      </RigidBody>
+    </group>
   );
 };
 

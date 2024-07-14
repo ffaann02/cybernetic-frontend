@@ -19,6 +19,8 @@ import EnemySimple from "../game_object/enemy/EnemySimple";
 import RobotIdle from "../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
+import { Message } from "primereact/message";
+import { Sidebar } from "primereact/sidebar";
 
 interface HomeProps {}
 
@@ -35,19 +37,58 @@ const Tutorial: React.FC<HomeProps> = () => {
       { name: Controls.coding, keys: ["KeyE"] },
       { name: Controls.interact, keys: ["KeyR"] },
       { name: Controls.ESC, keys: ["Escape"] },
+      { name: Controls.L, keys: ["KeyL"] },
     ],
     []
   );
 
-  const [tutorialChat, setTutorialChat] = useState<string[]>([
-    "Hello, I am X-Alpha, your personal assistant. Welcome to Operation Cybernetic. You may be wondering what happened to you? Where are you? And what is Operation Cybernetic? Would you like me to tell you?",
+  const [navigation, setNavigation] = useState<string[]>([
+    "checkpoint_0",
+    "checkpoint_1",
+    "checkpoint_2",
+    "checkpoint_3",
   ]);
 
+  const [hitCheckpoints, setHitCheckpoints] = useState<number>(0);
+
+  const [tutorialChat, setTutorialChat] = useState<string[]>([
+    "Hello, I am X-Alpha, your personal assistant. Welcome to Operation Cybernetic. You may be wondering what happened to you? Where are you? And what is Operation Cybernetic? Would you like me to tell you?",
+    `Good Job! Next, Let's try to press "I" to open Inventory. You can see the items you have collected in the inventory. Press "I" again to close the inventory.`,
+  ]);
+
+  const [currentStep, setCurrentStep] = useState<number>(0);
   const [currentSuccess, setCurrentSuccess] = useState<number>(0);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(true);
 
+  useEffect(() => {
+    if (hitCheckpoints >= 4) {
+      setCurrentSuccess(1);
+      setCurrentStep(1);
+      setIsChatOpen(true);
+    }
+  }, [hitCheckpoints]);
+
+  const [trackPressI, setTrackPressI] = useState<number>(0);
+
+  useEffect(() => {
+    if (trackPressI >= 2 && currentStep === 1) {
+      setCurrentSuccess(2);
+      setCurrentStep(2);
+      setIsChatOpen(true);
+    }
+  }, [trackPressI]);
+
   return (
     <>
+      {currentStep === 0 && (
+        <div className="absolute right-6 top-6 z-[100] flex flex-col gap-y-2 transition-all duration-200 ease-linear">
+          <Message
+            severity={hitCheckpoints >= 4 ? "success" : "info"}
+            text="Pick the 4 
+        checkpoints to complete the movement tutorial."
+          />
+        </div>
+      )}
       <div
         className={`${
           isChatOpen ? "block" : "hidden"
@@ -64,25 +105,39 @@ const Tutorial: React.FC<HomeProps> = () => {
                 {tutorialChat[currentSuccess]}
               </p>
               <div className="mt-4 gap-x-4 flex">
-                <Button
-                  label="Yes, please tell me more.
-                  "
-                  icon="pi pi-check"
-                  className="text-lg"
-                  onClick={() => {
-                    setCurrentSuccess((prev) => prev + 1);
-                    // Log currentSuccess value after update
-                  }}
-                />
-                <Button
-                  label="No, I am good"
-                  icon="pi pi-times"
-                  className="text-lg"
-                  severity="danger"
-                  onClick={()=>{
-                    setIsChatOpen(false);
-                  }}
-                />
+                {currentStep !== 0 && currentSuccess !== 0 && (
+                  <Button
+                    label="OK, I understand."
+                    icon="pi pi-check"
+                    className="text-lg"
+                    onClick={() => {
+                      setIsChatOpen(false);
+                    }}
+                  />
+                )}
+                {currentStep === 0 && currentSuccess === 0 && (
+                  <>
+                    <Button
+                      label="Yes, please tell me.
+                "
+                      icon="pi pi-check"
+                      className="text-lg"
+                      onClick={() => {
+                        setCurrentSuccess((prev) => prev + 1);
+                        // Log currentSuccess value after update
+                      }}
+                    />{" "}
+                    <Button
+                      label="No, I am good"
+                      icon="pi pi-times"
+                      className="text-lg"
+                      severity="danger"
+                      onClick={() => {
+                        setIsChatOpen(false);
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </Fieldset>
           </div>
@@ -111,7 +166,7 @@ const Tutorial: React.FC<HomeProps> = () => {
                 showPath={true}
               />
               <AssistantBotController />
-              <TutorialEnvironment />
+              <TutorialEnvironment setHitCheckpoints={setHitCheckpoints} />
             </Physics>
           </Suspense>
         </Canvas>
