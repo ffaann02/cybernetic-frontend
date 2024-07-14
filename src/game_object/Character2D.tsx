@@ -39,7 +39,7 @@ const Character2D = ({
   return (
     <mesh
       key="main_character"
-      position={[1, 4, 3.8]}
+      position={[0, 4, 0]}
       scale={[direction === "left" ? -1 : 1, 1, 1]}
     >
       {/* Use PlaneGeometry for a flat surface */}

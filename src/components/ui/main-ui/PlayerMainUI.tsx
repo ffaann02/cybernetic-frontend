@@ -111,7 +111,7 @@ const PlayerMainUI = () => {
   }, [energy]);
 
   return (
-    <div className="absolute bottom-0 w-full z-[1000] px-0 py-10 h-[30vh]">
+    <div className="absolute bottom-0 w-full z-[1000] px-0 py-10 h-[30vh] hidden">
       {/* <div className="w-[17.5rem] h-[17.5rem] rounded-full absolute -left-[3.5%] -bottom-[15%]
         bg-blue-400/50 border-4 border-white">
 

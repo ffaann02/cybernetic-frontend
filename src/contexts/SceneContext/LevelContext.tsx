@@ -2,11 +2,16 @@ import React, { createContext, useState } from "react";
 import useAxios from "../../hooks/useAxios";
 import axiosInstance from '../../api/axios';
 
+interface LevelDescription {
+    head: string;
+    content: string;
+}
+
 export interface LevelDetail {
     id: string;
     levelNumber: number;
     levelName: string;
-    description: string;
+    description: LevelDescription[];
     isActive: boolean;
 }
 

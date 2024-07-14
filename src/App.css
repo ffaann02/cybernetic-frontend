@@ -27,3 +27,12 @@ span, h1, h2, h3, h4, h5, h6, p {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+#level-preview-container {
+  backdrop-filter: blur(16px);
+}
+
+.setting-dropdown .p-dropdown-label {
+  color: white; 
+  padding: 16px;
+}

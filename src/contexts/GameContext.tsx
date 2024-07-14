@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useRef, useState } from "react";
 
 interface GameContextProps {
   currentScene: string;
@@ -20,16 +20,17 @@ interface GameContextProps {
   setIsInteracting: React.Dispatch<React.SetStateAction<boolean>>;
   isChatting?: boolean;
   setIsChatting?: React.Dispatch<React.SetStateAction<boolean>>;
+  playerRigidBody?: React.RefObject<any>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "tutorial",
+  currentScene: "home",
   previousScene: "level-selection",
   speed: 7.5,
-  debug: false,
-  sceneList: ["home", "tutorial", "test", "welcome", "level-selection", "game-level-1", "game-level-2", "game-level-3"],
-  camera: 1,
+  debug: true,
+  sceneList: ["home", "tutorial", "test-enemy", "test", "welcome", "level-selection", "game-level-1", "game-level-2", "game-level-3"],
+  camera: 2,
   cameraList: [1, 2, 3],
   currentHit: "",
   isCoding: false,
@@ -49,6 +50,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isCoding, setIsCoding] = useState<boolean>(false);
   const [isInteracting, setIsInteracting] = useState<boolean>(false);
   const [isChatting, setIsChatting] = useState<boolean>(false);
+  const playerRigidBody = useRef<any>(null);
+
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
       ...prevState,
@@ -65,6 +68,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     sceneList: gameState.sceneList,
     camera: gameState.camera,
     cameraList: gameState.cameraList,
+    playerRigidBody,
     setGameState,
     currentHit,
     setCurrentHit,

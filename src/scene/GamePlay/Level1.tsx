@@ -32,7 +32,9 @@ const Level1: React.FC<Level1Props> = () => {
 
   return (
     <>
-      <FadeTransition />
+      <FadeTransition 
+        loadingDescription={`Data Collection Lab (Level1)`}
+        tipMessage='Did you know that you can make enemy robots evolve? If your bomb trap matches its power source'/>
       {levelDetails &&
         <>
           <h1>Level{levelDetails.levelNumber}: {levelDetails.levelName}</h1>
