@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import playerImage from "/player-ui.gif";
-import CharacterHead from "../../create-character/CharacterHead";
+import CharacterHead from "../../create-character/cut/CharacterHead";
 import { Sidebar } from "primereact/sidebar";
 import { Dialog } from "primereact/dialog";
 import { GameContext } from "../../../contexts/GameContext";
@@ -14,6 +14,7 @@ const PlayerMainUI = () => {
     setIsPlanting,
     cooldowns,
     setCooldowns,
+    currentScene
   } = useContext(GameContext);
 
   const [starterItem, setStarterItem] = useState([
@@ -162,7 +163,7 @@ const PlayerMainUI = () => {
 
   return (
     <div
-      className={`absolute bottom-0 w-full z-[1000] px-0 py-10 ${
+      className={`absolute bottom-0 w-full z-[1000] px-0 py-10 ${currentScene?.includes("game") ? "block":"hidden"} ${
         isUsingSearch ? "h-full" : "h-fit"
       }`}
       id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}

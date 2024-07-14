@@ -14,6 +14,7 @@ import Jump1 from "./SpriteFrame/Jump/Jump1";
 import Jump2 from "./SpriteFrame/Jump/Jump2";
 import Jump3 from "./SpriteFrame/Jump/Jump3";
 import { useFirebaseStorage } from "../../../hooks/useFirebaseStorage";
+import testfromTif from "../../../components/create-character/MainCharacter.png"
 
 const CharacterPreview = () => {
   const [currentFrame, setCurrentFrame] = useState<number>(0);
@@ -229,13 +230,15 @@ const CharacterPreview = () => {
     <>
       <div className="flex flex-col rounded-lg">
         <div
-          className="w-[384px] h-[384px] my-auto relative bg-transparent overflow-hidden"
+          className="w-[384px] h-[384px] my-auto relative bg-transparent"
           id="frame"
         >
-          <div className="w-full h-full relative bg-transparent">
-            {/* <div className="w-full h-full relative" ref={frame1}>
-              <Idle1 />
-            </div>
+          <img src={testfromTif} className="h-full mx-auto"/>
+          {/* <div className="w-full h-full relative bg-transparent">
+            <div className="w-full h-full relative" ref={frame1}> */}
+              {/* <Idle1 /> */}
+            {/* </div> */}
+{/* 
             <div className="w-full h-full relative" ref={frame2}>
               <Idle2 />
             </div>
@@ -260,7 +263,7 @@ const CharacterPreview = () => {
             <div className="w-full h-full relative" ref={run_frame_6}>
               <Running6 />
             </div> */}
-            <div className="w-full h-full relative" ref={jump_frame_1}>
+            {/* <div className="w-full h-full relative" ref={jump_frame_1}>
               <Jump1/>
             </div>
             <div className="w-full h-full relative" ref={jump_frame_2}>
@@ -268,16 +271,16 @@ const CharacterPreview = () => {
             </div>
             <div className="w-full h-full relative" ref={jump_frame_3}>
               <Jump3 />
-            </div>
-            <div className="w-full h-full relative bg-transparent">
+            </div> */}
+            {/* <div className="w-full h-full relative bg-transparent">
               {frames[currentFrame]}
-            </div>
+            </div> */}
           </div>
         </div>
-        <button onClick={IdleExportToPng}>Idle Export to PNG</button>
+        {/* <button onClick={IdleExportToPng}>Idle Export to PNG</button>
         <button onClick={RunningExportToPng}>Running Export to PNG</button>
-        <button onClick={JumpExportToPng}>Jump Export to PNG</button>
-      </div>
+        <button onClick={JumpExportToPng}>Jump Export to PNG</button> */}
+      {/* </div> */}
     </>
   );
 };

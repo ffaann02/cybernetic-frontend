@@ -7,15 +7,16 @@ export const Mine = ({ mine, index, setMines }) => {
     <RigidBody
       colliders="trimesh"
       key={index}
-      position={[mine.position.x + 1, mine.position.y + 2, mine.position.z + 5]}
+      position={[mine.position.x + 0, mine.position.y + 2, mine.position.z+1]}
       lockRotations
+      // lockTranslations
       rotation={[
         degreeNumberToRadian(-90),
         degreeNumberToRadian(0),
         degreeNumberToRadian(-45),
       ]}
       type="dynamic"
-      mass={10}
+      mass={0}
       onCollisionEnter={({ other }) => {
         if (
           other.rigidBodyObject &&

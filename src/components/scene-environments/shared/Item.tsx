@@ -19,6 +19,7 @@ interface ItemProps {
   meshRef?: any;
   opacity?: number;
   isOutlined?: boolean;
+  status?: string;
 }
 
 export const Item: React.FC<ItemProps> = ({
@@ -27,6 +28,7 @@ export const Item: React.FC<ItemProps> = ({
   meshRef,
   opacity,
   isOutlined,
+  status,
 }) => {
   const { name, position, rotation, scale, fileType, textures, color } = item;
   const { currentHit } = useContext(GameContext);
@@ -81,7 +83,7 @@ export const Item: React.FC<ItemProps> = ({
           {isOutlined && (
             <Outlines
               thickness={5}
-              color={"red"}
+              color={status==="close" ? "red" : "green"}
               angle={180}
               screenspace={true}
             />

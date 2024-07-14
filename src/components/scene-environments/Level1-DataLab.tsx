@@ -46,14 +46,17 @@ const items = [
   },
 ];
 
-export const Level1DataLabEnvironment = ({
-  showDialog,
-  setShowDialog,
-}) => {
+export const Level1DataLabEnvironment = ({ showDialog, setShowDialog }) => {
   const [lastPressTime, setLastPressTime] = useState(0);
 
-  const { currentCamera, currentHit, setCurrentHit, mines, setMines, playerRigidBody} =
-    useContext(GameContext);
+  const {
+    currentCamera,
+    currentHit,
+    setCurrentHit,
+    mines,
+    setMines,
+    playerRigidBody,
+  } = useContext(GameContext);
 
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
   const enterDoorRef = useRef();
@@ -68,6 +71,8 @@ export const Level1DataLabEnvironment = ({
       }
     }
   });
+
+  const [doorStatuses, setDoorStatuses] = useState(["close", "open","open","open"]);
 
   return (
     <>
@@ -249,7 +254,41 @@ export const Level1DataLabEnvironment = ({
         doorname="secure-door-01"
         destinationObject={enterDoorRef}
         rigidBody={playerRigidBody}
+        position={[-8, 0, -15]}
+        rotation={[
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(90),
+          degreeNumberToRadian(0),
+        ]}
+        status={doorStatuses[0]}
       />
+
+      <Door
+        doorname="secure-door-02"
+        destinationObject={enterDoorRef}
+        rigidBody={playerRigidBody}
+        position={[135.5, 0.1, -54]}
+        rotation={[
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(90),
+          degreeNumberToRadian(0),
+        ]}
+        status={doorStatuses[1]}
+      />
+
+      <Door
+        doorname="secure-door-01-back"
+        destinationObject={enterDoorRef}
+        rigidBody={playerRigidBody}
+        position={[129.5, 0.1, -14]}
+        rotation={[
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(0),
+        ]}
+        status={doorStatuses[1]}
+      />
+
       <ScifiComputer />
 
       {currentCamera === 2 && <OrbitControls />}

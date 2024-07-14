@@ -9,7 +9,10 @@ import { Outlines } from "@react-three/drei";
 const Door = ({
   doorname,
   destinationObject,  // Updated prop name
-  rigidBody
+  rigidBody,
+  position,
+  rotation,
+  status
 }) => {
   const { currentHit, setCurrentHit } = useContext(GameContext);
   const doorBorderRef = useRef<any>();
@@ -39,15 +42,14 @@ const Door = ({
       mass={0}
       type="fixed"
       name={doorname}
-      position={[-8, 0, -15]}
+      position={position}
+      rotation={rotation}
       scale={[2, 3, 3]}
-      rotation={[
-        degreeNumberToRadian(0),
-        degreeNumberToRadian(90),
-        degreeNumberToRadian(0),
-      ]}
       onCollisionEnter={({ other }) => {
-        if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
+        if (other.rigidBodyObject && other.rigidBodyObject.name === "player" && status === "close") {
+          setCurrentHit("door");
+        }
+        if (other.rigidBodyObject && other.rigidBodyObject.name === "player" && status === "open") {
           setCurrentHit("door");
           movePlayerToDestination();
         }
@@ -59,7 +61,7 @@ const Door = ({
       <mesh position={[0, 1.1, 0]}>
         <boxGeometry args={[0.3, 2, 0.9]} />
         <meshStandardMaterial
-          color="red"
+          color={status === "close" ? "red" : "green"}
           transparent={true}
           opacity={0.5}
           ref={doorBorderRef}
@@ -73,6 +75,7 @@ const Door = ({
           fileType: "glb",
         }}
         isOutlined={true}
+        status={status}
       />
     </RigidBody>
   );

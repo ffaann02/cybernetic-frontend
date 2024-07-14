@@ -30,10 +30,6 @@ export const Level1DataLabRoom2 = ({ enterDoorRef }) => {
         // ref={enterDoorRef}
       >
         <primitive object={clone} />
-        {/* <mesh castShadow position={[4,0,0]} name="head-glass-bridge-data-lab-01">
-        <boxGeometry args={[4, 0.1, 4]} />
-        <meshStandardMaterial color={'blue'} opacity={0.9} transparent={true} />
-      </mesh> */}
       </RigidBody>
       <RigidBody
         colliders="trimesh"
@@ -49,8 +45,8 @@ export const Level1DataLabRoom2 = ({ enterDoorRef }) => {
         >
           <boxGeometry args={[4, 0.1, 4]} />
           <meshStandardMaterial
-            color={"gray"}
-            opacity={1}
+            color={"purple"}
+            opacity={0.5}
             transparent={true}
           />
         </mesh>
