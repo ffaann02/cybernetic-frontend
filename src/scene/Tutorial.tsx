@@ -15,14 +15,14 @@ import { GameContext } from "../contexts/GameContext";
 import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
 import { TutorialEnvironment } from "../components/scene-environments/Tutorial";
 import AssistantBotController from "../controllers/AssistantBotController";
-import EnemySimple from "../game_object/enemy/EnemySimple";
 import RobotIdle from "../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
 import { Message } from "primereact/message";
 import { Sidebar } from "primereact/sidebar";
+import EnemyGuardController from "../controllers/EnemyGuardController";
 
-interface HomeProps {}
+interface HomeProps { }
 
 const Tutorial: React.FC<HomeProps> = () => {
   const { debug, camera } = useContext(GameContext);
@@ -90,9 +90,8 @@ const Tutorial: React.FC<HomeProps> = () => {
         </div>
       )}
       <div
-        className={`${
-          isChatOpen ? "block" : "hidden"
-        } bg-black/70 h-full w-full fixed bottom-0 z-[1000] flex justify-center items-center`}
+        className={`${isChatOpen ? "block" : "hidden"
+          } bg-black/70 h-full w-full fixed bottom-0 z-[1000] flex justify-center items-center`}
       >
         <div className="flex max-w-5xl">
           <img src={RobotIdle} className="" />
@@ -159,12 +158,11 @@ const Tutorial: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              <EnemySimple
+              <EnemyGuardController
                 speed={3}
                 point1={[-6, 0.5, -10]}
                 point2={[-6, 0.5, 10]}
-                showPath={true}
-              />
+                showPath={true} />
               <AssistantBotController />
               <TutorialEnvironment setHitCheckpoints={setHitCheckpoints} />
             </Physics>

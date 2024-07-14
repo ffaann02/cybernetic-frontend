@@ -18,7 +18,7 @@ import {
 } from "@react-three/drei";
 import { TutorialEnvironment } from "../../components/scene-environments/Tutorial";
 import AssistantBotController from "../../controllers/AssistantBotController";
-import EnemySimple from "../../game_object/enemy/EnemySimple";
+import EnemySimple from "../../game_object/enemy/Spider2D";
 import RobotIdle from "../../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
@@ -26,8 +26,10 @@ import { Message } from "primereact/message";
 import { Sidebar } from "primereact/sidebar";
 import { Level1DataLabEnvironment } from "../../components/scene-environments/Level1-DataLab";
 import { MeterGroup } from "primereact/metergroup";
+import EnemyGuardController from "../../controllers/EnemyGuardController";
+import EnemyFollowController from "../../controllers/EnemyFollowController";
 
-interface HomeProps {}
+interface HomeProps { }
 
 const Level1DataLab: React.FC<HomeProps> = () => {
   const { debug, currentCamera } = useContext(GameContext);
@@ -136,9 +138,8 @@ const Level1DataLab: React.FC<HomeProps> = () => {
   return (
     <>
       <div
-        className={`bg-black/70 h-full w-full fixed bottom-0 z-[1000] ${
-          showDialog ? "flex" : "hidden"
-        } justify-center items-center`}
+        className={`bg-black/70 h-full w-full fixed bottom-0 z-[1000] ${showDialog ? "flex" : "hidden"
+          } justify-center items-center`}
       >
         <div className="flex max-w-4xl gap-x-4 relative">
           <div className="w-[50%] -left-[40%] -bottom-[25%] h-fit absolute -z-0">
@@ -175,11 +176,10 @@ const Level1DataLab: React.FC<HomeProps> = () => {
                       {preparedImages.map((src, index) => (
                         <div
                           key={index}
-                          className={`h-20 ${
-                            selectedIndices.includes(index)
-                              ? "border-green-600 border-2 bg-green-400/50"
-                              : "border-2 opacity-50"
-                          } bg-cyan-400/50 rounded-xl cursor-pointer hover:bg-black/10 flex justify-center items-center`}
+                          className={`h-20 ${selectedIndices.includes(index)
+                            ? "border-green-600 border-2 bg-green-400/50"
+                            : "border-2 opacity-50"
+                            } bg-cyan-400/50 rounded-xl cursor-pointer hover:bg-black/10 flex justify-center items-center`}
                           onClick={() => toggleSelection(index)}
                         >
                           <img src={src} className="w-full h-full p-2" />
@@ -254,11 +254,23 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              <EnemySimple
+              {/* <EnemyGuardController
                 speed={3}
-                point1={[-6, 0.5, -10]}
-                point2={[-6, 0.5, 10]}
-                showPath={true}
+                point1={[-6, 3, -10]}
+                point2={[-6, 3, 10]}/> */}
+              <EnemyFollowController
+                speed={4}
+                position={[-13, 15, 0]}
+                idleAreaRadius={8}
+                chasingAreaRadius={4}
+                texture="slime"
+              />
+              <EnemyFollowController
+                speed={8}
+                position={[-8, 15, 0]}
+                idleAreaRadius={8}
+                chasingAreaRadius={4}
+                texture="spider"
               />
               {/* <AssistantBotController /> */}
               <Level1DataLabEnvironment

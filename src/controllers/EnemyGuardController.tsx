@@ -1,7 +1,9 @@
 import { useFrame } from '@react-three/fiber';
-import { RigidBody } from '@react-three/rapier';
+import { CapsuleCollider, RigidBody } from '@react-three/rapier';
 import React, { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three';
+import Spider2D from '../game_object/enemy/Spider2D';
+import { EnemyAnimationState, useEnemyAnimation } from '../hooks/useEnemyAnimation';
 
 interface Props {
     speed: number;
@@ -10,7 +12,9 @@ interface Props {
     showPath?: boolean;
 }
 
-const EnemySimple: React.FC<Props> = ({ speed, point1, point2, showPath }) => {
+const EnemyGuardController: React.FC<Props> = ({ speed, point1, point2, showPath }) => {
+
+    const { animationState, setAnimationState, updateAnimationState } = useEnemyAnimation();
 
     const rigidBody = useRef<any>(null);
     const isReachedPoint1 = useRef(false);
@@ -33,9 +37,9 @@ const EnemySimple: React.FC<Props> = ({ speed, point1, point2, showPath }) => {
             position.y,
             position.z + impulse.z
         );
-
+        setAnimationState(EnemyAnimationState.Running);
         rigidBody.current.setTranslation(newPos, true);
-        if (newPos.distanceTo(target) < 1) {
+        if (newPos.distanceTo(target) < 1.5) {
             isReachedPoint1.current = true;
             isReachedPoint2.current = false;
             return;
@@ -59,9 +63,9 @@ const EnemySimple: React.FC<Props> = ({ speed, point1, point2, showPath }) => {
             position.y,
             position.z + impulse.z
         );
-
+        setAnimationState(EnemyAnimationState.Running);
         rigidBody.current.setTranslation(newPos, true);
-        if (newPos.distanceTo(target) < 1) {
+        if (newPos.distanceTo(target) < 1.5) {
             isReachedPoint1.current = false;
             isReachedPoint2.current = true;
         }
@@ -99,16 +103,30 @@ const EnemySimple: React.FC<Props> = ({ speed, point1, point2, showPath }) => {
                 colliders="trimesh"
                 name='enemy_fix_path'
                 lockRotations
-                mass={50}
                 gravityScale={9.8}
-                position={point1}>
-                <mesh
+                position={point1}
+                linearDamping={10}>
+                <group>
+                    <Spider2D animation={animationState} />
+                    <CapsuleCollider
+                        args={[
+                            0.08, // height
+                            1.05,    // radius
+                        ]}
+                        position={[0, -0.5, 0]}
+                    />
+                    <mesh castShadow position={[-1.5, 4, 0.8]} scale={[1, 0.1, 0.75]}>
+                        <sphereGeometry args={[0.8, 32, 32]} />
+                        <meshStandardMaterial transparent={true} opacity={0} />
+                    </mesh>
+                </group>
+                {/* <mesh
                     key="enemy_fix_path"
                     position={[0, 0, 0]}
                     scale={[1, 1, 1]}>
                     <boxGeometry args={[1, 1, 1]} />
                     <meshStandardMaterial color="hotpink" />
-                </mesh>
+                </mesh> */}
             </RigidBody>
             {showPath &&
                 <line>
@@ -119,4 +137,4 @@ const EnemySimple: React.FC<Props> = ({ speed, point1, point2, showPath }) => {
     )
 }
 
-export default EnemySimple
+export default EnemyGuardController
