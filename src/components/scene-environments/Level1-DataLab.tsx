@@ -49,11 +49,10 @@ const items = [
 export const Level1DataLabEnvironment = ({
   showDialog,
   setShowDialog,
-  rigidBody,
 }) => {
   const [lastPressTime, setLastPressTime] = useState(0);
 
-  const { currentCamera, currentHit, setCurrentHit, mines, setMines } =
+  const { currentCamera, currentHit, setCurrentHit, mines, setMines, playerRigidBody} =
     useContext(GameContext);
 
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
@@ -249,7 +248,7 @@ export const Level1DataLabEnvironment = ({
       <Door
         doorname="secure-door-01"
         destinationObject={enterDoorRef}
-        rigidBody={rigidBody}
+        rigidBody={playerRigidBody}
       />
       <ScifiComputer />
 

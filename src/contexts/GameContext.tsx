@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useRef, useState } from "react";
 
 interface GameContextProps {
   currentScene: string;
@@ -32,11 +32,12 @@ interface GameContextProps {
   setMines?: React.Dispatch<React.SetStateAction<any>>;
   cooldowns?: any;
   setCooldowns?: React.Dispatch<React.SetStateAction<any>>;
+  playerRigidBody?: React.RefObject<any>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-1",
+  currentScene: "home",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -88,6 +89,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataStorage, setDataStorage] = useState<any>({});
   const [mines, setMines] = useState<any>([]);
   const [cooldowns, setCooldowns] = useState({ J: 0, K: 0, L: 0 });
+  const playerRigidBody = useRef<any>(null);
 
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
@@ -105,6 +107,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     sceneList: gameState.sceneList,
     currentCamera: gameState.currentCamera,
     cameraList: gameState.cameraList,
+    playerRigidBody,
     setGameState,
     currentHit,
     setCurrentHit,

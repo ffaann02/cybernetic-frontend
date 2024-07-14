@@ -1,11 +1,97 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import useAxios from '../hooks/useAxios';
 import axiosInstance from '../api/axios';
-import { GameContext } from '../contexts/GameContext';
 import { LevelDetail } from '../contexts/SceneContext/LevelContext';
 import { useAuth } from '../hooks/useAuth';
+import { ItemWithUrl } from '../components/scene-environments/shared/ItemWithUrl';
+import { Canvas, useLoader } from "@react-three/fiber";
+import LevelSelectPreview from '../components/ui/level-selection/LevelSelectPreview';
+import SmoothCamera from '../controllers/SmoothCamera';
+import { TextureLoader } from 'three';
+import { ItemWithUrlIdle } from '../components/scene-environments/shared/ItemWIthUrlIdle';
 
-interface UserLevel {
+const items = [
+    {
+        name: "LargeBuilding",
+        fileType: "glb",
+        position: [0, 0, 0],
+        rotation: -2.15,
+        scale: [2.5, 2.5, 2.5],
+    },
+    {
+        name: "Floor",
+        fileType: "glb",
+        position: [0, -1.5, 0],
+        rotation: -2.15,
+        scale: [10, 2.5, 10],
+    },
+    {
+        name: "HoveTank",
+        fileType: "glb",
+        position: [2.9, 0, -2],
+        rotation: -2.2,
+        scale: [2.5, 2.5, 2.5],
+    },
+    {
+        name: "BladeRunnerMemory",
+        fileType: "glb",
+        position: [3.2, 1.48, 0],
+        rotation: -2.2,
+        scale: [1, 1, 1],
+    },
+    {
+        name: "BladeRunnerMemory",
+        fileType: "glb",
+        position: [2.6, 1.48, 0.5],
+        rotation: -2.2,
+        scale: [1, 1, 1],
+    },
+    {
+        name: "Probodobodyne",
+        fileType: "glb",
+        position: [5.2, 0, 1.6],
+        rotation: -2.2,
+        scale: [0.5, 0.5, 0.5],
+    },
+    {
+        name: "GeodesicDome",
+        fileType: "glb",
+        position: [5.2, 0.5, 1.6],
+        rotation: -2.2,
+        scale: [0.1, 0.1, 0.1],
+    },
+    {
+        name: "SecurityCamera",
+        fileType: "glb",
+        position: [-2, 0.95, 1.98],
+        rotation: -3.2,
+        scale: [0.06, 0.06, 0.06],
+    },
+    {
+        name: "SecurityCamera",
+        fileType: "glb",
+        position: [1.74, 0.95, 2.6],
+        rotation: -2.2,
+        scale: [0.06, 0.06, 0.06],
+    }
+];
+
+const idleItems = [
+    {
+        name: "Arrow2",
+        position: [1.8, 1.5, 2],
+        rotationX: 0,
+        rotation: -2.2,
+        rotationZ: 2,
+        scale: [1, 1, 1],
+        idleAnimation: true,
+        idleSpeed: 3,
+        idleAmplitude: 0.05,
+        idlePos: 'x',
+    }
+];
+
+export interface UserLevel {
     userId: string;
     levelPlayed: string[];
 }
@@ -14,10 +100,10 @@ const LevelSelection: React.FC = () => {
 
     const { axiosFetch } = useAxios();
     const { user } = useAuth();
-    const { currentScene, setScene } = useContext(GameContext)
 
     const [levels, setLevels] = useState<LevelDetail[]>([]);
     const [userLevels, setUserLevels] = useState<UserLevel>();
+    const [currentLevel, setCurrentLevel] = useState<LevelDetail | null>(null);
 
     const fetchLevels = async () => {
         try {
@@ -27,6 +113,7 @@ const LevelSelection: React.FC = () => {
                 url: '/game-play/level-selection',
             });
             setLevels(response.gamePlayLevel);
+            setCurrentLevel(response.gamePlayLevel[0]);
         } catch (error) {
             console.error(error);
         }
@@ -54,49 +141,72 @@ const LevelSelection: React.FC = () => {
         fetchUserLevels();
     }, []);
 
-    const navigateToLevel = (level: LevelDetail) => {
-        console.log(level);
-        if (setScene) {
-            console.log(`game-level-${level.levelNumber}`);
-            setScene(currentScene, `game-level-${level.levelNumber}`);
-        }
-    }
+    const cameraPosX = 3;
+    const cameraPosY = [0, 1.5, 2.5, 3.5, 4.5]
+    const cameraPosZ = 8;
 
-    const isLevelUnlocked = (levelNumber: number) => {
-        if (levelNumber === 1) {
-            return true; // Level 1 is always unlocked
-        }
-        if (!userLevels || userLevels.levelPlayed.length === 0) {
-            return false; // No levels are played, so other levels are locked
-        }
-        const playedLevels = userLevels.levelPlayed.map(Number);
-        return playedLevels.includes(levelNumber - 1);
-    };
+    const areaLightPosX = -0.25;
+    const areaLightPosY = [0, 1.48, 2.48, 3.48, 4.48]
+    const areaLightPosZ = 2.4;
+
+    // Add this inside your component or as a separate hook if needed
+    const backgroundTexture = useLoader(TextureLoader, '/images/sky.jpg');
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-white text-white">
-            <h1 className="text-4xl font-bold mb-8 text-cyan-600">Level Selection</h1>
-            <div className="grid grid-cols-4 gap-4 mb-8">
-                {levels.map(level => (
-                    <button
-                        key={level.id}
-                        onClick={() => isLevelUnlocked(level.levelNumber) && navigateToLevel(level)}
-                        className={`flex items-center justify-center w-16 h-16 rounded-lg shadow-lg 
-                            ${level.isActive ?
-                                (isLevelUnlocked(level.levelNumber)
-                                    ? 'bg-cyan-500 hover:bg-cyan-600'
-                                    : 'bg-gray-500 cursor-not-allowed') : 'bg-gray-500 cursor-not-allowed'}`}
-                        disabled={!isLevelUnlocked(level.levelNumber)}
-                    >
-                        {level.isActive ? (
-                            <span className="text-2xl font-bold">{level.levelNumber}</span>
-                        ) : (
-                            <span className="text-2xl font-bold">?</span>
-                        )}
-                    </button>
-                ))}
-            </div>
-        </div>
+        <>
+            <Canvas
+                dpr={[1, 2]}
+                style={{ height: "100%", width: "100%" }}
+                shadows
+                className="z-0">
+                {currentLevel &&
+                    <>
+                        <SmoothCamera targetPosition={[cameraPosX, cameraPosY[currentLevel.levelNumber], cameraPosZ]} />
+                        <rectAreaLight
+                            // intensity={50}
+                            intensity={30}
+                            width={20}
+                            height={0.15}
+                            color="#083bb2"
+                            // color="#ffffff"
+                            // rotation={[(6 * Math.PI) / 2, 16, 0]}
+                            rotation={[(6 * Math.PI) / 2, 15.84, 0]}
+                            position={[areaLightPosX, areaLightPosY[currentLevel.levelNumber], areaLightPosZ]} />
+                    </>
+                }
+                <ambientLight intensity={0.2} />
+                <directionalLight position={[5, 4, 0]} intensity={0.2} />
+                <Suspense fallback={null}>
+                    {/* <Environment files="/images/sky.jpg" background /> */}
+                    <mesh scale={[1.5, 1.5, 1.5]} position={[0, 0, -20]}> {/* Adjust the scale to zoom in or out */}
+                        <planeGeometry attach="geometry" args={[50, 50]} /> {/* Adjust args for aspect ratio */}
+                        <meshBasicMaterial attach="material" map={backgroundTexture} />
+                    </mesh>
+                    {items.map((item, index) => (
+                        <ItemWithUrl
+                            key={index}
+                            item={item}
+                            sceneName='level-selection'/>
+                    ))}
+                    {currentLevel && idleItems.map((item, index) => (
+                        <ItemWithUrlIdle
+                            key={index}
+                            item={item}
+                            sceneName='level-selection'
+                            isMovePosY={true}
+                            arrayOfPosY={cameraPosY}
+                            IndexOfArray={currentLevel.levelNumber} />
+                    ))}
+                </Suspense>
+            </Canvas>
+            {currentLevel && userLevels &&
+                <LevelSelectPreview
+                    levels={levels}
+                    currentLevel={currentLevel}
+                    setCurrentLevel={setCurrentLevel}
+                    userLevels={userLevels} />
+            }
+        </>
     );
 };
 

@@ -7,9 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import CharacterController, {
-  Controls,
-} from "../../controllers/CharacterController";
+import CharacterController, { Controls } from "../../controllers/CharacterController";
 import { Physics } from "@react-three/rapier";
 import { GameContext } from "../../contexts/GameContext";
 import {
@@ -134,7 +132,6 @@ const Level1DataLab: React.FC<HomeProps> = () => {
         : [...prevSelectedIndices, index]
     );
   };
-  const rigidBody = useRef<any>(null);
 
   return (
     <>
@@ -256,7 +253,7 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           <ambientLight intensity={0.25} />
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
-              <CharacterController rigidBody={rigidBody} />
+              <CharacterController />
               <EnemySimple
                 speed={3}
                 point1={[-6, 0.5, -10]}
@@ -267,7 +264,6 @@ const Level1DataLab: React.FC<HomeProps> = () => {
               <Level1DataLabEnvironment
                 showDialog={showDialog}
                 setShowDialog={setShowDialog}
-                rigidBody={rigidBody}
               />
             </Physics>
           </Suspense>

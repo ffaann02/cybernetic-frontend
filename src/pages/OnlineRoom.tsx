@@ -32,6 +32,50 @@ export interface ChatMessage {
     Time: string;
 }
 
+export interface Friend {
+    ID: string;
+    Name: string;
+    Status: string;
+}
+
+const friendList = [
+    {
+        ID: '1',
+        Name: 'Steve',
+        Status: 'online'
+    },
+    {
+        ID: '2',
+        Name: 'Alex',
+        Status: 'online'
+    },
+    {
+        ID: '3',
+        Name: 'Stephen',
+        Status: 'offline'
+    },
+    {
+        ID: '4',
+        Name: 'John',
+        Status: 'offline'
+    },
+    {
+        ID: '5',
+        Name: 'Chris',
+        Status: 'offline'
+    },
+    {
+        ID: '6',
+        Name: 'Robert',
+        Status: 'offline'
+    },
+    {
+        ID: '7',
+        Name: 'Thomas',
+        Status: 'offline'
+    }
+]
+
 const OnlineRoom = () => {
 
     const { user } = useAuth();
@@ -126,7 +170,7 @@ const OnlineRoom = () => {
                             owner={owner}
                             toggleReadyStatus={toggleReadyStatus}
                             readyStatus={readyStatus}
-                            friends={["friend1", "friend2", "friend3", "friend4", "friend5", "friend6", "friend7"]} />
+                            friends={friendList} />
                     }
                 </div>
             </div>

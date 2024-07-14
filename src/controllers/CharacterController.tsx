@@ -5,8 +5,8 @@ import {
   useKeyboardControls,
 } from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
-import { useRef, useContext, useState, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import { useRef, useContext, useState, useMemo, useEffect } from "react";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
@@ -29,7 +29,7 @@ export enum Controls {
   E = "E",
 }
 
-const CharacterController: React.FC = ({rigidBody}) => {
+const CharacterController: React.FC = () => {
   const controls = useRef<any>(null);
   const firstPerson = useRef<any>(null);
   const character = useRef<any>(null);
@@ -49,6 +49,7 @@ const CharacterController: React.FC = ({rigidBody}) => {
     mines,
     setMines,
     cooldowns,
+    playerRigidBody,
   } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -123,7 +124,7 @@ const CharacterController: React.FC = ({rigidBody}) => {
         setAnimationState(AnimationState.Idle);
       }, 1000);
 
-      rigidBody.current.applyImpulse(
+      playerRigidBody.current.applyImpulse(
         new THREE.Vector3(impulse.x, speed * 75, impulse.z)
       );
     }
@@ -146,11 +147,11 @@ const CharacterController: React.FC = ({rigidBody}) => {
 
     let newPos; // Declare newPos outside the if block
 
-    if (rigidBody.current) {
+    if (playerRigidBody.current) {
       newPos = new THREE.Vector3(
-        rigidBody.current.translation().x + impulse.x,
-        rigidBody.current.translation().y,
-        rigidBody.current.translation().z + impulse.z
+        playerRigidBody.current.translation().x + impulse.x,
+        playerRigidBody.current.translation().y,
+        playerRigidBody.current.translation().z + impulse.z
       );
     } else {
       // Handle the case where rigidBody.current is null
@@ -158,10 +159,10 @@ const CharacterController: React.FC = ({rigidBody}) => {
     }
 
     if (newPos) {
-      rigidBody.current.setTranslation(newPos, true);
+      playerRigidBody.current.setTranslation(newPos, true);
     }
 
-    rigidBody.current.setTranslation(newPos, true);
+    playerRigidBody.current.setTranslation(newPos, true);
 
     updateAnimationState(
       forwardPressed,
@@ -182,10 +183,10 @@ const CharacterController: React.FC = ({rigidBody}) => {
       adjustZoom = { x: 0, y: 0, z: 0 };
     }
 
-    if (controls.current && rigidBody.current) {
+    if (controls.current && playerRigidBody.current) {
       const cameraDistanceY = window.innerWidth < 1024 ? 10 : 8;
       const cameraDistanceZ = window.innerWidth < 1024 ? 14 : 12;
-      const playerWorldPos = vec3(rigidBody.current.translation());
+      const playerWorldPos = vec3(playerRigidBody?.current.translation());
       controls.current.setLookAt(
         playerWorldPos.x + 1 + adjustZoom.x,
         playerWorldPos.y + cameraDistanceY + 7 + adjustZoom.y,
@@ -198,7 +199,7 @@ const CharacterController: React.FC = ({rigidBody}) => {
     }
 
     if (isUsingSearch && firstPerson.current) {
-      const playerWorldPos = vec3(rigidBody.current.translation());
+      const playerWorldPos = vec3(playerRigidBody.current.translation());
       // Define the base aim point, which could be directly in front of the camera
       let aimX = playerWorldPos.x + 2.25;
       let aimY = playerWorldPos.y + 5.25; // Base elevation
@@ -230,7 +231,7 @@ const CharacterController: React.FC = ({rigidBody}) => {
   const handleUseItem = () => {
     if (skillLPressed && !isCoding && !isInteracting && !useItemCooldown) {
       // Get the current position of the player
-      const currentPosition = vec3(rigidBody.current.translation());
+      const currentPosition = vec3(playerRigidBody.current.translation());
 
       // Create a new mine object
       const newMine = {
@@ -259,7 +260,7 @@ const CharacterController: React.FC = ({rigidBody}) => {
       {isUsingSearch && <CameraControls ref={firstPerson} />}
       <RigidBody
         name="player"
-        ref={rigidBody}
+        ref={playerRigidBody}
         colliders={false}
         linearDamping={10}
         position={[2, 3, 2]}
@@ -282,10 +283,10 @@ const CharacterController: React.FC = ({rigidBody}) => {
               1, // radius
               1, // height
             ]}
-            position={[1, 4, 4]}
+            position={[0, 4, 0]}
           />
         </group>
-        <mesh castShadow position={[0.5, 4, 4.3]} scale={[1, 0.1, 0.75]}>
+        <mesh castShadow position={[-0.5, 4, 0.5]} scale={[1, 0.1, 0.75]}>
           <sphereGeometry args={[0.8, 32, 32]} />
           <meshStandardMaterial transparent={true} opacity={0} />
         </mesh>

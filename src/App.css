@@ -54,3 +54,11 @@
 .p-menuitem-link .p-steps-title{
   color: white;
 }
+#level-preview-container {
+  backdrop-filter: blur(16px);
+}
+
+.setting-dropdown .p-dropdown-label {
+  color: white; 
+  padding: 16px;
+}
