@@ -27,7 +27,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ chatMessages, newMessage, setNe
 
     return (
         <div className='w-full h-full bg-white relative'>
-            <h1 className="text-2xl p-4 bg-blue-400 text-white">แชท/แจ้งเตือน</h1>
+            <h1 className="text-2xl p-4 bg-blue-400 text-white">Message/Notification</h1>
             <div className="p-4 overflow-auto text-black" style={{ maxHeight: '300px' }}>
                 {chatMessages.map((msg, index) => (
                     <div key={index} className='mb-2 flex gap-1'>
@@ -43,7 +43,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ chatMessages, newMessage, setNe
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder='พิมพ์ข้อความของคุณ...'
+                    placeholder='Type your message...'
                     className='w-full h-10 px-2 border-2 focus:outline-none focus:border-blue-200'
                 />
                 <button onClick={sendMessage} className='bg-blue-400 text-white px-4 py-2 ml-2'>

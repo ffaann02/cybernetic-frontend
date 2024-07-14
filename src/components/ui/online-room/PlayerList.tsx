@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { RoomPlayer } from '../../../pages/OnlineRoom';
+import { Friend, RoomPlayer } from '../../../pages/OnlineRoom';
 import { FaCrown, FaPlay } from "react-icons/fa";
 import { useAuth } from '../../../hooks/useAuth';
 import { BiLogOut } from "react-icons/bi";
@@ -12,7 +12,7 @@ interface PlayerListProps {
     owner: string;
     toggleReadyStatus: () => void;
     readyStatus: boolean;
-    friends: string[];  // Add a new prop for the friend list
+    friends: Friend[];  // Add a new prop for the friend list
 }
 
 const PlayerList: React.FC<PlayerListProps> = ({ players, maxPlayer, minPlayer, owner, toggleReadyStatus, readyStatus, friends }) => {
@@ -34,7 +34,7 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, maxPlayer, minPlayer, 
     return (
         <div>
             <div className=''>
-                <h2 className="text-2xl text-white bg-blue-400 p-4">ผู้เล่น</h2>
+                <h2 className="text-2xl text-white bg-blue-400 p-4">Players</h2>
                 <ul>
                     {Array.from({ length: maxPlayer }, (_, index) => {
                         const player = playerArray[index];
@@ -49,8 +49,8 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, maxPlayer, minPlayer, 
                                     </div>
                                     <div>
                                         {player.Status === "Ready"
-                                            ? <p className='bg-green-400 px-2 text-white'>พร้อม</p>
-                                            : <p className='bg-orange-400 px-2 text-white'>รอก่อน</p>}
+                                            ? <p className='bg-green-400 px-2 text-white'>Ready</p>
+                                            : <p className='bg-orange-400 px-2 text-white'>Not Ready</p>}
                                     </div>
                                 </div>
                             </li>
@@ -61,7 +61,7 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, maxPlayer, minPlayer, 
                                         <p className='my-auto'>-</p>
                                     </div>
                                     <div>
-                                        <p className='bg-gray-400 px-2 text-white'>ว่าง</p>
+                                        {/* <p className='bg-gray-400 px-2 text-white'>Empty</p> */}
                                     </div>
                                 </div>
                             </li>
@@ -71,16 +71,19 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, maxPlayer, minPlayer, 
             </div>
 
             <div className=''>
-                <h2 className="text-2xl text-white bg-blue-400 p-4 mt-8">เพื่อน</h2>
+                <h2 className="text-2xl text-white bg-blue-400 p-4 mt-8">Friends</h2>
                 <div className="overflow-auto text-black" style={{ maxHeight: '200px' }}>
                     {friends.map((friend, index) => (
                         <div key={index} className='bg-white border-y-[1px] border-slate-100 py-1 px-4'>
                             <div>
                                 <div className='flex gap-2 justify-between'>
-                                    <p className='my-auto'>{friend}</p>
-                                    <div className='flex gap-1 bg-blue-200 text-blue-800 text-sm px-2 rounded-md'>
-                                        <span className='my-auto'>ส่งคำเชิญ</span>
-                                        <MdMail className='my-auto'/>
+                                    <div className='flex'>
+                                        <p className='my-auto'>{friend.Name}</p>
+                                        <p className={`my-auto ml-1 ${friend.Status === "online" ? "text-green-500" : "text-slate-600" }`}>({friend.Status})</p>
+                                    </div>
+                                    <div className={`flex gap-1 ${friend.Status === "online" ? "bg-blue-200 text-blue-800" : "bg-slate-200 text-slate-600" }  text-sm px-2 rounded-md`}>
+                                        <span className='my-auto'>invite</span>
+                                        <MdMail className='my-auto' />
                                     </div>
                                 </div>
                             </div>
