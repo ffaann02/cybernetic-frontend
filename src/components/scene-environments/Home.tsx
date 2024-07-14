@@ -274,14 +274,14 @@ const itemSpin = [
 const reactLightPosY = [0.48, 1.48, 2.48, 3.48, 4.48];
 
 export const HomeEnvironment = () => {
-  const { camera } = useContext(GameContext);
+  // const { camera } = useContext(GameContext);
 
   // Add this inside your component or as a separate hook if needed
   const backgroundTexture = useLoader(TextureLoader, '/images/sky.jpg');
 
   return (
     <>
-      {camera === 2 && <OrbitControls />}
+      {/* {camera === 2 && <OrbitControls />} */}
 
       {/* Background */}
       <mesh scale={[5, 5, -5]} position={[60, 100, 80]}> 
@@ -347,8 +347,6 @@ export const HomeEnvironment = () => {
       {itemSpin.map((item, index) => (
         <ItemWithUrlSpin key={index} item={item} sceneName="home" />
       ))}
-
-      /
     </>
   );
 };

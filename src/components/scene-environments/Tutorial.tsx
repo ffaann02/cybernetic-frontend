@@ -2,38 +2,39 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import { Home } from "../../map/Home";
 import { Item } from "./shared/Item";
 import { RigidBody } from "@react-three/rapier";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import Wall from "./shared/Wall";
 import { ItemWithUrl } from "./shared/ItemWithUrl";
 import Computer from "./shared/Computer";
 import { degreeNumberToRadian } from "../../utils";
 import { Tutorial } from "../../map/Tutorial";
+import FloatingCheckpoint from "./shared/FloatingCheckpoint";
+import { Mine } from "./shared/Mine";
 
 const items = [
   {
     name: "Arrow",
-    position: [10, 0, 0],
+    position: [-5, 7, 4],
     rotation: -45,
     fileType: "glb",
   },
   {
     name: "Arrow",
 
-    position: [2, 0, 0],
+    position: [-5.5, 10, -5],
     rotation: 1,
     fileType: "glb",
   },
   {
     name: "Arrow",
-
-    position: [2, 0, 3],
+    position: [5, 0, -5],
     rotation: 45,
     fileType: "glb",
   },
   {
     name: "Arrow",
-    position: [2, 0, 2],
+    position: [5, 2.5, 4],
     rotation: 2,
     fileType: "glb",
   },
@@ -50,9 +51,11 @@ const computer1 = {
     "/models/map_object/material_1_baseColor.png",
   ],
 };
+export const TutorialEnvironment = ({ setHitCheckpoints }) => {
+  useEffect(() => {}, []);
 
-export const TutorialEnvironment = () => {
-  const { camera, currentHit, setCurrentHit } = useContext(GameContext);
+  const { camera, currentHit, setCurrentHit, mines, setMines } =
+    useContext(GameContext);
   return (
     <>
       <Environment preset="dawn" environmentIntensity={0.5} />
@@ -69,30 +72,24 @@ export const TutorialEnvironment = () => {
         shadow-camera-top={20}
         shadow-camera-bottom={-20}
       />
-
       {items.map((item, index) => (
-        <RigidBody
-          name="item"
-          lockTranslations
-          lockRotations
-          scale={[0.5, 0.5, 0.5]}
-          position={item.position}
-          rotation={[
-            degreeNumberToRadian(90),
-            degreeNumberToRadian(45),
-            degreeNumberToRadian(0),
-          ]}
-        >
-          <Item item={item} key={index} type="check_point" />
-        </RigidBody>
+        <FloatingCheckpoint
+          item={item}
+          index={index}
+          setHitCheckpoints={setHitCheckpoints}
+        />
       ))}
 
       <Tutorial />
 
+      {mines.map((mine, index) => (
+        <Mine mine={mine} index={index} setMines={setMines} />
+      ))}
+
       <RigidBody
         colliders="trimesh"
         type="fixed"
-        name="floor"
+        name="computer"
         position={[-10, 0, -7]}
         rotation={[
           degreeNumberToRadian(-90),

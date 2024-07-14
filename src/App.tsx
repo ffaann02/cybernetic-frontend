@@ -19,6 +19,7 @@ import Level1 from "./scene/GamePlay/Level1";
 import Level2 from "./scene/GamePlay/Level2";
 import Level3 from "./scene/GamePlay/Level3";
 import { LevelProvider } from "./contexts/SceneContext/LevelContext";
+import Level1DataLab from "./scene/GamePlay/Level1-DataLab";
 import TestEnemy from "./scene/TestEnemy";
 import { SettingProvider } from "./contexts/SettingContext";
 function App() {
@@ -28,8 +29,8 @@ function App() {
     <>
       <GameProvider>
         <SettingProvider>
-          <div className="w-full min-h-screen flex flex-col font-ibm relative">
-            {showDebugTools && <DebugToolsBar />}
+        <div className="w-full min-h-screen flex flex-col font-ibm relative overflow-hidden">
+          {showDebugTools && <DebugToolsBar />}
             <Router>
               <GlobalGameUI />
               <Routes>
@@ -46,7 +47,7 @@ function App() {
                             <Scene title="test" scene={<Test />} />
                             <Scene title="test-enemy" scene={<TestEnemy />} />
                             <Scene title="level-selection" scene={<LevelSelection />} />
-                            <Scene title="game-level-1" scene={<Level1 />} />
+                            <Scene title="game-level-1" scene={<Level1DataLab/>} />
                             <Scene title="game-level-2" scene={<Level2 />} />
                             <Scene title="game-level-3" scene={<Level3 />} />
                           </SceneRouter>

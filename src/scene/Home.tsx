@@ -10,7 +10,7 @@ import HomeMenu from "../components/ui/main-menu/HomeMenu";
 interface HomeProps { }
 
 const Home: React.FC<HomeProps> = () => {
-  const { debug, camera } = useContext(GameContext);
+  const { debug } = useContext(GameContext);
 
   const cameraRef = useRef<any>(null);
 

@@ -1,11 +1,12 @@
 import {
   CameraControls,
   KeyboardControls,
+  OrbitControls,
   useKeyboardControls,
 } from "@react-three/drei";
 import Character2D from "../game_object/Character2D";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useContext, useState, useMemo, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";
 import * as THREE from "three";
 import { GameContext } from "../contexts/GameContext";
@@ -16,26 +17,40 @@ import {
 import useAudio from "../hooks/useAudio";
 
 export enum Controls {
-  forward = 'forward',
-  backward = 'backward',
-  left = 'left',
-  right = 'right',
-  jump = 'jump',
-  coding = 'coding',
-  interact = 'interact',
-  ESC = 'ESC'
+  forward = "forward",
+  backward = "backward",
+  left = "left",
+  right = "right",
+  jump = "jump",
+  coding = "coding",
+  interact = "interact",
+  ESC = "ESC",
+  L = "L",
+  E = "E",
 }
 
 const CharacterController: React.FC = () => {
   const controls = useRef<any>(null);
+  const firstPerson = useRef<any>(null);
   const character = useRef<any>(null);
-  // const rigidBody = useRef<any>(null);
-  const { playerRigidBody } = useContext(GameContext);
   const isOnFloor = useRef(true);
   const jumpCooldown = useRef(false);
 
-  const { speed, camera, isCoding, setIsCoding, currentHit, isInteracting, setIsInteracting } =
-    useContext(GameContext);
+  const {
+    speed,
+    currentCamera,
+    isCoding,
+    setIsCoding,
+    currentHit,
+    isInteracting,
+    setIsInteracting,
+    isUsingSearch,
+    setIsUsingSearch,
+    mines,
+    setMines,
+    cooldowns,
+    playerRigidBody,
+  } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
@@ -49,8 +64,24 @@ const CharacterController: React.FC = () => {
   const rightPressed = useKeyboardControls((state) => state[Controls.right]);
 
   const codingPressed = useKeyboardControls((state) => state[Controls.coding]);
-  const interactPressed = useKeyboardControls((state) => state[Controls.interact]);
+  const interactPressed = useKeyboardControls(
+    (state) => state[Controls.interact]
+  );
   const escPressed = useKeyboardControls((state) => state[Controls.ESC]);
+  const skillLPressed = useKeyboardControls((state) => state[Controls.L]);
+
+  const rotateLeftPressed = useKeyboardControls(
+    (state) => state[Controls.left]
+  );
+  const rotateRightPressed = useKeyboardControls(
+    (state) => state[Controls.right]
+  );
+  const rotateUpPressed = useKeyboardControls(
+    (state) => state[Controls.forward]
+  ); // Assuming 'forward' is used for rotating up
+  const rotateDownPressed = useKeyboardControls(
+    (state) => state[Controls.backward]
+  );
 
   const { animationState, setAnimationState, updateAnimationState } =
     useCharacterAnimation();
@@ -59,119 +90,191 @@ const CharacterController: React.FC = () => {
   const [codingCooldown, setCodingCooldown] = useState(false);
 
   const handleMovement = (delta: number) => {
-    if (playerRigidBody && playerRigidBody.current) {
-      const onAirFraction = isOnFloor.current ? 1 : 0.3;
+    const onAirFraction = isOnFloor.current ? 1 : 0.3;
 
-      const impulse = new THREE.Vector3();
+    const impulse = new THREE.Vector3();
 
-      if (forwardPressed && !isCoding && !isInteracting) {
-        impulse.z -= speed * delta * onAirFraction;
-      }
-      if (backwardPressed && !isCoding && !isInteracting) {
-        impulse.z += speed * delta * onAirFraction;
-      }
-      if (leftPressed && !isCoding && !isInteracting) {
-        setDirection("left");
-        impulse.x -= speed * delta * onAirFraction;
-      }
+    if (forwardPressed && !isCoding && !isInteracting) {
+      impulse.z -= speed * delta * onAirFraction;
+    }
+    if (backwardPressed && !isCoding && !isInteracting) {
+      impulse.z += speed * delta * onAirFraction;
+    }
+    if (leftPressed && !isCoding && !isInteracting) {
+      setDirection("left");
+      impulse.x -= speed * delta * onAirFraction;
+    }
 
-      if (rightPressed && !isCoding && !isInteracting) {
-        setDirection("right");
-        impulse.x += speed * delta * onAirFraction;
-      }
+    if (rightPressed && !isCoding && !isInteracting) {
+      setDirection("right");
+      impulse.x += speed * delta * onAirFraction;
+    }
 
-      if (jumpPressed && !jumpCooldown.current && isOnFloor.current) {
-        jumpCooldown.current = true;
-        jumpSound();
-        setAnimationState(AnimationState.Jumping);
-        setTimeout(() => {
-          jumpCooldown.current = false;
-          setAnimationState(AnimationState.Idle);
-        }, 1000);
+    if (
+      jumpPressed &&
+      !jumpCooldown.current &&
+      isOnFloor.current &&
+      !isUsingSearch
+    ) {
+      jumpCooldown.current = true;
+      jumpSound();
+      setAnimationState(AnimationState.Jumping);
+      setTimeout(() => {
+        jumpCooldown.current = false;
+        setAnimationState(AnimationState.Idle);
+      }, 1000);
 
-        playerRigidBody.current.applyImpulse(
-          new THREE.Vector3(impulse.x, speed * 75, impulse.z)
-        );
-      }
+      playerRigidBody.current.applyImpulse(
+        new THREE.Vector3(impulse.x, speed * 75, impulse.z)
+      );
+    }
 
-      if (codingPressed && !codingCooldown && currentHit === "computer") {
-        setCodingCooldown(true);
-        setIsCoding(prev => !prev);
-        setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
-      }
+    if (codingPressed && !codingCooldown && currentHit === "computer") {
+      setCodingCooldown(true);
+      setIsCoding((prev) => !prev);
+      setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
+    }
 
-      if (codingPressed && !codingCooldown && currentHit === "assistant-bot") {
-        setCodingCooldown(true);
-        setIsInteracting(prev => !prev);
-        setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
-      }
-      if (escPressed) {
-        setIsCoding(false);
-        setIsInteracting(false);
-      }
+    if (codingPressed && !codingCooldown && currentHit === "assistant-bot") {
+      setCodingCooldown(true);
+      setIsInteracting((prev) => !prev);
+      setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
+    }
+    if (escPressed) {
+      setIsCoding(false);
+      setIsInteracting(false);
+    }
 
-      const newPos = new THREE.Vector3(
+    let newPos; // Declare newPos outside the if block
+
+    if (playerRigidBody.current) {
+      newPos = new THREE.Vector3(
         playerRigidBody.current.translation().x + impulse.x,
         playerRigidBody.current.translation().y,
         playerRigidBody.current.translation().z + impulse.z
       );
-
-      playerRigidBody.current.setTranslation(newPos, true);
-
-      updateAnimationState(
-        forwardPressed,
-        backwardPressed,
-        leftPressed,
-        rightPressed,
-        jumpPressed,
-        isOnFloor.current,
-        jumpCooldown.current
-      );
+    } else {
+      // Handle the case where rigidBody.current is null
+      console.error("rigidBody.current is null");
     }
+
+    if (newPos) {
+      playerRigidBody.current.setTranslation(newPos, true);
+    }
+
+    playerRigidBody.current.setTranslation(newPos, true);
+
+    updateAnimationState(
+      forwardPressed,
+      backwardPressed,
+      leftPressed,
+      rightPressed,
+      jumpPressed,
+      isOnFloor.current,
+      jumpCooldown.current
+    );
   };
 
   const cameraFollow = () => {
     let adjustZoom = { x: 0, y: 0, z: 0 };
     if (isCoding || isInteracting) {
       adjustZoom = { x: 1, y: -4, z: -4 };
-    }
-    else {
+    } else {
       adjustZoom = { x: 0, y: 0, z: 0 };
     }
 
-    if (controls.current) {
+    if (controls.current && playerRigidBody.current) {
       const cameraDistanceY = window.innerWidth < 1024 ? 10 : 8;
       const cameraDistanceZ = window.innerWidth < 1024 ? 14 : 12;
       const playerWorldPos = vec3(playerRigidBody?.current.translation());
       controls.current.setLookAt(
         playerWorldPos.x + 1 + adjustZoom.x,
-        playerWorldPos.y + cameraDistanceY + 5 + adjustZoom.y,
+        playerWorldPos.y + cameraDistanceY + 7 + adjustZoom.y,
         playerWorldPos.z + cameraDistanceZ + 3 + adjustZoom.z,
         playerWorldPos.x + 1 + adjustZoom.x,
-        playerWorldPos.y - 2,
+        playerWorldPos.y + 3,
         playerWorldPos.z - 8 + adjustZoom.z,
         true
       );
+    }
+
+    if (isUsingSearch && firstPerson.current) {
+      const playerWorldPos = vec3(playerRigidBody.current.translation());
+      // Define the base aim point, which could be directly in front of the camera
+      let aimX = playerWorldPos.x + 2.25;
+      let aimY = playerWorldPos.y + 5.25; // Base elevation
+      let aimZ = playerWorldPos.z + 4.5; // Base depth
+
+      const cameraRotationSpeed = 2; // Adjust this value as needed for sensitivity
+
+      // Adjust aim point based on keyboard input
+      if (rotateLeftPressed) {
+        aimX -= cameraRotationSpeed;
+      }
+      if (rotateRightPressed) {
+        aimX += cameraRotationSpeed;
+      }
+      if (rotateUpPressed) {
+        aimY += cameraRotationSpeed;
+      }
+      if (rotateDownPressed) {
+        console.log("hello down");
+        aimY -= cameraRotationSpeed;
+      }
+
+      // Use setLookAt to orient the camera towards the new aim point
+      firstPerson.current.setLookAt(aimX, aimY, aimZ, aimX, aimY, aimZ, true);
+    }
+  };
+
+  const [useItemCooldown, setUseItemCooldown] = useState(false);
+  const handleUseItem = () => {
+    if (skillLPressed && !isCoding && !isInteracting && !useItemCooldown) {
+      // Get the current position of the player
+      const currentPosition = vec3(playerRigidBody.current.translation());
+
+      // Create a new mine object
+      const newMine = {
+        position: currentPosition,
+        // Add any other properties you need for the mine
+      };
+
+      // Update the mines state to include the new mine
+      setMines((prevMines) => [...prevMines, newMine]);
+      setUseItemCooldown(true); // Start cooldown
+      setTimeout(() => setUseItemCooldown(false), 1000); // Reset cooldown after 1 second
     }
   };
 
   useFrame((_, delta) => {
     cameraFollow();
     handleMovement(delta);
+    handleUseItem();
   });
 
   return (
     <group>
-      {camera === 1 && <CameraControls ref={controls} />}
+      {currentCamera === 1 && !isUsingSearch && (
+        <CameraControls ref={controls} />
+      )}
+      {isUsingSearch && <CameraControls ref={firstPerson} />}
       <RigidBody
         name="player"
         ref={playerRigidBody}
         colliders={false}
         linearDamping={10}
-        position={[2, -2, 2]}
+        position={[2, 3, 2]}
         lockRotations
         mass={50}
         gravityScale={9.8}
+        onCollisionEnter={({ other }) => {
+          if (
+            other.rigidBodyObject &&
+            other.rigidBodyObject.name.includes("checkpoint")
+          ) {
+            console.log(other.rigidBodyObject.name);
+          }
+        }}
       >
         <group ref={character}>
           <Character2D direction={direction} animation={animationState} />
