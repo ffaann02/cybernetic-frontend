@@ -12,19 +12,6 @@ interface HomeProps { }
 const Home: React.FC<HomeProps> = () => {
   const { debug } = useContext(GameContext);
 
-  const cameraRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (cameraRef.current) {
-      console.log(cameraRef.current.position);
-    }
-  }, [cameraRef?.current?.position]);
-
-  const displayCameraPosition = () => {
-    console.log(cameraRef.current.position);
-  }
-
-
   return (
     <>
       <Canvas

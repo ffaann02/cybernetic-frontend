@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { GameContext } from '../contexts/GameContext';
 import EnemyFollow2D from '../game_object/enemy/EnemyFollow2D';
 import { EnemyAnimationState, useEnemyAnimation } from '../hooks/useEnemyAnimation';
+import Spider2D from '../game_object/enemy/Spider2D';
 
 interface Props {
     speed: number;
@@ -12,9 +13,10 @@ interface Props {
     showArea?: boolean;
     idleAreaRadius: number;
     chasingAreaRadius: number;
+    texture?: string;
 }
 
-const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = false, idleAreaRadius, chasingAreaRadius }) => {
+const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = false, idleAreaRadius, chasingAreaRadius, texture='slime' }) => {
 
     const { playerRigidBody } = useContext(GameContext);
     const { animationState, setAnimationState, updateAnimationState } = useEnemyAnimation();
@@ -27,6 +29,7 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
 
     const moveToPlayer = (delta: number) => {
         if (playerRigidBody && playerRigidBody.current) {
+            setAnimationState(EnemyAnimationState.Running);
             updateAnimationState(true);
             const playerPosition = vec3(playerRigidBody.current.translation());
             const enemyPosition = rigidBody.current.translation();
@@ -87,13 +90,16 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
                 moveToPlayer(delta);
                 if (enemyPosition2D.distanceTo(playerPosition2D) < 1) {
                     console.log('Player reached')
+                    setAnimationState(EnemyAnimationState.Idle);
                     return;
                 }
             }
             else {
+                setAnimationState(EnemyAnimationState.Idle);
                 if (enemyPosition2D.distanceTo(playerPosition2D) < chasingAreaRadius) {
                     if (enemyPosition2D.distanceTo(playerPosition2D) < 1) {
                         console.log('Player reached')
+                        setAnimationState(EnemyAnimationState.Idle);
                         return;
                     }
                     moveToPlayer(delta);
@@ -140,10 +146,11 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
                 gravityScale={9.8}
                 linearDamping={10}
                 onCollisionEnter={({ other }) => {
-                    console.log(other.rigidBodyObject?.name);
                 }}>
                 <group ref={enemy}>
-                    <EnemyFollow2D animation={animationState} />
+                    {texture === 'slime' ? <EnemyFollow2D animation={animationState} /> : <Spider2D animation={animationState} />}
+                    {/* <EnemyFollow2D animation={animationState} />
+                    <Spider2D animation={animationState} /> */}
                     <CapsuleCollider
                         args={[
                             0.25, // height
@@ -151,13 +158,10 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
                         ]}
                         position={[0, -3.6, 0]}
                     />
-                    {/* <mesh
-                        key="enemy_follow"
-                        // position={[0, 0.25, 0]}
-                        scale={[1, 1, 1]}>
-                        <boxGeometry args={[1, 1, 1]} />
-                        <meshStandardMaterial color="hotpink" />
-                    </mesh> */}
+                    <mesh castShadow position={[-1, -2, 0.1]} scale={[1, 0.1, 0.75]}>
+                        <sphereGeometry args={[0.8, 32, 32]} />
+                        <meshStandardMaterial transparent={true} opacity={0} />
+                    </mesh>
                 </group>
             </RigidBody>
             {activeArea}
