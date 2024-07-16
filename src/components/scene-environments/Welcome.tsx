@@ -3,7 +3,7 @@ import { Item } from "./shared/Item";
 import { RigidBody } from "@react-three/rapier";
 import { useContext } from "react";
 import { GameContext } from "../../contexts/GameContext";
-import { Welcome } from "../../map/Welcome";
+import { Welcome } from "../../non-gameplay-scene/WelcomeMap";
 
 const items = [
   {

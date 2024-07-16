@@ -4,7 +4,7 @@ import {
   OrbitControls,
   useKeyboardControls,
 } from "@react-three/drei";
-import Character2D from "../game_object/Character2D";
+import Character2D from "../animation/Character2D";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useContext, useState, useMemo, useEffect } from "react";
 import { CapsuleCollider, RigidBody, vec3 } from "@react-three/rapier";

@@ -165,6 +165,16 @@ const ToolsBar: React.FC = () => {
     setCharacter(newCharacter);
   };
 
+  const colorList = [
+    "#CE8E71",
+    "#DFA98F",
+    "#E9C8BC",
+    "#F6CDAA",
+    "#D69D70",
+    "#B37344",
+    "#88583B",
+  ];
+
   return (
     <div className="w-full h-full">
       <div className="w-full flex gap-x-4 overflow-x-scroll scrollbar-hide">
@@ -184,7 +194,7 @@ const ToolsBar: React.FC = () => {
         ))}
       </div>
       <div className="grid grid-cols-4 mt-6 gap-4 pr-6">
-        {currentTool.choices.map((choice: Choice) => (
+        {/* {currentTool.choices.map((choice: Choice) => (
           <button
             key={choice.id}
             onClick={() => chooseChoice(choice)}
@@ -194,12 +204,26 @@ const ToolsBar: React.FC = () => {
                 : "border-white/20 bg-white/20"
             } px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
           >
-            <img
-              src={choice.image}
-              alt={choice.name}
-              className="object-cover"
-            />
+            <div className="bg-[#]"></div>
             <h2 className="mt-2">{choice.name}</h2>
+          </button>
+        ))} */}
+        {colorList.map((color,index) => (
+          <button
+            key={color}
+            onClick={() => chooseChoice({ id: 0, name: color, image: "" })}
+            className={`col-span-1 w-full h-full border-4 rounded-lg ${
+              currentChoices[currentTool.name]?.name === color
+                ? "border-cyan-200 bg-white/40"
+                : "border-white/20 bg-white/20"
+            } px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
+          >
+            <div
+              className="w-20 h-20 rounded-full mx-auto"
+              style={{ backgroundColor: color }}
+            >
+            </div>
+            <p className="mt-3 text-white">สีผิวที่ {index+1}</p>
           </button>
         ))}
       </div>
@@ -208,3 +232,11 @@ const ToolsBar: React.FC = () => {
 };
 
 export default ToolsBar;
+
+{
+  /* <img
+              src={choice.image}
+              alt={choice.name}
+              className="object-cover"
+            /> */
+}

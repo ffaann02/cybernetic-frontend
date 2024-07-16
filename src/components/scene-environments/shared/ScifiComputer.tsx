@@ -4,20 +4,19 @@ import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import { Item } from "./Item";
 
-const ScifiComputer = () => {
+const ScifiComputer = ({
+  position,
+  rotation
+}) => {
   const { currentHit, setCurrentHit } = useContext(GameContext);
 
   return (
     <RigidBody
       colliders="trimesh"
       type="fixed"
+      position={position}
+      rotation={rotation}
       name="computer"
-      position={[-22, 0, 12]}
-      rotation={[
-        degreeNumberToRadian(-90),
-        degreeNumberToRadian(0),
-        degreeNumberToRadian(-30),
-      ]}
       onCollisionEnter={({ other }) => {
         if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
           if (setCurrentHit) {

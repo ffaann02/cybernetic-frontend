@@ -726,7 +726,7 @@ const AiModelComputer = ({ setIsCoding }: { setIsCoding: any }) => {
                       </div>
                     </div>
                   )}
-                  {activeIndex === 3 && !isTraining && (
+                  {activeIndex === 3 && isTraining && (
                     <div className="text-white px-20 mt-2 w-full">
                       <div className="text-xl mt-4 bg-white/30 rounded-lg px-4 py-2 pb-4 border">
                         <h3 className="">Split Dataset Ratio</h3>
@@ -755,7 +755,7 @@ const AiModelComputer = ({ setIsCoding }: { setIsCoding: any }) => {
                       </div>
                     </div>
                   )}
-                  {activeIndex === 3 && isTraining && (
+                  {activeIndex === 3 && !isTraining && (
                     <div className="px-20 py-10">
                       <div className="bg-white/50 w-full h-full border rounded-lg pt-2 px-6 pb-4 flex flex-col">
                         <ProgressSpinner className="mx-auto p-20" />
@@ -767,7 +767,7 @@ const AiModelComputer = ({ setIsCoding }: { setIsCoding: any }) => {
                     </div>
                   )}
                   <div className="mt-2 ml-20">
-                    <button
+                    {/* <button
                       className="px-4 py-2 bg-cyan-400/50 text-xl rounded-lg border flex"
                       onClick={() => {
                         setIsTraining((prev) => !prev);
@@ -775,7 +775,7 @@ const AiModelComputer = ({ setIsCoding }: { setIsCoding: any }) => {
                     >
                       <p className="pi pi-check-circle my-auto mr-2 pb-0.5 text-xl text-green-400"></p>
                       <p className="my-auto">Train AI</p>
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               )}

@@ -1,5 +1,5 @@
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
-import Assistant2D from "../game_object/AssistantRobot2D";
+import Assistant2D from "../game/shared/interaction/AssistantRobot2D";
 import { useContext, useState } from "react";
 import { GameContext } from "../contexts/GameContext";
 

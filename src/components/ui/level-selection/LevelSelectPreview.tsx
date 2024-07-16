@@ -3,7 +3,7 @@ import { LevelDetail } from '../../../contexts/SceneContext/LevelContext';
 import { GameContext } from '../../../contexts/GameContext'
 import { MdGamepad } from "react-icons/md";
 import { GiPreviousButton, GiNextButton } from "react-icons/gi";
-import { UserLevel } from '../../../scene/LevelSelection';
+import { UserLevel } from '../../../non-gameplay-scene/LevelSelection';
 import { RiSettings3Fill } from "react-icons/ri";
 import { TiHome } from "react-icons/ti";
 

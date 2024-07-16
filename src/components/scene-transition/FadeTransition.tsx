@@ -11,7 +11,7 @@ interface FadeTransitionProps {
 
 const FadeTransition: React.FC<FadeTransitionProps> = ({
     loadingDescription,
-    tipMessage,
+    tipMessage = "Did you know that you can make enemy robots evolve? If your bomb trap matches its power source",
     fadeDuration = 500,
     visibleDuration = 2000,
     messages = ["Loading resources...", "Please wait...", "Starting the game..."]
@@ -42,7 +42,7 @@ const FadeTransition: React.FC<FadeTransitionProps> = ({
 
     return (
         <div
-            className="fixed inset-0 flex items-center justify-center"
+            className="fixed inset-0 flex items-center justify-center z-[100000]"
             style={{
                 background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(${url})`,
                 backgroundSize: 'cover',

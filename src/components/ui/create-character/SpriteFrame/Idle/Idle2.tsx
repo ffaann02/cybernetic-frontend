@@ -1,13 +1,13 @@
 import Body from "../../../../create-character/Body";
-import CharacterHead from "../../../../create-character/CharacterHead";
-import LeftFoot from "../../../../create-character/LeftFoot";
-import LeftHand from "../../../../create-character/LeftHand";
-import LeftTopArm from "../../../../create-character/LeftTopArm";
-import LeftTopLeg from "../../../../create-character/LeftTopLeg";
-import RightFoot from "../../../../create-character/RightFoot";
-import RightHand from "../../../../create-character/RightHand";
-import RightTopArm from "../../../../create-character/RightTopArm";
-import RightTopLeg from "../../../../create-character/RightTopLeg";
+import CharacterHead from "../../../../create-character/Head";
+import LeftFoot from "../../../../create-character/BottomLeftLeg";
+import LeftHand from "../../../../create-character/BottomLeftArm";
+import LeftTopArm from "../../../../create-character/cut/LeftTopArm";
+import LeftTopLeg from "../../../../create-character/TopLeftLeg";
+import RightFoot from "../../../../create-character/cut/RightFoot";
+import RightHand from "../../../../create-character/BottomRightArm";
+import RightTopArm from "../../../../create-character/TopRightArm";
+import RightTopLeg from "../../../../create-character/TopRightLeg";
 
 const Idle2 = () => {
   return (
