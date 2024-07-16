@@ -1,12 +1,18 @@
 import { useContext } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import { InputSwitch } from "primereact/inputswitch";
-import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 
 const DebugToolsBar = () => {
-  const { currentScene, speed, debug, sceneList, camera, cameraList, setGameState } =
-    useContext(GameContext);
+  const {
+    currentScene,
+    speed,
+    debug,
+    sceneList,
+    currentCamera,
+    cameraList,
+    setGameState,
+  } = useContext(GameContext);
 
   const handleDebugChange = (e: any) => {
     if (setGameState) {
@@ -16,13 +22,13 @@ const DebugToolsBar = () => {
 
   const handleSceneChange = (e: any) => {
     if (setGameState) {
-      setGameState((prevState) => ({ ...prevState, currentScene: e.value }));
+      setGameState((prevState) => ({ ...prevState, currentScene: e.target.value }));
     }
   };
 
   const handleCameraChange = (e: any) => {
     if (setGameState) {
-      setGameState((prevState) => ({ ...prevState, camera: e.value }));
+      setGameState((prevState) => ({ ...prevState, camera: e.target.value }));
     }
   };
 
@@ -43,19 +49,35 @@ const DebugToolsBar = () => {
         </div>
         <div className="mt-4 px-4 grid grid-cols-2 gap-y-4">
           <label className="my-auto">Collider</label>
-          <InputSwitch checked={debug} onChange={handleDebugChange} className="ml-auto"/>
+          <InputSwitch
+            checked={debug}
+            onChange={handleDebugChange}
+            className="ml-auto"
+          />
           <label className="my-auto mr-10">Scene</label>
-          <Dropdown
+          <select
             value={currentScene}
-            options={sceneList}
             onChange={handleSceneChange}
-          />
+            className="ml-auto p-2 rounded-lg w-full"
+          >
+            {sceneList.map((scene) => (
+              <option key={scene} value={scene}>
+                {scene}
+              </option>
+            ))}
+          </select>
           <label className="my-auto mr-10">Camera</label>
-          <Dropdown
-            value={camera}
-            options={cameraList}
+          <select
+            value={currentCamera}
             onChange={handleCameraChange}
-          />
+            className="ml-auto w-full p-2 rounded-lg"
+          >
+            {cameraList.map((camera) => (
+              <option key={camera} value={camera}>
+                {camera}
+              </option>
+            ))}
+          </select>
           <label className="my-auto">Speed</label>
           <InputNumber
             min={0}

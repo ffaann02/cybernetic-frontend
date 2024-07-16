@@ -48,8 +48,8 @@ const GlassBridge = ({ row, col, gap = 0.5, position = [0, 0, 0], rotation = [0,
         const greenRowIndex = Math.floor(Math.random() * row);
         for (let j = 0; j < row; j++) {
           column.push({
-            // color: j === greenRowIndex ? "green" : "red",
-            color:"white",
+            color: j === greenRowIndex ? "green" : "red",
+            // color:"white",
             position: [i * (3 + gap), 2, j * (3 + gap)],
             fall: j !== greenRowIndex,
             locked: true,

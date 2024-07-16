@@ -1,7 +1,7 @@
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useState } from "react";
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { HiOutlineArrowRight } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -18,21 +18,20 @@ interface LoginProps {
 
 const loginValidationSchema = object({
   username: string()
-    .min(8, "ชื่อผู้ใช้ขั้นต่ำ 8 ตัวอักษร")
+    .min(8, "Username must be at least 8 characters")
     .max(20)
-    .required("กรุณากรอกชื่อผู้ใช้"),
+    .required("Please enter a username"),
   password: string()
-    .min(8, "รหัสผ่านขั้นต่ำ 8 ตัวอักษร")
+    .min(8, "Password must be at least 8 characters")
     .max(30)
     .matches(
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,30}$/,
-      "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่ พิมพ์เล็ก และตัวเลข"
+      "Password must include uppercase, lowercase, and numbers"
     )
-    .required("กรุณากรอกรหัสผ่าน"),
+    .required("Please enter a password"),
 });
 
 const Login = () => {
-
   const { axiosFetch } = useAxios();
   const { setItem } = useLocalStorage();
   const navigate = useNavigate();
@@ -68,17 +67,14 @@ const Login = () => {
       setLoading(false);
     } catch (err: any) {
       console.log(err);
-      // Error occurred by response
       setLoading(false);
       if (err.response && err.response.status) {
         if (err.response.status === 400) {
-          setErrorMessages(["ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"]);
+          setErrorMessages(["Incorrect username or password"]);
         } else if (err.response.status === 500) {
-          setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+          setErrorMessages(["An error occurred, please try again later"]);
         }
-      }
-      // Error occurred by validation
-      else {
+      } else {
         console.log(err.inner);
         setErrorMessages(err.inner.map((e: any) => e.message));
       }
@@ -87,7 +83,7 @@ const Login = () => {
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (codeResponse) => {
-      console.log("Code Response:", codeResponse); // Inspect this log
+      console.log("Code Response:", codeResponse);
       try {
         const response = await axiosFetch({
           axiosInstance,
@@ -101,9 +97,11 @@ const Login = () => {
       } catch (err: any) {
         if (err.response && err.response.status) {
           if (err.response.status === 400) {
-            setErrorMessages(["อีเมลดังกล่าวได้ลงทะเบียนไว้แล้ว กรุณาใช้ username และ password เข้าสู่ระบบ"]);
+            setErrorMessages([
+              "This email is already registered, please use username and password to login",
+            ]);
           } else if (err.response.status === 500) {
-            setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
+            setErrorMessages(["An error occurred, please try again later"]);
           }
         }
       }
@@ -112,7 +110,7 @@ const Login = () => {
   });
 
   const checkCharacter = async (userId: string, email: string) => {
-    console.log(`userId: ${userId}, email: ${email}`)
+    console.log(`userId: ${userId}, email: ${email}`);
     try {
       const response = await axiosFetch({
         axiosInstance,
@@ -122,12 +120,12 @@ const Login = () => {
           params: { userId: userId },
         },
       });
-      console.log(response.character)
+      console.log(response.character);
       const data = {
         userId: userId,
         email: email,
-        characterName: response.character.characterName
-      }
+        characterName: response.character.characterName,
+      };
       setItem("CYBERNETIC_USER", data);
       navigate("/");
     } catch (err: any) {
@@ -137,25 +135,27 @@ const Login = () => {
           const data = {
             userId: userId,
             email: email,
-          }
+          };
           setItem("CYBERNETIC_USER", data);
           navigate("/create-character");
         } else if (err.response.status === 500) {
-          setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง ไม่สามารถเข้าถึงข้อมูลตัวละครได้ กรุณาลองใหม่อีกครั้ง"]); 
+          setErrorMessages([
+            "An error occurred, unable to access character data, please try again later",
+          ]);
         }
       }
     }
-  }
+  };
 
   return (
-    <div className="w-full flex-grow flex flex-col max-h-screen py-16 2xl:py-24 bg-gradient-to-r from-cyan-400 to-blue-400">
+    <div className="w-full flex-grow flex flex-col max-h-screen py-16 2xl:py-24 bg-gradient-to-r from-blue-400 to-cyan-200">
       <div className="w-full h-full flex flex-grow max-w-6xl mx-auto">
         <div
           className="grid flex-grow grid-cols-12 border-t-2 border-t-cyan-400 rounded-xl
       bg-white/80 shadow-xl shadow-slate-200"
         >
           <div className="col-span-4 px-8 py-8 flex flex-col gap-y-4">
-            <h1 className="text-2xl">ยินดีต้อนรับ</h1>
+            <h1 className="text-2xl text-neutral-500 font-bold">Welcome to Cybernetic</h1>
             <div className="p-inputgroup">
               <span className="p-inputgroup-addon">
                 <i className="pi pi-user"></i>
@@ -206,7 +206,7 @@ const Login = () => {
             >
               {!loading ? (
                 <div className="flex justify-between w-full">
-                  ลงชื่อเข้าสู่ระบบ
+                  Sign In
                   <HiOutlineArrowRight className="text-2xl" />
                 </div>
               ) : (
@@ -219,12 +219,12 @@ const Login = () => {
                       animationDuration=".5s"
                       className=""
                     />
-                    <p className="text-sm my-auto">กำลังประมวลผล</p>
+                    <p className="text-sm my-auto">Processing</p>
                   </div>
                 </div>
               )}
             </Button>
-            <p className="text-center text-slate-500">หรือ</p>
+            <p className="text-center text-slate-500">Or</p>
             <div className="justify-center flex">
               <Button
                 className="bg-neutral-100 font-ibm pt-3 pb-2.5 w-fit
@@ -240,17 +240,17 @@ const Login = () => {
                     src="https://cdn4.iconfinder.com/data/icons/logos-brands-7/512/google_logo-google_icongoogle-512.png"
                     className="w-6 h-6"
                   />
-                  <a className="my-auto">ลงชื่อเข้าสู่ระบบด้วย Google</a>
+                  <a className="my-auto">Sign in with Google</a>
                 </div>
               </Button>
             </div>
             <div className="text-center text-blue-400 mt-2">
-              ยังไม่มีบัญชีผู้ใช้ ?
+              Don't have an account?
               <Link
                 to="/register"
                 className="ml-2 hover:underline hover:text-blue-500 transition-all ease-linear duration-400"
               >
-                สมัครสมาชิก
+                Register
               </Link>
             </div>
             <div className="mt-auto text-center">
@@ -259,8 +259,9 @@ const Login = () => {
           </div>
           <div className="col-span-8 w-full h-full relative">
             <img
-              src="https://images.playground.com/427d12e318b644fbab30098ea303db8c.jpeg"
+              src="/images/login.png"
               className="absolute inset-0 object-cover w-full h-full rounded-r-xl"
+              style={{ objectPosition: "right" }}
             />
           </div>
         </div>

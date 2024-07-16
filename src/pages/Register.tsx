@@ -120,7 +120,9 @@ const Register = () => {
         setLoading(false);
         if (err.response && err.response.status) {
           if (err.response.status === 400) {
-            setErrorMessages(["อีเมลดังกล่าวได้ลงทะเบียนไว้แล้ว กรุณาใช้ username และ password เข้าสู่ระบบ"]);
+            setErrorMessages([
+              "อีเมลดังกล่าวได้ลงทะเบียนไว้แล้ว กรุณาใช้ username และ password เข้าสู่ระบบ",
+            ]);
           } else if (err.response.status === 500) {
             setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"]);
           }
@@ -140,12 +142,12 @@ const Register = () => {
           params: { userId: userId },
         },
       });
-      console.log(response.character)
+      console.log(response.character);
       const data = {
         userId: userId,
         email: email,
-        characterName: response.character.characterName
-      }
+        characterName: response.character.characterName,
+      };
       setItem("CYBERNETIC_USER", data);
       navigate("/");
     } catch (err: any) {
@@ -155,25 +157,28 @@ const Register = () => {
           const data = {
             userId: userId,
             email: email,
-          }
+          };
           setItem("CYBERNETIC_USER", data);
           navigate("/create-character");
         } else if (err.response.status === 500) {
-          setErrorMessages(["เกิดข้อผิดพลาดบางอย่าง ไม่สามารถเข้าถึงข้อมูลตัวละครได้ กรุณาลองใหม่อีกครั้ง"]); 
+          setErrorMessages([
+            "เกิดข้อผิดพลาดบางอย่าง ไม่สามารถเข้าถึงข้อมูลตัวละครได้ กรุณาลองใหม่อีกครั้ง",
+          ]);
         }
       }
     }
-  }
-
+  };
 
   return (
     <div className="w-full flex-grow flex flex-col min-h-screen py-16 2xl:py-14 bg-gradient-to-r from-cyan-400 to-blue-400">
       <div
-        className="grid flex-grow max-w-5xl mx-auto grid-cols-12 border-t-2 border-t-cyan-400 rounded-xl w-full h-full
+        className="grid flex-grow max-w-[85rem] mx-auto grid-cols-12 border-t-2 border-t-cyan-400 rounded-xl w-full h-full
          bg-white/80 shadow-xl shadow-slate-200"
       >
-        <div className="col-span-8 px-14 pt-10 pb-12 flex flex-col gap-y-4">
-          <h1 className="text-2xl">สมัครสมาชิก</h1>
+        <div className="col-span-4 px-14 pt-10 pb-12 flex flex-col gap-y-4">
+          <h1 className="text-2xl text-neutral-500 font-bold">
+            Register a New Account
+          </h1>
           <div className="flex flex-col gap-4">
             <div className="p-inputgroup">
               <span className="p-inputgroup-addon">
@@ -252,12 +257,12 @@ const Register = () => {
           </ul>
           <Button
             className="h-fit font-ibm text-left text-xl py-4 pr-6 hover:pr-3 transition-all 
-                duration-200 ease-linear w-1/2"
+                duration-200 ease-linear"
             onClick={handleRegister}
           >
             {!loading ? (
               <div className="flex justify-between w-full">
-                ลงทะเบียน
+                <p>Register</p>
                 <HiOutlineArrowRight className="text-2xl" />
               </div>
             ) : (
@@ -286,16 +291,17 @@ const Register = () => {
                   src="https://cdn4.iconfinder.com/data/icons/logos-brands-7/512/google_logo-google_icongoogle-512.png"
                   className="w-6 h-6"
                 />
-                <a className="my-auto text-xs">ลงชื่อเข้าสู่ระบบด้วย Google</a>
+                <a className="my-auto text-xs">Sign in with Google</a>
               </div>
             </Button>
             <div className="text-blue-400 mt-4">
-              มีบัญชีผู้ใช้แล้ว ?
+              Already
+              <span className="ml-2">have an account?</span>
               <Link
                 to="/login"
                 className="ml-2 hover:underline hover:text-blue-500 transition-all ease-linear duration-400"
               >
-                ลงชื่อเข้าสู่ระบบ
+                Login
               </Link>
             </div>
           </div>
@@ -303,9 +309,9 @@ const Register = () => {
             <p>Cybernetic 2024.</p>
           </div>
         </div>
-        <div className="col-span-4 w-full h-full relative">
+        <div className="col-span-8 w-full h-full relative">
           <img
-            src="https://lsvp.com/wp-content/uploads/2023/07/ai-inworld-cover.jpg"
+            src="https://cdn.discordapp.com/attachments/764116499840368640/1262078282635935844/Untitled-2.png?ex=6695497e&is=6693f7fe&hm=0df836cd084986e1efe9cd0fc2e96d7b39ea4657274b19a7ddf7ddcd7d0eaf4c&"
             className="absolute inset-0 object-cover w-full h-full rounded-r-xl"
           />
         </div>
