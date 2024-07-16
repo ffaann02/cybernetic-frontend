@@ -3,7 +3,7 @@ import { GameContext } from "../../contexts/GameContext";
 import { LiaRobotSolid } from "react-icons/lia";
 import { MdCancelPresentation, MdCategory } from "react-icons/md";
 import { TbBorderNone } from "react-icons/tb";
-import PlayerMainUI from "./main-ui/PlayerMainUI";
+import PlayerMainUI from "./player-main-ui/PlayerMainUI";
 import { Badge } from "primereact/badge";
 import { BsClipboardData, BsGraphUp } from "react-icons/bs";
 import { PiBrain, PiEggCrack, PiEye } from "react-icons/pi";
