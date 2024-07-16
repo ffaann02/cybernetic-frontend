@@ -16,8 +16,13 @@ import {
   PerspectiveCamera,
   useKeyboardControls,
 } from "@react-three/drei";
+<<<<<<< HEAD:src/game/level1-datalab/scene/Level1-DataLab.tsx
 import { TutorialEnvironment } from "../../tutorial/scene-object/Tutorial";
 import AssistantBotController from "../../../controllers/AssistantBotController";
+=======
+import { TutorialEnvironment } from "../../components/scene-environments/Tutorial";
+import AssistantBotController from "../../controllers/AssistantBotController";
+>>>>>>> origin/dev:src/scene/GamePlay/Level1-DataLab.tsx
 import EnemySimple from "../../game_object/enemy/Spider2D";
 import RobotIdle from "../../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
@@ -26,9 +31,14 @@ import { Message } from "primereact/message";
 import { Sidebar } from "primereact/sidebar";
 import { Level1DataLabEnvironment } from "../scene-object/Level1-DataLab";
 import { MeterGroup } from "primereact/metergroup";
+<<<<<<< HEAD:src/game/level1-datalab/scene/Level1-DataLab.tsx
 import EnemyGuardController from "../../../controllers/EnemyGuardController";
 import EnemyFollowController from "../../../controllers/EnemyFollowController";
 import FadeTransition from "../../../components/scene-transition/FadeTransition";
+=======
+import EnemyGuardController from "../../controllers/EnemyGuardController";
+import EnemyFollowController from "../../controllers/EnemyFollowController";
+>>>>>>> origin/dev:src/scene/GamePlay/Level1-DataLab.tsx
 
 interface HomeProps { }
 
