@@ -2,7 +2,7 @@ import { RigidBody } from "@react-three/rapier";
 import { degreeNumberToRadian } from "../../../utils";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameContext";
-import { Item } from "./Item";
+import { Item } from "../object/Item";
 
 const ScifiComputer = ({
   position,

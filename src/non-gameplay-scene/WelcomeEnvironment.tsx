@@ -1,9 +1,9 @@
 import { Environment, OrbitControls } from "@react-three/drei";
-import { Item } from "./shared/Item";
+import { Item } from "../game/shared-object/object/Item";
 import { RigidBody } from "@react-three/rapier";
 import { useContext } from "react";
-import { GameContext } from "../../contexts/GameContext";
-import { Welcome } from "../../non-gameplay-scene/WelcomeMap";
+import { GameContext } from "../contexts/GameContext";
+import { Welcome } from "./WelcomeMap";
 
 const items = [
   {

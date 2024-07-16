@@ -3,21 +3,21 @@ import {
   OrbitControls,
   useKeyboardControls,
 } from "@react-three/drei";
-import { Item } from "../../../components/scene-environments/shared/Item";
+import { Item } from "../../shared-object/object/Item";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import { useContext, useEffect, useRef, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
-import Wall from "../../../components/scene-environments/shared/Wall";
-import { ItemWithUrl } from "../../../components/scene-environments/shared/ItemWithUrl";
+import Wall from "../../shared-object/object/Wall";
+import { ItemWithUrl } from "../../shared-object/object/ItemWithUrl";
 import Computer from "./shared/Computer";
 import { degreeNumberToRadian } from "../../../utils";
-import { Mine } from "../../../components/scene-environments/shared/Mine";
-import Door from "../../../components/scene-environments/shared/Door";
-import ScifiComputer from "../../../components/scene-environments/shared/ScifiComputer";
-import Guard from "../../../components/scene-environments/shared/Guard";
+import { Mine } from "../../shared-object/object/Mine";
+import Door from "../../shared-object/object/Door";
+import ScifiComputer from "../../shared-object/interaction/ScifiComputer";
+import Guard from "../../level1-datalab/scene-object/Guard";
 import { Controls } from "../../../controllers/CharacterController";
 import { useFrame } from "@react-three/fiber";
-import GlassBridge from "../../../components/scene-environments/shared/GlassBridge";
+import GlassBridge from "../../shared-object/object/GlassBridge";
 import { Level2ImageLabRoom1 } from "../map/Level2-ImageLab-Room1";
 
 const items = [

@@ -1,7 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import playerImage from "/player-ui.gif";
 import CharacterHead from "../../create-character/cut/CharacterHead";
-import { Sidebar } from "primereact/sidebar";
 import { Dialog } from "primereact/dialog";
 import { GameContext } from "../../../contexts/GameContext";
 import { Toast } from "primereact/toast";
@@ -163,17 +161,11 @@ const PlayerMainUI = () => {
 
   return (
     <div
-      className={`absolute bottom-0 w-full z-[9999] px-0 py-10 ${currentScene?.includes("game") ? "block":"hidden"} ${
+      className={`absolute bottom-0 w-full z-[9998] px-0 py-10 ${currentScene?.includes("game") ? "block":"hidden"} ${
         isUsingSearch ? "h-full" : "h-fit"
       }`}
       id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}
     >
-      {/* <button
-        onClick={() => showToast("success", "Found Enemy", "Data collected!")}
-        className="w-[50%] bg-red-200 opacity-0 h-[40vh]"
-      >
-        <p className="">Show message</p>
-      </button> */}
       <Toast ref={aimHitEnemyToast} />
       {isUsingSearch && (
         <div

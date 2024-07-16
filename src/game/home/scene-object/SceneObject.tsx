@@ -2,11 +2,11 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameContext";
-import { ItemWithUrl } from "../../../components/scene-environments/shared/ItemWithUrl";
+import { ItemWithUrl } from "../../shared-object/object/ItemWithUrl";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { ItemWithUrlIdle } from "../../../components/scene-environments/shared/ItemWIthUrlIdle";
-import ItemWithUrlSpin from "../../../components/scene-environments/shared/ItemWithUrlSpin";
+import { ItemWithUrlIdle } from "../../shared-object/object/ItemWIthUrlIdle";
+import ItemWithUrlSpin from "../../shared-object/object/ItemWithUrlSpin";
 import { LightProbeHelper } from "three-stdlib";
 import { items, idleItems, itemSpin } from "./items";
 

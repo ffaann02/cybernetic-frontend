@@ -3,13 +3,9 @@ import { CapsuleCollider, RigidBody, vec3 } from '@react-three/rapier';
 import React, { useContext, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GameContext } from '../contexts/GameContext';
-import EnemyFollow2D from '../game/shared/enemy/EnemyFollow2D';
+import Slime2D from '../animation/SlimeFollow2D';
 import { EnemyAnimationState, useEnemyAnimation } from '../hooks/useEnemyAnimation';
-<<<<<<< HEAD
-import Spider2D from '../game/shared/enemy/Spider2D';
-=======
-import Spider2D from '../game_object/enemy/Spider2D';
->>>>>>> origin/dev
+import Spider2D from '../animation/Spider2D';
 
 interface Props {
     speed: number;
@@ -152,7 +148,7 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
                 onCollisionEnter={({ other }) => {
                 }}>
                 <group ref={enemy}>
-                    {texture === 'slime' ? <EnemyFollow2D animation={animationState} /> : <Spider2D animation={animationState} />}
+                    {texture === 'slime' ? <Slime2D animation={animationState} /> : <Spider2D animation={animationState} />}
                     {/* <EnemyFollow2D animation={animationState} />
                     <Spider2D animation={animationState} /> */}
                     <CapsuleCollider

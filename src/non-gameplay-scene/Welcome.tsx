@@ -3,7 +3,7 @@ import React, { Suspense, useContext } from "react";
 import { Physics } from "@react-three/rapier";
 import { PerspectiveCamera } from "@react-three/drei";
 import { GameContext } from "../contexts/GameContext";
-import { WelcomeEnviroment } from "../components/scene-environments/Welcome";
+import { WelcomeEnviroment } from "./WelcomeEnvironment";
 
 interface HomeProps {}
 

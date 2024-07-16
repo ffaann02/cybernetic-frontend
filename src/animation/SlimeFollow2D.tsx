@@ -2,12 +2,11 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { useState } from 'react';
 import * as THREE from 'three';
 import { PlainAnimator } from "three-plain-animator";
-import idleSprite from "/images/Spider_IdleAnim.png";
-import runningSprite from "/images/Spider_RunAnim.png";
-import { EnemyAnimationState } from '../../../hooks/useEnemyAnimation';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
+import idleSprite from "/images/EnemySlimeIdleAnim.png";
+import runningSprite from "/images/EnemySlimeRunningAnim.png";
+import { EnemyAnimationState } from '../hooks/useEnemyAnimation';
 
-const Spider2D = ({
+const Slime2D = ({
     animation,
 }: {
     animation: EnemyAnimationState;
@@ -24,8 +23,8 @@ const Spider2D = ({
 
      // Initialize animators
   const [animators] = useState<{ [key in EnemyAnimationState]: PlainAnimator }>({
-    idle: new PlainAnimator(idleSpriteTexture, 7, 1, 7, 7),
-    running: new PlainAnimator(runningSpriteTexture, 5, 1, 5, 5)
+    idle: new PlainAnimator(idleSpriteTexture, 10, 1, 10, 10),
+    running: new PlainAnimator(runningSpriteTexture, 8, 1, 8, 8)
   });
 
     // Animate based on the current state
@@ -36,9 +35,11 @@ const Spider2D = ({
 
     return (
         <mesh
-            position={[0, -2.8, -0.2]}
+            position={[0, -2.6, 0]}
             scale={[1, 1, 1]}>
-            <meshStandardMaterial color="hotpink"/>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color="hotpink"
+            />
             {/* Use PlaneGeometry for a flat surface */}
             <planeGeometry args={[4, 5, 1]} />
             <meshStandardMaterial
@@ -49,4 +50,4 @@ const Spider2D = ({
     );
 };
 
-export default Spider2D;
+export default Slime2D;

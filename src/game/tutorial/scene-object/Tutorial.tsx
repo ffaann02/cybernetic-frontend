@@ -1,12 +1,12 @@
 import { Environment, OrbitControls } from "@react-three/drei";
-import { Item } from "../../../components/scene-environments/shared/Item";
+import { Item } from "../../shared-object/object/Item";
 import { RigidBody } from "@react-three/rapier";
 import { useContext, useEffect } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import { degreeNumberToRadian } from "../../../utils";
 import { Tutorial } from "../map/Tutorial";
-import FloatingCheckpoint from "../../../components/scene-environments/shared/FloatingCheckpoint";
-import { Mine } from "../../../components/scene-environments/shared/Mine";
+import FloatingCheckpoint from "../../shared-object/object/FloatingCheckpoint";
+import { Mine } from "../../shared-object/object/Mine";
 
 const items = [
   {

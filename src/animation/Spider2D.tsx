@@ -4,8 +4,7 @@ import * as THREE from 'three';
 import { PlainAnimator } from "three-plain-animator";
 import idleSprite from "/images/Spider_IdleAnim.png";
 import runningSprite from "/images/Spider_RunAnim.png";
-import { EnemyAnimationState } from '../../hooks/useEnemyAnimation';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
+import { EnemyAnimationState } from '../hooks/useEnemyAnimation';
 
 const Spider2D = ({
     animation,

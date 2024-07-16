@@ -3,12 +3,12 @@ import useAxios from '../hooks/useAxios';
 import axiosInstance from '../api/axios';
 import { LevelDetail } from '../contexts/SceneContext/LevelContext';
 import { useAuth } from '../hooks/useAuth';
-import { ItemWithUrl } from '../components/scene-environments/shared/ItemWithUrl';
+import { ItemWithUrl } from '../game/shared-object/object/ItemWithUrl';
 import { Canvas, useLoader } from "@react-three/fiber";
 import LevelSelectPreview from '../components/ui/level-selection/LevelSelectPreview';
 import SmoothCamera from '../controllers/SmoothCamera';
 import { TextureLoader } from 'three';
-import { ItemWithUrlIdle } from '../components/scene-environments/shared/ItemWIthUrlIdle';
+import { ItemWithUrlIdle } from '../game/shared-object/object/ItemWIthUrlIdle';
 
 const items = [
     {

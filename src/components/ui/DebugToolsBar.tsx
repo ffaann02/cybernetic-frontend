@@ -28,7 +28,7 @@ const DebugToolsBar = () => {
 
   const handleCameraChange = (e: any) => {
     if (setGameState) {
-      setGameState((prevState) => ({ ...prevState, camera: e.target.value }));
+      setGameState((prevState) => ({ ...prevState, currentCamera: e.target.value }));
     }
   };
 
@@ -40,7 +40,7 @@ const DebugToolsBar = () => {
   };
 
   return (
-    <div className="absolute right-6 top-6 bg-white/40 pt-4 pb-6 px-0 z-[9999] rounded-xl">
+    <div className="absolute right-6 top-6 bg-white/40 pt-4 pb-6 px-0 z-[10001] rounded-xl">
       <div>
         <div className="px-4">
           <div className="pb-2 border-b border-b-slate-400">

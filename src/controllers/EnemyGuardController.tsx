@@ -2,11 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { CapsuleCollider, RigidBody } from '@react-three/rapier';
 import React, { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three';
-<<<<<<< HEAD:src/controllers/EnemyGuardController.tsx
-import Spider2D from '../game/shared/enemy/Spider2D';
-=======
-import Spider2D from '../game_object/enemy/Spider2D';
->>>>>>> origin/dev:src/game_object/enemy/EnemySimple.tsx
+import Spider2D from '../animation/Spider2D';
 import { EnemyAnimationState, useEnemyAnimation } from '../hooks/useEnemyAnimation';
 
 interface Props {
