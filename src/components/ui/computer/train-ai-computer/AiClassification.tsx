@@ -16,69 +16,42 @@ import { GameContext } from "../../../../contexts/GameContext";
 import DataStoragePanel from "./DataStoragePanel";
 import initData from "./data/fakeInitEnemyData.json";
 import classificationModelList from "./data/classificationModelList.json";
+import AiTrainHeader from "./AiTrainHeader";
 
 const AiClassification = ({
-    aiTypes,
-    selectedAIfield,
-    classificationMenuItemsStep,
-    activeIndex,
-    setActiveIndex,
-    selectedData,
-    setSelectedData,
-    isTraining,
-    setIsTraining,
-    dataStorage,
-    setDataStorage,
-    groupAndCountData,
-    classificationModelList,
-    dataType,
-    currentDataType,
-    setCurrentDataType,
+  aiTypes,
+  selectedAIfield,
+  classificationMenuItemsStep,
+  activeIndex,
+  setActiveIndex,
+  selectedData,
+  setSelectedData,
+  isTraining,
+  setIsTraining,
+  dataStorage,
+  setDataStorage,
+  groupAndCountData,
+  classificationModelList,
+  dataType,
+  currentDataType,
+  setCurrentDataType,
+  handleBack,
+  handleNext,
 }) => {
   return (
     <div className="w-full h-full px-20 pt-6">
       <div className="border-2 rounded-2xl pb-10 bg-black/60 relative">
-        <div className="flex justify-between px-4 py-2">
-          <div
-            className="text-white mb-6 flex gap-x-2 hover:text-cyan-400 cursor-pointer"
-            onClick={() => {
-              setActiveIndex((prev) => prev - 1);
-            }}
-          >
-            <p className="pi pi-chevron-left my-auto text-xl"></p>
-            <p className="my-auto text-xl pt-1">Back</p>
-          </div>
-          <div>
-            <div className="text-center text-3xl text-white mt-4 font-bold tracking-wider">
-              {aiTypes?.find((type) => type.key === selectedAIfield)?.title}
-            </div>
-            <div className="text-center">
-              <div className="text-white">
-                {
-                  aiTypes?.find((type) => type.key === selectedAIfield)
-                    ?.description
-                }
-              </div>
-            </div>
-          </div>
-          <div
-            className="text-white mb-6 flex gap-x-2 hover:text-cyan-400 cursor-pointer"
-            onClick={() => {
-              setActiveIndex((prev) => prev + 1);
-            }}
-          >
-            <p className="my-auto text-xl pt-1">Next</p>
-            <p className="pi pi-chevron-right my-auto text-xl"></p>
-          </div>
-        </div>
+        <AiTrainHeader
+          handleBack={handleBack}
+          handleNext={handleNext}
+          selectedAIfield={selectedAIfield}
+          aiTypes={aiTypes}
+          activeIndex={activeIndex}
+          classificationMenuItemsStep={classificationMenuItemsStep}
+          setActiveIndex={setActiveIndex}
+        />
         {selectedAIfield === "ml-classification" && (
           <div className="w-full mt-2">
-            <Steps
-              model={classificationMenuItemsStep}
-              readOnly={false}
-              onSelect={(e) => setActiveIndex(e.index)}
-              activeIndex={activeIndex}
-            />
             {activeIndex === 0 && (
               <div className="px-[10%] mt-4 grid grid-cols-3 gap-x-4">
                 <div className="border p-2 rounded-xl bg-white/20">

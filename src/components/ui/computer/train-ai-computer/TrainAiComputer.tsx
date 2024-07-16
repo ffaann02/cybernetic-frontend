@@ -113,6 +113,20 @@ const TrainAiComputer = () => {
 
   const [currentDataType, setCurrentDataType] = useState("Enemy");
 
+  const handleNext = () => {
+    console.log("next");
+    setActiveIndex((prevIndex) => prevIndex + 1);
+  };
+
+  const handleBack = () => {
+    if (activeIndex > 0) {
+      setActiveIndex((prevIndex) => prevIndex - 1);
+    } else {
+      setActiveIndex(0);
+      setSelectedAIfield(null);
+    }
+  };
+
   const classificationMenuItemsStep = [
     {
       id: "0",
@@ -207,25 +221,46 @@ const TrainAiComputer = () => {
               </div>
             </div>
           )}
-        {currentSection.title === "Train AI Model" && selectedAIfield && (
-          <AiClassification
-            aiTypes={aiTypes}
-            selectedAIfield={selectedAIfield}
-            classificationMenuItemsStep={classificationMenuItemsStep}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
-            selectedData={selectedData}
-            setSelectedData={setSelectedData}
-            isTraining={isTraining}
-            setIsTraining={setIsTraining}
-            dataStorage={dataStorage}
-            setDataStorage={dataStorage}
-            groupAndCountData={groupAndCountData}
-            classificationModelList={classificationModelList}
-            dataType={dataType}
-            currentDataType={currentDataType}
-            setCurrentDataType={setCurrentDataType}
-          />
+        {currentSection.title === "Train AI Model" && (
+          <>
+            {selectedAIfield === "ml-classification" && (
+              <AiClassification
+                aiTypes={aiTypes}
+                selectedAIfield={selectedAIfield}
+                classificationMenuItemsStep={classificationMenuItemsStep}
+                activeIndex={activeIndex}
+                setActiveIndex={setActiveIndex}
+                selectedData={selectedData}
+                setSelectedData={setSelectedData}
+                isTraining={isTraining}
+                setIsTraining={setIsTraining}
+                dataStorage={dataStorage}
+                setDataStorage={setDataStorage} // Assuming this should be a function to update dataStorage
+                groupAndCountData={groupAndCountData}
+                classificationModelList={classificationModelList}
+                dataType={dataType}
+                currentDataType={currentDataType}
+                setCurrentDataType={setCurrentDataType}
+                handleBack={handleBack}
+                handleNext={handleNext}
+              />
+            )}
+            {selectedAIfield === "linear-regression" && (
+              // Render your component for linear regression here
+              <div>linear regression</div>
+              // Props for LinearRegressionComponent
+            )}
+            {selectedAIfield === "genetic-algorithm" && (
+              // Render your component for genetic algorithm here
+              <div>genetic algorithm</div>
+              // Props for GeneticAlgorithmComponent
+            )}
+            {selectedAIfield === "neural-network" && (
+              // Render your component for neural network here
+              <div>neural network</div>
+              // Props for NeuralNetworkComponent
+            )}
+          </>
         )}
       </div>
     </div>
