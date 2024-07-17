@@ -21,7 +21,7 @@ import AiTrainHeader from "./AiTrainHeader";
 const AiClassification = ({
   aiTypes,
   selectedAIfield,
-  classificationMenuItemsStep,
+  menuItemsStep,
   activeIndex,
   setActiveIndex,
   selectedData,
@@ -47,7 +47,7 @@ const AiClassification = ({
           selectedAIfield={selectedAIfield}
           aiTypes={aiTypes}
           activeIndex={activeIndex}
-          classificationMenuItemsStep={classificationMenuItemsStep}
+          menuItemsStep={menuItemsStep}
           setActiveIndex={setActiveIndex}
         />
         {selectedAIfield === "ml-classification" && (

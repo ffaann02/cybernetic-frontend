@@ -1,31 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import { LiaRobotSolid } from "react-icons/lia";
 import { MdCategory } from "react-icons/md";
-import { BsClipboardData, BsGraphUp } from "react-icons/bs";
+import { BsGraphUp } from "react-icons/bs";
 import { PiBrain, PiEggCrack, PiEye } from "react-icons/pi";
 import { Carousel } from "primereact/carousel";
-import { Steps } from "primereact/steps";
-import { Divider } from "primereact/divider";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Splitter, SplitterPanel } from "primereact/splitter";
-import { Tag } from "primereact/tag";
-import { ProgressBar } from "primereact/progressbar";
-import { ProgressSpinner } from "primereact/progressspinner";
 import { GameContext } from "../../../../contexts/GameContext";
 import DataStoragePanel from "./DataStoragePanel";
 import initData from "./data/fakeInitEnemyData.json";
 import classificationModelList from "./data/classificationModelList.json";
 import AiClassification from "./AiClassification";
+import { FiDatabase, FiTool, FiInfo } from "react-icons/fi";
+import Tools from "./Tools";
 
 const TrainAiComputer = () => {
   const { dataStorage, setDataStorage } = useContext(GameContext);
 
   const sections = [
-    { title: "Data Storage" },
-    { title: "Train AI Model" },
-    { title: "Tools" },
-    { title: "Level Info" },
+    { title: "Data Storage", Icon: FiDatabase },
+    { title: "Train AI Model", Icon: LiaRobotSolid },
+    { title: "Tools", Icon: FiTool },
+    { title: "Level Info", Icon: FiInfo },
   ];
 
   const dataType = [
@@ -99,7 +93,7 @@ const TrainAiComputer = () => {
     }
   }, []);
 
-  const groupAndCountData = (data) => {
+  const groupAndCountData = (data: any) => {
     return data.reduce((acc, item) => {
       const key = `${item.element}-${item.name}`;
       if (!acc[key]) {
@@ -127,7 +121,7 @@ const TrainAiComputer = () => {
     }
   };
 
-  const classificationMenuItemsStep = [
+  const menuItemsStep = [
     {
       id: "0",
       index: 0,
@@ -186,7 +180,7 @@ const TrainAiComputer = () => {
                 }}
               >
                 <div className="flex gap-x-2">
-                  <LiaRobotSolid className="my-auto text-2xl" />{" "}
+                  <section.Icon className="my-auto text-2xl" />
                   <p>{section.title}</p>
                 </div>
               </button>
@@ -227,7 +221,7 @@ const TrainAiComputer = () => {
               <AiClassification
                 aiTypes={aiTypes}
                 selectedAIfield={selectedAIfield}
-                classificationMenuItemsStep={classificationMenuItemsStep}
+                menuItemsStep={menuItemsStep}
                 activeIndex={activeIndex}
                 setActiveIndex={setActiveIndex}
                 selectedData={selectedData}
@@ -235,7 +229,7 @@ const TrainAiComputer = () => {
                 isTraining={isTraining}
                 setIsTraining={setIsTraining}
                 dataStorage={dataStorage}
-                setDataStorage={setDataStorage} // Assuming this should be a function to update dataStorage
+                setDataStorage={setDataStorage}
                 groupAndCountData={groupAndCountData}
                 classificationModelList={classificationModelList}
                 dataType={dataType}
@@ -262,6 +256,7 @@ const TrainAiComputer = () => {
             )}
           </>
         )}
+        {currentSection.title === "Tools" && <Tools />}
       </div>
     </div>
   );
