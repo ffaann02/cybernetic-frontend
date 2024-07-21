@@ -6,6 +6,7 @@ export const Mine = ({ mine, index, setMines }) => {
   return (
     <RigidBody
       colliders="trimesh"
+      name="mine"
       key={index}
       position={[mine.position.x + 0, mine.position.y + 2, mine.position.z+1]}
       lockRotations
