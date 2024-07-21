@@ -1,19 +1,23 @@
 import { useContext, useEffect, useState } from "react";
 import { LiaRobotSolid } from "react-icons/lia";
-import { MdCategory } from "react-icons/md";
+import { MdCancel, MdCategory } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
 import { PiBrain, PiEggCrack, PiEye } from "react-icons/pi";
 import { Carousel } from "primereact/carousel";
 import { GameContext } from "../../../../contexts/GameContext";
 import DataStoragePanel from "./DataStoragePanel";
-import initData from "./data/fakeInitEnemyData.json";
+import enemyData from "./data/fakeInitEnemyData.json";
+import objectData from "./data/fakeInitObjectData.json";
 import classificationModelList from "./data/classificationModelList.json";
 import AiClassification from "./AiClassification";
 import { FiDatabase, FiTool, FiInfo } from "react-icons/fi";
 import Tools from "./Tools";
+import AiLinearRegression from "./AiLinearRegression";
+import AiGeneticAlgorithm from "./AiGeneticAlgorithm";
+import AiNeuralNetwork from "./AiNeuralNetwork";
 
 const TrainAiComputer = () => {
-  const { dataStorage, setDataStorage } = useContext(GameContext);
+  const { dataStorage, setDataStorage, setIsCoding, setIsInteracting, setCurrentHit} = useContext(GameContext);
 
   const sections = [
     { title: "Data Storage", Icon: FiDatabase },
@@ -88,10 +92,24 @@ const TrainAiComputer = () => {
   };
 
   useEffect(() => {
-    if (initData) {
-      setDataStorage(initData);
+    // Assuming setDataStorage is a function that updates a state variable
+    // and that objectData is an array and enemyData is an object you want to store together.
+    const objectDataWithIndex = objectData.map((item, index) => ({
+      ...item,
+      index, // Add the index to each object in objectData
+    }));
+
+    const combinedData = {
+      objectData: objectDataWithIndex, // Use the modified objectData with index
+      enemyData: enemyData, // This will only be added if enemyData is not falsy
+    };
+
+    console.log(combinedData);
+
+    if (enemyData) {
+      setDataStorage(combinedData);
     }
-  }, []);
+  }, [objectData, enemyData]); // Adding objectData and enemyData as dependencies
 
   const groupAndCountData = (data: any) => {
     return data.reduce((acc, item) => {
@@ -152,12 +170,25 @@ const TrainAiComputer = () => {
   return (
     <div className="absolute w-full z-[10000] flex h-full top-0 p-16 pt-10 left-1/2 transform -translate-x-1/2">
       <div
-        className="flex-grow overflow-hidden h-[90vh] relative bg-cyan-400/10 border-8 border-cyan-400/20 rounded-xl pt-0 pb-8 shadow-lg shadow-white"
+        className="flex-grow overflow-y-hidden h-[90vh] relative bg-cyan-400/10 border-8 border-cyan-400/20 rounded-xl pt-0 pb-8 shadow-lg shadow-white"
         id="ui-computer-panel"
       >
+        <div className="absolute right-2 top-2 z-50">
+          <button
+            className="px-3 py-2 rounded-lg bg-red-500/50 hover:bg-red-500/70 flex gap-x-2 items-center"
+            onClick={() => {
+              setIsCoding(false);
+              setIsInteracting(false);
+              setCurrentHit("");
+            }}
+          >
+            <MdCancel className="textes-white text-2xl"/>
+            <span className="text-white">Close</span>
+          </button>
+        </div>
         <div
-          className="sticky w-full top-0 px-20 pb-4 bg-cyan-400/10"
-          style={{ backdropFilter: "blur(10px)" }}
+          className="sticky w-full top-0 px-20 pb-4 bg-black/50 z-20"
+          style={{ backdropFilter: "blur(20px)" }}
         >
           <div
             className="text-center flex text-3xl rounded-b-2xl border-8 border-t-0 border-cyan-400/40 mb-6 pt-5 pb-4 
@@ -187,76 +218,135 @@ const TrainAiComputer = () => {
             ))}
           </div>
         </div>
-        {currentSection.title === "Data Storage" && (
-          <DataStoragePanel
-            dataStorage={dataStorage}
-            setDataStorage={setDataStorage}
-            dataType={dataType}
-            currentDataType={currentDataType}
-            setCurrentDataType={setCurrentDataType}
-            groupAndCountData={groupAndCountData}
-          />
-        )}
-        {currentSection.title === "Train AI Model" &&
-          selectedAIfield === null && (
-            <div className="w-full h-full px-20 pt-10">
-              <div className="border-2 rounded-2xl pb-10 bg-black/50 relative">
-                <div className="text-center text-3xl text-white py-6 font-bold tracking-wider">
-                  Select AI Type
-                </div>
-                <div className="mt-4">
-                  <Carousel
-                    value={aiTypes}
-                    numScroll={1}
-                    numVisible={3}
-                    itemTemplate={aiTypeCardTemplate}
-                  />
+        <div className="h-full overflow-hidden">
+          {currentSection.title === "Data Storage" && (
+            <DataStoragePanel
+              dataStorage={dataStorage}
+              setDataStorage={setDataStorage}
+              dataType={dataType}
+              currentDataType={currentDataType}
+              setCurrentDataType={setCurrentDataType}
+              groupAndCountData={groupAndCountData}
+              currentSection={currentSection}
+              setCurrentSection={setCurrentSection}
+            />
+          )}
+          {currentSection.title === "Train AI Model" &&
+            selectedAIfield === null && (
+              <div className="w-full h-full px-20 pt-10">
+                <div className="border-2 rounded-2xl pb-10 bg-black/50 relative">
+                  <div className="text-center text-3xl text-white py-6 font-bold tracking-wider">
+                    Select AI Type
+                  </div>
+                  <div className="mt-4">
+                    <Carousel
+                      value={aiTypes}
+                      numScroll={1}
+                      numVisible={3}
+                      itemTemplate={aiTypeCardTemplate}
+                    />
+                  </div>
                 </div>
               </div>
+            )}
+          {currentSection.title === "Train AI Model" && (
+            <div className="h-full">
+              <>
+                {selectedAIfield === "ml-classification" && (
+                  <AiClassification
+                    aiTypes={aiTypes}
+                    selectedAIfield={selectedAIfield}
+                    menuItemsStep={menuItemsStep}
+                    activeIndex={activeIndex}
+                    setActiveIndex={setActiveIndex}
+                    selectedData={selectedData}
+                    setSelectedData={setSelectedData}
+                    isTraining={isTraining}
+                    setIsTraining={setIsTraining}
+                    dataStorage={dataStorage}
+                    setDataStorage={setDataStorage}
+                    groupAndCountData={groupAndCountData}
+                    classificationModelList={classificationModelList}
+                    dataType={dataType}
+                    currentDataType={currentDataType}
+                    setCurrentDataType={setCurrentDataType}
+                    handleBack={handleBack}
+                    handleNext={handleNext}
+                  />
+                )}
+                {selectedAIfield === "linear-regression" && (
+                  // Render your component for linear regression here
+                  <AiLinearRegression
+                    aiTypes={aiTypes}
+                    selectedAIfield={selectedAIfield}
+                    menuItemsStep={menuItemsStep}
+                    activeIndex={activeIndex}
+                    setActiveIndex={setActiveIndex}
+                    selectedData={selectedData}
+                    setSelectedData={setSelectedData}
+                    isTraining={isTraining}
+                    setIsTraining={setIsTraining}
+                    dataStorage={dataStorage}
+                    setDataStorage={setDataStorage}
+                    groupAndCountData={groupAndCountData}
+                    classificationModelList={classificationModelList}
+                    dataType={dataType}
+                    currentDataType={currentDataType}
+                    setCurrentDataType={setCurrentDataType}
+                    handleBack={handleBack}
+                    handleNext={handleNext}
+                  />
+                  // Props for LinearRegressionComponent
+                )}
+                {selectedAIfield === "genetic-algorithm" && (
+                  <AiLinearRegression
+                    aiTypes={aiTypes}
+                    selectedAIfield={selectedAIfield}
+                    menuItemsStep={menuItemsStep}
+                    activeIndex={activeIndex}
+                    setActiveIndex={setActiveIndex}
+                    selectedData={selectedData}
+                    setSelectedData={setSelectedData}
+                    isTraining={isTraining}
+                    setIsTraining={setIsTraining}
+                    dataStorage={dataStorage}
+                    setDataStorage={setDataStorage}
+                    groupAndCountData={groupAndCountData}
+                    classificationModelList={classificationModelList}
+                    dataType={dataType}
+                    currentDataType={currentDataType}
+                    setCurrentDataType={setCurrentDataType}
+                    handleBack={handleBack}
+                    handleNext={handleNext}
+                  />
+                )}
+                {selectedAIfield === "neural-network" && (
+                  <AiNeuralNetwork
+                    aiTypes={aiTypes}
+                    selectedAIfield={selectedAIfield}
+                    menuItemsStep={menuItemsStep}
+                    activeIndex={activeIndex}
+                    setActiveIndex={setActiveIndex}
+                    selectedData={selectedData}
+                    setSelectedData={setSelectedData}
+                    isTraining={isTraining}
+                    setIsTraining={setIsTraining}
+                    dataStorage={dataStorage}
+                    setDataStorage={setDataStorage}
+                    groupAndCountData={groupAndCountData}
+                    classificationModelList={classificationModelList}
+                    dataType={dataType}
+                    currentDataType={currentDataType}
+                    setCurrentDataType={setCurrentDataType}
+                    handleBack={handleBack}
+                    handleNext={handleNext}
+                  />
+                )}
+              </>
             </div>
           )}
-        {currentSection.title === "Train AI Model" && (
-          <>
-            {selectedAIfield === "ml-classification" && (
-              <AiClassification
-                aiTypes={aiTypes}
-                selectedAIfield={selectedAIfield}
-                menuItemsStep={menuItemsStep}
-                activeIndex={activeIndex}
-                setActiveIndex={setActiveIndex}
-                selectedData={selectedData}
-                setSelectedData={setSelectedData}
-                isTraining={isTraining}
-                setIsTraining={setIsTraining}
-                dataStorage={dataStorage}
-                setDataStorage={setDataStorage}
-                groupAndCountData={groupAndCountData}
-                classificationModelList={classificationModelList}
-                dataType={dataType}
-                currentDataType={currentDataType}
-                setCurrentDataType={setCurrentDataType}
-                handleBack={handleBack}
-                handleNext={handleNext}
-              />
-            )}
-            {selectedAIfield === "linear-regression" && (
-              // Render your component for linear regression here
-              <div>linear regression</div>
-              // Props for LinearRegressionComponent
-            )}
-            {selectedAIfield === "genetic-algorithm" && (
-              // Render your component for genetic algorithm here
-              <div>genetic algorithm</div>
-              // Props for GeneticAlgorithmComponent
-            )}
-            {selectedAIfield === "neural-network" && (
-              // Render your component for neural network here
-              <div>neural network</div>
-              // Props for NeuralNetworkComponent
-            )}
-          </>
-        )}
-        {currentSection.title === "Tools" && <Tools />}
+          {currentSection.title === "Tools" && <Tools />}
+        </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ const AiTrainHeader = ({
   aiTypes,
   activeIndex,
   setActiveIndex,
-  classificationMenuItemsStep
+  menuItemsStep
 }) => {
   return (
     <>
@@ -41,7 +41,7 @@ const AiTrainHeader = ({
         </div>
       </div>
       <Steps
-        model={classificationMenuItemsStep}
+        model={menuItemsStep}
         readOnly={false}
         onSelect={(e) => setActiveIndex(e.index)}
         activeIndex={activeIndex}

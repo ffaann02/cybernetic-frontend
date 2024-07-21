@@ -11,6 +11,8 @@ const DataStoragePanel = ({
   currentDataType,
   setCurrentDataType,
   groupAndCountData,
+  currentSection,
+  setCurrentSection,
 }) => {
   const [selectedData, setSelectedData] = useState(null);
 
@@ -48,6 +50,29 @@ const DataStoragePanel = ({
     });
   };
 
+  const renderPropertiesObject = (data) => {
+    return Object.entries(data).map(([key, value]) => {
+      if (
+        key !== "image_url" &&
+        key !== "name" &&
+        key !== "color" &&
+        key !== "breakable" &&
+        key !== "index"
+      ) {
+        return (
+          <div
+            key={key}
+            className="text-white col-span-3 flex gap-x-1 mt-3 px-2.5 py-2 bg-cyan-600/50 border border-slate-400/50 rounded-lg"
+          >
+            <span className="my-auto mt-1 capitalize">
+              {key}: {String(value)}
+            </span>
+          </div>
+        );
+      }
+    });
+  };
+
   return (
     <>
       <h2 className="ml-20 mt-4 text-xl mb-1 text-white">Data Type</h2>
@@ -61,6 +86,7 @@ const DataStoragePanel = ({
                 : "bg-neutral-50 border-slate-400 text-neutral-400"
             }`}
             onClick={() => {
+              setSelectedData(null);
               setCurrentDataType(type.title);
             }}
           >
@@ -73,15 +99,67 @@ const DataStoragePanel = ({
           className="mt-6 w-3/5 flex flex-col gap-y-4 pl-20 pr-4 overflow-y-scroll pb-[20%]"
           id="data-storage"
         >
-          {dataStorage.length > 0 &&
-            Object.values(groupAndCountData(dataStorage)).map((data, index) => {
+          {Object.keys(dataStorage).length > 0 &&
+            currentDataType === "Enemy" &&
+            Object.values(groupAndCountData(dataStorage.enemyData)).map(
+              (data, index) => {
+                return (
+                  <div
+                    key={`${data.element}-${data.name}-${index}`}
+                    className={`w-full ${
+                      selectedData &&
+                      selectedData.name + selectedData.element ===
+                        data.name + data.element
+                        ? "bg-cyan-400/50 border-4"
+                        : "bg-white/20 border-2 opacity-75 hover:scale-105 hover:shadow-blue-400/100 hover:bg-cyan-400/10 hover:border-cyan-400/50"
+                    } flex-grow p-3 rounded-lg flex gap-x-2
+                         transition-all duration-200 ease-linear cursor-pointer hover:shadow-md 
+                        `}
+                    onClick={() => setSelectedData(data)}
+                  >
+                    <div className="w-24 h-24 rounded-md border relative">
+                      <div className="w-8 h-8 absolute -right-3 -top-1.5 z-10 bg-cyan-400 text-center rounded-full pt-0.5 p-1">
+                        <p className="mt-0.5 font-semibold text-slate-500">
+                          {data.count}
+                        </p>
+                      </div>
+                      <div
+                        className={`absolute w-full h-full ${
+                          colorClasses[data.color]
+                        }`}
+                      ></div>
+                      <img
+                        className="w-full h-full p-2"
+                        src={data.image_url || "/images/slime_default.png"}
+                        alt={data.name}
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center ml-2">
+                      <p className="text-white font-semibold">
+                        {data.name.charAt(0).toUpperCase() + data.name.slice(1)}
+                      </p>{" "}
+                      <p className="text-white">
+                        Energy Source: {data.element}
+                      </p>
+                      <p className="text-white">Weakness: {data.weakness}</p>
+                    </div>
+                  </div>
+                );
+              }
+            )}
+
+          {Object.keys(dataStorage).length > 0 &&
+            currentDataType === "Object" &&
+            dataStorage.objectData.map((data, index) => {
               return (
                 <div
-                  key={`${data.element}-${data.name}-${index}`}
+                  key={`${data.name}-${data.type}`}
                   className={`w-full ${
-                    selectedData && 
-                    selectedData.name + selectedData.element ===
-                    data.name + data.element ? "bg-cyan-400/50 border-4":"bg-white/20 border-2 opacity-75 hover:scale-105 hover:shadow-blue-400/100 hover:bg-cyan-400/10 hover:border-cyan-400/50"
+                    selectedData &&
+                    selectedData.name + selectedData.type ===
+                      data.name + data.type
+                      ? "bg-cyan-400/50 border-4"
+                      : "bg-white/20 border-2 opacity-75 hover:scale-105 hover:shadow-blue-400/100 hover:bg-cyan-400/10 hover:border-cyan-400/50"
                   } flex-grow p-3 rounded-lg flex gap-x-2
                          transition-all duration-200 ease-linear cursor-pointer hover:shadow-md 
                         `}
@@ -90,7 +168,7 @@ const DataStoragePanel = ({
                   <div className="w-24 h-24 rounded-md border relative">
                     <div className="w-8 h-8 absolute -right-3 -top-1.5 z-10 bg-cyan-400 text-center rounded-full pt-0.5 p-1">
                       <p className="mt-0.5 font-semibold text-slate-500">
-                        {data.count}
+                        {/* {data.count} */}
                       </p>
                     </div>
                     <div
@@ -105,9 +183,11 @@ const DataStoragePanel = ({
                     />
                   </div>
                   <div className="flex flex-col justify-center ml-2">
-                    <p className="text-white font-semibold">{data.name}</p>
-                    <p className="text-white">Energy Source: {data.element}</p>
-                    <p className="text-white">Weakness: {data.weakness}</p>
+                    <p className="text-white font-semibold">
+                      {data.name.charAt(0).toUpperCase() + data.name.slice(1)}
+                    </p>
+                    <p className="text-white">Energy Source: test</p>
+                    <p className="text-white">Weakness: test</p>
                   </div>
                 </div>
               );
@@ -115,7 +195,7 @@ const DataStoragePanel = ({
         </div>
         <div className="w-2/5 p-4 h-full pb-[18rem]">
           <div className="border-2 rounded-xl h-full flex">
-            {selectedData ? (
+            {selectedData && currentDataType === "Enemy" && (
               <div className="p-4 w-full text-center flex flex-col gap-y-4 overflow-y-auto">
                 <div className="w-full">
                   <div className="flex w-full">
@@ -138,16 +218,16 @@ const DataStoragePanel = ({
                         {selectedData.name.split(" - ")[0]}
                       </p>
                       <div className="text-white flex gap-x-1 mt-1 px-2.5 py-2 bg-cyan-600/50 border border-slate-400/50 rounded-lg">
-                        <MdBatteryCharging90 className="my-auto text-3xl -ml-2 -mt-1" />
-                        <span className="">
+                        <MdBatteryCharging90 className="my-auto text-3xl" />
+                        <span className="my-auto mt-1">
                           Energy Source:{" "}
                           {selectedData.element.charAt(0).toUpperCase() +
                             selectedData.element.slice(1)}
                         </span>
                       </div>
                       <div className="text-white flex gap-x-1 mt-3 px-2.5 py-2 bg-cyan-600/50 border border-slate-400/50 rounded-lg">
-                        <LuShieldClose className="my-auto text-3xl -ml-2 -mt-1" />
-                        <span className="">
+                        <LuShieldClose className="my-auto text-3xl" />
+                        <span className="my-auto mt-1">
                           Weakness:{" "}
                           {selectedData.weakness.charAt(0).toUpperCase() +
                             selectedData.weakness.slice(1)}
@@ -164,7 +244,54 @@ const DataStoragePanel = ({
                   {renderProperties(selectedData)}
                 </div>
               </div>
-            ) : (
+            )}
+            {selectedData && currentDataType === "Object" && (
+              <div className="p-4 w-full text-center flex flex-col gap-y-4 overflow-y-auto">
+                <div className="w-full">
+                  <div className="grid grid-cols-6 w-full">
+                    <div className="relative col-span-2 h-40 rounded-xl border bg-white/20">
+                      <div
+                        className={`absolute w-full h-full rounded-xl ${
+                          colorClasses[selectedData.color]
+                        }`}
+                      ></div>
+                      <img
+                        className="m-auto w-full h-full object-cover"
+                        src={
+                          selectedData.image_url || "/images/slime_default.png"
+                        }
+                        alt={selectedData.name}
+                      />
+                    </div>
+                    <div className="text-left ml-4 mt-1 col-span-4">
+                      <p className="text-2xl text-white font-semibold">
+                        {selectedData.name.charAt(0).toUpperCase() +
+                          selectedData.name.slice(1)}
+                      </p>
+                      <p className="text-white mt-1 text-sm">
+                        This data can be used to train equipment to classify
+                        whether the glass is safe or dangerous based on these
+                        properties.
+                      </p>
+                      <div className="text-white flex w-fit gap-x-1 mt-3 px-2.5 py-2 bg-cyan-600/50 border border-slate-400/50 rounded-lg">
+                        <LuShieldClose className="my-auto text-3xl" />
+                        <span className="my-auto mt-1">
+                          Breakable: {selectedData.breakable ? "True" : "False"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <h4 className="text-left text-xl text-white -mb-2">
+                  Data Profile
+                </h4>
+                <Divider />
+                <div className="grid grid-cols-9 gap-3">
+                  {renderPropertiesObject(selectedData)}
+                </div>
+              </div>
+            )}
+            {!selectedData && (
               <div className="m-auto text-center flex flex-col gap-y-4">
                 <TbBorderNone className="text-[5rem] mx-auto text-white" />
                 <p className="text-xl text-white">

@@ -250,8 +250,8 @@ const AiClassification = ({
               </div>
             )}
             {activeIndex === 2 && (
-              <div className="text-white px-20 mt-4 w-full grid grid-cols-5 gap-x-4">
-                <div className="col-span-2 flex flex-col gap-y-2">
+              <div className="text-white overflow-y-auto h-full px-20 mt-4 w-full grid grid-cols-5 gap-x-4">
+                <div className="col-span-2 flex flex-col gap-y-2 overflow-y-scroll h-72 p-2 border rounded-xl rounded-r-none">
                   {classificationModelList.map((model, index) => (
                     <div
                       className="w-full bg-white/20 rounded-lg px-4 py-2

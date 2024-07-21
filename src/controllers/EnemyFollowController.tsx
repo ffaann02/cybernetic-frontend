@@ -89,7 +89,7 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
             if (idlePosition2D.distanceTo(playerPosition2D) < idleAreaRadius) {
                 moveToPlayer(delta);
                 if (enemyPosition2D.distanceTo(playerPosition2D) < 1) {
-                    console.log('Player reached')
+
                     setAnimationState(EnemyAnimationState.Idle);
                     return;
                 }
@@ -98,7 +98,6 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
                 setAnimationState(EnemyAnimationState.Idle);
                 if (enemyPosition2D.distanceTo(playerPosition2D) < chasingAreaRadius) {
                     if (enemyPosition2D.distanceTo(playerPosition2D) < 1) {
-                        console.log('Player reached')
                         setAnimationState(EnemyAnimationState.Idle);
                         return;
                     }
@@ -142,7 +141,7 @@ const EnemyFollowController: React.FC<Props> = ({ speed, position, showArea = fa
                 name='enemy_follow'
                 position={position}
                 lockRotations
-                mass={50}
+                mass={30}
                 gravityScale={9.8}
                 linearDamping={10}
                 onCollisionEnter={({ other }) => {

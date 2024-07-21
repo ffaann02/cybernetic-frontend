@@ -4,6 +4,7 @@ import { OBJLoader, SkeletonUtils } from "three-stdlib";
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { GameContext } from "../../../contexts/GameContext";
+import FakeGlowMaterial from "../../../components/FakeGlowMaterial";
 
 interface ItemProps {
   item: {
