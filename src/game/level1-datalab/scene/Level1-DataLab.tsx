@@ -18,7 +18,6 @@ import {
 } from "@react-three/drei";
 import { TutorialEnvironment } from "../../tutorial/scene-object/Tutorial";
 import AssistantBotController from "../../../controllers/AssistantBotController";
-import EnemySimple from "../../game_object/enemy/Spider2D";
 import RobotIdle from "../../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
@@ -26,9 +25,9 @@ import { Message } from "primereact/message";
 import { Sidebar } from "primereact/sidebar";
 import { Level1DataLabEnvironment } from "../scene-object/Level1-DataLab";
 import { MeterGroup } from "primereact/metergroup";
-import EnemyGuardController from "../../../controllers/EnemyGuardController";
-import EnemyFollowController from "../../../controllers/EnemyFollowController";
 import FadeTransition from "../../../components/scene-transition/FadeTransition";
+import { enemyPartrolProps } from "../scene-object/EnemyDataProps";
+import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
 
 interface HomeProps { }
 
@@ -135,6 +134,8 @@ const Level1DataLab: React.FC<HomeProps> = () => {
         : [...prevSelectedIndices, index]
     );
   };
+
+  const [enemyPatrolInScene, setEnemyPatrolInScene] = useState(enemyPartrolProps);
 
   return (
     <>
@@ -258,24 +259,22 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              {/* <EnemyGuardController
-                speed={3}
-                point1={[-6, 3, -10]}
-                point2={[-6, 3, 10]}/> */}
-              <EnemyFollowController
-                speed={4}
-                position={[-13, 15, 0]}
-                idleAreaRadius={8}
-                chasingAreaRadius={4}
-                texture="slime"
-              />
-              <EnemyFollowController
-                speed={8}
-                position={[-8, 15, 0]}
-                idleAreaRadius={8}
-                chasingAreaRadius={4}
-                texture="spider"
-              />
+
+              {enemyPatrolInScene.map((enemyPartrolProp, index) => (
+                <EnemyPatrolController
+                  key={index}
+                  name={enemyPartrolProp.name}
+                  waypoints={enemyPartrolProp.waypoints}
+                  angle={enemyPartrolProp.angle}
+                  idleTime={enemyPartrolProp.idleTime}
+                  chaseTimeLimit={enemyPartrolProp.chaseTimeLimit}
+                  patrolType={enemyPartrolProp.patrolType}
+                  showPath={enemyPartrolProp.showPath}
+                  data={enemyPartrolProp.data}
+                  setEnemyPatrolInScene={setEnemyPatrolInScene}
+                  />
+              ))}
+
               {/* <AssistantBotController /> */}
               <Level1DataLabEnvironment
                 showDialog={showDialog}
