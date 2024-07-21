@@ -50,6 +50,7 @@ const initialGameContext: GameContextProps = {
     "tutorial",
     "test",
     "welcome",
+    "enemy-environment",
     "level-selection",
     "game-level-1",
     "game-level-2",

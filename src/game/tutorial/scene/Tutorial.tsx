@@ -18,7 +18,6 @@ import RobotIdle from "../../../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
 import { Message } from "primereact/message";
-import EnemyGuardController from "../../../controllers/EnemyGuardController";
 
 interface HomeProps { }
 
@@ -156,13 +155,6 @@ const Tutorial: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              <EnemyGuardController
-                speed={3}
-                point1={[-6, 0.5, -10]}
-                point2={[-6, 0.5, 10]}
-                showPath={true} />
-              <AssistantBotController />
-              <TutorialEnvironment setHitCheckpoints={setHitCheckpoints} />
             </Physics>
           </Suspense>
         </Canvas>

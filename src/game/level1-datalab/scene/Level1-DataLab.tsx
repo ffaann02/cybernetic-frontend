@@ -20,7 +20,6 @@ import {
 } from "@react-three/drei";
 import { TutorialEnvironment } from "../../tutorial/scene-object/Tutorial";
 import AssistantBotController from "../../../controllers/AssistantBotController";
-import EnemySimple from "../../game_object/enemy/Spider2D";
 import RobotIdle from "../../assets/assistant-bot/gif/Idle.gif";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
@@ -28,8 +27,6 @@ import { Message } from "primereact/message";
 import { Sidebar } from "primereact/sidebar";
 import { Level1DataLabEnvironment } from "../scene-object/Level1-DataLab";
 import { MeterGroup } from "primereact/metergroup";
-import EnemyGuardController from "../../../controllers/EnemyGuardController";
-import EnemyFollowController from "../../../controllers/EnemyFollowController";
 import FadeTransition from "../../../components/scene-transition/FadeTransition";
 import GuardDataPanelUI from "../scene-object/GuardDataPanelUI";
 import { Toast } from "primereact/toast";
@@ -39,6 +36,8 @@ import LootBoxUI from "../ui/LootBoxUI";
 import CameraDataPanelUI from "../ui/CameraDataPanelUI";
 import ChatwithGoodBot from "../ui/ChatwithGoodBot";
 import CheckListGuideUI from "../ui/CheckListGuideUI";
+import { enemyPartrolProps } from "../scene-object/EnemyDataProps";
+import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
 
 interface HomeProps {}
 
@@ -119,6 +118,8 @@ const Level1DataLab: React.FC<HomeProps> = () => {
   const [confirmSelectedItems, setConfirmSelectedItems] = useState([]);
   const dataCollectNotify = useRef(null);
 
+  const [enemyPatrolInScene, setEnemyPatrolInScene] = useState(enemyPartrolProps);
+
   return (
     <>
       <Toast ref={craneUpNotAllow} position="top-center" />
@@ -181,17 +182,7 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              {/* <EnemyGuardController
-                speed={3}
-                point1={[-6, 3, -10]}
-                point2={[-6, 3, 10]}/> */}
-              {/* <EnemyFollowController
-                speed={8}
-                position={[-8, 15, 0]}
-                idleAreaRadius={8}
-                chasingAreaRadius={4}
-                texture="spider"
-              /> */}
+
               {/* <AssistantBotController /> */}
               <Level1DataLabEnvironment
                 showDialog={showDialog}
@@ -201,6 +192,8 @@ const Level1DataLab: React.FC<HomeProps> = () => {
                 setIsOpenChest={setIsOpenChest}
                 isOpenDataCamera={isOpenDataCamera}
                 setIsOpenDataCamera={setIsOpenDataCamera}
+                enemyPatrolInScene={enemyPatrolInScene}
+                setEnemyPatrolInScene={setEnemyPatrolInScene}
               />
             </Physics>
           </Suspense>

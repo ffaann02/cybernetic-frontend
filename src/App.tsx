@@ -18,6 +18,7 @@ import { LevelProvider } from "./contexts/SceneContext/LevelContext";
 import Level1DataLab from "./game/level1-datalab/scene/Level1-DataLab";
 import { SettingProvider } from "./contexts/SettingContext";
 import Level2ImageLab from "./game/level2-classify/scene/Level2-ImageLab";
+import EnemyEnvironment from "./non-gameplay-scene/EnemyEnvironment";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -39,6 +40,7 @@ function App() {
                           <SceneRouter >
                             <Scene title="welcome" scene={<Welcome />} />
                             <Scene title="home" scene={<Home />} />
+                            <Scene title="enemy-environment" scene={<EnemyEnvironment />} />
                             <Scene title="tutorial" scene={<Tutorial />} />
                             <Scene title="level-selection" scene={<LevelSelection />} />
                             <Scene title="game-level-1" scene={<Level1DataLab/>} />

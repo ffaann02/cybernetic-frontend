@@ -21,6 +21,8 @@ import EnemyFollowController from "../../../controllers/EnemyFollowController";
 import CraneGuardLevel1 from "./CraneGuard-Level1";
 import Quit from "../../../Quit";
 import Room2 from "./room/Room2";
+import { enemyPartrolProps } from "./EnemyDataProps";
+import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
 
 const Room = memo(({ children }) => {
   return <>{children}</>;
@@ -53,6 +55,8 @@ export const Level1DataLabEnvironment = ({
   setIsOpenChest,
   isOpenDataCamera,
   setIsOpenDataCamera,
+  enemyPatrolInScene,
+  setEnemyPatrolInScene,
 }) => {
   const [lastPressTime, setLastPressTime] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
@@ -206,9 +210,6 @@ export const Level1DataLabEnvironment = ({
       }
     }
   };
-
-  console.log("Red Pad:", allowRedPad);
-  console.log("Green Pad:", allowGreenPad);
 
   return (
     <>
@@ -365,6 +366,20 @@ export const Level1DataLabEnvironment = ({
       {/* <Room2 /> */}
       {currentRoom === 2 && (
         <Room>
+          {enemyPartrolProps.map((enemyPartrolProp, index) => (
+            <EnemyPatrolController
+              key={index}
+              name={enemyPartrolProp.name}
+              waypoints={enemyPartrolProp.waypoints}
+              angle={enemyPartrolProp.angle}
+              idleTime={enemyPartrolProp.idleTime}
+              chaseTimeLimit={enemyPartrolProp.chaseTimeLimit}
+              patrolType={enemyPartrolProp.patrolType}
+              showPath={enemyPartrolProp.showPath}
+              data={enemyPartrolProp.data}
+              setEnemyPatrolInScene={setEnemyPatrolInScene}
+            />
+          ))}
           <EnemyFollowController
             speed={15}
             position={[-13, 15, 4]}
