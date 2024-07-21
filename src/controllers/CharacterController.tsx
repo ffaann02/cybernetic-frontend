@@ -50,6 +50,7 @@ const CharacterController: React.FC = () => {
     setMines,
     cooldowns,
     playerRigidBody,
+    isUsingSecurityCamera
   } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -94,18 +95,18 @@ const CharacterController: React.FC = () => {
 
     const impulse = new THREE.Vector3();
 
-    if (forwardPressed && !isCoding && !isInteracting) {
+    if (forwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
       impulse.z -= speed * delta * onAirFraction;
     }
-    if (backwardPressed && !isCoding && !isInteracting) {
+    if (backwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
       impulse.z += speed * delta * onAirFraction;
     }
-    if (leftPressed && !isCoding && !isInteracting) {
+    if (leftPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
     }
 
-    if (rightPressed && !isCoding && !isInteracting) {
+    if (rightPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
     }
@@ -114,7 +115,7 @@ const CharacterController: React.FC = () => {
       jumpPressed &&
       !jumpCooldown.current &&
       isOnFloor.current &&
-      !isUsingSearch
+      !isUsingSearch && !isUsingSecurityCamera
     ) {
       jumpCooldown.current = true;
       jumpSound();
@@ -161,8 +162,6 @@ const CharacterController: React.FC = () => {
     if (newPos) {
       playerRigidBody.current.setTranslation(newPos, true);
     }
-
-    playerRigidBody.current.setTranslation(newPos, true);
 
     updateAnimationState(
       forwardPressed,
@@ -254,8 +253,8 @@ const CharacterController: React.FC = () => {
 
   return (
     <group>
-      {currentCamera === 1 && !isUsingSearch && (
-        <CameraControls ref={controls} />
+      {currentCamera === 1 && !isUsingSecurityCamera && !isUsingSearch && (
+        <CameraControls ref={controls}/>
       )}
       {isUsingSearch && <CameraControls ref={firstPerson} />}
       <RigidBody
@@ -263,7 +262,7 @@ const CharacterController: React.FC = () => {
         ref={playerRigidBody}
         colliders={false}
         linearDamping={10}
-        position={[2, 3, 2]}
+        position={[-2, 3, 2]}
         lockRotations
         mass={50}
         gravityScale={9.8}

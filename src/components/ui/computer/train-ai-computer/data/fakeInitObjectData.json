@@ -1,0 +1,90 @@
+[
+    {
+        "name": "glass",
+        "type": "danger",
+        "color": "red",
+        "thickness": 10,
+        "transparency": 0.7,
+        "density": 1,
+        "weight": 5,
+        "defect": true,
+        "breakable": true
+    },
+    {
+        "name": "glass",
+        "type": "safe",
+        "color": "green",
+        "thickness": 8,
+        "transparency": 0.9,
+        "density": 0.9,
+        "weight": 4,
+        "defect": false,
+        "breakable": false
+    },
+    {
+        "name": "glass",
+        "type": "danger",
+        "color": "red",
+        "thickness": 12,
+        "transparency": 0.6,
+        "density": 1.2,
+        "weight": 6,
+        "defect": true,
+        "breakable": true
+    },
+    {
+        "name": "glass",
+        "type": "safe",
+        "color": "green",
+        "thickness": 6,
+        "transparency": 0.8,
+        "density": 0.8,
+        "weight": 3,
+        "defect": false,
+        "breakable": false
+    },
+    {
+        "name": "glass",
+        "type": "danger",
+        "color": "red",
+        "thickness": 15,
+        "transparency": 0.5,
+        "density": 1.5,
+        "weight": 8,
+        "defect": true,
+        "breakable": true
+    },
+    {
+        "name": "glass",
+        "type": "safe",
+        "color": "green",
+        "thickness": 5,
+        "transparency": 0.95,
+        "density": 0.7,
+        "weight": 2,
+        "defect": false,
+        "breakable": false
+    },
+    {
+        "name": "glass",
+        "type": "danger",
+        "color": "red",
+        "thickness": 18,
+        "transparency": 0.4,
+        "density": 2.0,
+        "weight": 10,
+        "defect": true,
+        "breakable": true
+    },
+    {
+        "name": "glass",
+        "type": "safe",
+        "color": "green",
+        "thickness": 9,
+        "transparency": 0.85,
+        "density": 0.95,
+        "weight": 3.5,
+        "defect": false,
+        "breakable": false
+    }
+]

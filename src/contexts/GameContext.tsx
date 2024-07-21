@@ -33,11 +33,15 @@ interface GameContextProps {
   cooldowns?: any;
   setCooldowns?: React.Dispatch<React.SetStateAction<any>>;
   playerRigidBody?: React.RefObject<any>;
+  isFadingBetweenRoom?: boolean;
+  setIsFadingBetweenRoom?: React.Dispatch<React.SetStateAction<boolean>>;
+  isUsingSecurityCamera?: boolean;
+  setIsUsingSecurityCamera?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-2",
+  currentScene: "game-level-1",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -72,6 +76,10 @@ const initialGameContext: GameContextProps = {
   setMines: () => {},
   cooldowns: { J: 0, K: 0, L: 0 },
   setCooldowns: () => {},
+  isFadingBetweenRoom: false,
+  setIsFadingBetweenRoom: () => {},
+  isUsingSecurityCamera: false,
+  setIsUsingSecurityCamera: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -89,6 +97,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataStorage, setDataStorage] = useState<any>({});
   const [mines, setMines] = useState<any>([]);
   const [cooldowns, setCooldowns] = useState({ J: 0, K: 0, L: 0 });
+  const [isFadingBetweenRoom, setIsFadingBetweenRoom] = useState<boolean>(false);
+  const [isUsingSecurityCamera, setIsUsingSecurityCamera] = useState<boolean>(false);
   const playerRigidBody = useRef<any>(null);
 
   const setScene = (currentScene: string, nextScene: string) => {
@@ -130,6 +140,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setMines,
     cooldowns,
     setCooldowns,
+    isFadingBetweenRoom,
+    setIsFadingBetweenRoom,
+    isUsingSecurityCamera,
+    setIsUsingSecurityCamera,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };
