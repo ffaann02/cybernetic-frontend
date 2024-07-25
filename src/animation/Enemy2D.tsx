@@ -16,7 +16,7 @@ const Enemy2D = ({
     name: string;
     animation: EnemyAnimationState;
     direction: "left" | "right";
-    color: string;
+    color?: string;
     scale: number;
 }) => {
     const config: EnemyConfig = enemyConfigs[name];
@@ -51,6 +51,27 @@ const Enemy2D = ({
         animators[animation].animate();
     });
 
+    const colorCode = (color: any) => {
+        switch (color) {
+            case "red":
+                return "#f79481";
+            case "green":
+                return "#78fa87";
+            case "blue":
+                return "#6e90ff";
+            case "yellow":
+                return "#ffe985";
+            case "orange":
+                return "#ffa585";
+            case "white":
+                return "#ffffff";
+            case "black":
+                return "#000000";
+            default:
+                return "#ffffff";
+        }
+    };
+
     return (
         <group>
             <mesh
@@ -60,7 +81,7 @@ const Enemy2D = ({
                 <meshStandardMaterial
                     map={animators[animation].texture}
                     transparent={true}
-                    color={color}
+                    color={color !== "" ? colorCode(color) : "white"}
                     opacity={1}
                 />
             </mesh>

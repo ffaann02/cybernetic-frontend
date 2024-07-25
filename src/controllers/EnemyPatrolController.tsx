@@ -41,7 +41,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
 
     const { axiosFetch } = useAxios();
 
-    const { playerRigidBody } = useContext(GameContext);
+    const { playerRigidBody, isHidden } = useContext(GameContext);
     const { element, speed, color, detection_range, weakness } = data;
 
     const { animationState, setAnimationState } = useEnemyAnimation();
@@ -80,7 +80,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
     });
 
     useEffect(() => {
-        if (isChasing && flashlightRef.current) {
+        if (isChasing && flashlightRef.current && isHidden === false) {
             flashlightRef.current.intensity = flashlightRef.current.intensity + 100;
             const timer = setInterval(() => {
                 setChaseTimer(prev => prev - 1);
@@ -99,7 +99,8 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
         // Calculate direction to the next waypoint
         const directionVec = new THREE.Vector3(
             currentWaypoint[0] - position.x,
-            0.15,
+            // 0.15,
+            0,
             currentWaypoint[2] - position.z,
         );
 
@@ -189,7 +190,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
             const angle = Math.acos(forward.dot(toPlayer));
 
             // Check if the player is within the detection range and angle
-            if (distance < (detectionRange * enemyScale) && angle < detectionAngle) {
+            if (distance < (detectionRange * enemyScale) && angle < detectionAngle && isHidden === false) {
                 console.log("Player detected!");
                 foundPlayer.current = true;
                 setIsChasing(true); // Start chasing the player
@@ -201,11 +202,27 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
         }
     };
 
+    // const updateFlashlight = (position: THREE.Vector3, range: number) => {
+    //     if (flashlightRef.current) {
+    //         flashlightRef.current.position.set(position.x, position.y + 1, position.z);
+    //         flashlightRef.current.angle = detectionAngle; // Set the cone angle
+    //         flashlightRef.current.distance = range * enemyScale; // Set the cone distance
+    //         flashlightRef.current.penumbra = 0.5; // Example penumbra
+    //     }
+    // };
+
     const updateFlashlight = (position: THREE.Vector3, range: number) => {
         if (flashlightRef.current) {
-            flashlightRef.current.position.set(position.x, position.y + 1, position.z);
-            flashlightRef.current.angle = detectionAngle; // Set the cone angle
-            flashlightRef.current.distance = range * enemyScale; // Set the cone distance
+            const newPos = new THREE.Vector3(position.x, position.y + 1, position.z);
+            if (!flashlightRef.current.position.equals(newPos)) {
+                flashlightRef.current.position.set(position.x, position.y + 1, position.z);
+            }
+            if (flashlightRef.current.angle !== detectionAngle) {
+                flashlightRef.current.angle = detectionAngle; // Set the cone angle
+            }
+            if (flashlightRef.current.distance !== range * enemyScale) {
+                flashlightRef.current.distance = range * enemyScale; // Set the cone distance
+            }
             flashlightRef.current.penumbra = 0.5; // Example penumbra
         }
     };
@@ -249,10 +266,15 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
             updateFlashLightTarget(enemyPosition, directionVec);
             updateFlashlight(enemyPosition, length + 4);
 
-            if (chaseTimer <= 0) {
+            if (chaseTimer <= 0 || isHidden === true) {
+                console.log("Chase time limit reached or player is hidden");
                 foundPlayer.current = false;
                 setIsChasing(false);
                 setChaseTimer(chaseTimeLimit); // Reset timer
+                if(flashlightRef.current){
+                    flashlightRef.current.intensity = 100;
+                    flashlightRef.current.color.set('white');
+                }
             }
         }
         else {
@@ -339,6 +361,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
             );
 
             try {
+                console.log(modifiedData);
                 const response = await axiosFetch({
                     axiosInstance: axiosInstanceAiService,
                     method: "post",
@@ -376,12 +399,11 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
         <group>
             <RigidBody
                 ref={rigidBody}
-                colliders="cuboid"
+                colliders={false}
                 name='enemy_patrol'
                 lockRotations
-                gravityScale={9.8}
-                position={[waypoints[0][0], waypoints[0][1] + 2, waypoints[0][2]]}
-                linearDamping={10}
+                // gravityScale={9.8}
+                position={[waypoints[0][0], waypoints[0][1], waypoints[0][2]]}
                 onCollisionEnter={({ other }) => {
                     if (
                         other.rigidBodyObject &&
