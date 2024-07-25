@@ -23,6 +23,9 @@ import Quit from "../../../Quit";
 import Room2 from "./room/Room2";
 import { enemyPartrolProps } from "./EnemyDataProps";
 import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
+import * as THREE from "three";
+import { LaserTargetObjectProps } from "./room/LaserTargetObject";
+import { LaserTargetObjectData } from "./room/LaserTargetObjectData";
 
 const Room = memo(({ children }) => {
   return <>{children}</>;
@@ -57,11 +60,14 @@ export const Level1DataLabEnvironment = ({
   setIsOpenDataCamera,
   enemyPatrolInScene,
   setEnemyPatrolInScene,
+  setObjectCollectedList,
+  setNumericalCollectedList,
+  dataCollectNotify,
 }) => {
   const [lastPressTime, setLastPressTime] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
 
-  const [currentRoom, setCurrentRoom] = useState(1);
+  const [currentRoom, setCurrentRoom] = useState(2);
   const [allowCraneUp, setAllowCraneUp] = useState(false);
 
   const {
@@ -80,6 +86,10 @@ export const Level1DataLabEnvironment = ({
   const door01_destination = useRef<any>(null);
   const [allowRedPad, setAllowRedPad] = useState(false);
   const [allowGreenPad, setAllowGreenPad] = useState(false);
+
+  const [objectData, setObjectData] = useState<LaserTargetObjectProps[]>(LaserTargetObjectData);
+  const [dropedObject, setDropedObject] = useState<LaserTargetObjectProps[]>([]);
+  const [currentLaserTarget, setCurrentLaserTarget] = useState<string | null>(null);
 
   useFrame(() => {
     if (ePressed && currentHit === "level1-data-guard-red") {
@@ -128,7 +138,7 @@ export const Level1DataLabEnvironment = ({
         }
       }
     }
-    if (ePressed && currentHit === "Computer-camera-01") {
+    if (ePressed && currentHit?.includes("Computer-camera-01")) {
       const currentTime = new Date().getTime();
       if (currentTime - lastPressTime > 200) {
         // 500 milliseconds debounce time
@@ -363,6 +373,7 @@ export const Level1DataLabEnvironment = ({
           <Level1DataLabRoom1 />
         </Room>
       )}
+
       {/* <Room2 /> */}
       {currentRoom === 2 && (
         <Room>
@@ -380,19 +391,22 @@ export const Level1DataLabEnvironment = ({
               setEnemyPatrolInScene={setEnemyPatrolInScene}
             />
           ))}
-          <EnemyFollowController
-            speed={15}
-            position={[-13, 15, 4]}
-            idleAreaRadius={15}
-            chasingAreaRadius={4}
-            texture="slime"
-          />
 
           <Room2
             totalWeight={totalWeight}
             setTotalWeight={setTotalWeight}
             allowCraneUp={allowCraneUp}
             setAllowCraneUp={setAllowCraneUp}
+            setObjectCollectedList={setObjectCollectedList}
+            setNumericalCollectedList={setNumericalCollectedList}
+            objectData={objectData}
+            // objectData={LaserTargetObjectData}
+            setObjectData={setObjectData}
+            dropedObject={dropedObject}
+            setDropedObject={setDropedObject}
+            currentLaserTarget={currentLaserTarget}
+            setCurrentLaserTarget={setCurrentLaserTarget}
+            dataCollectNotify={dataCollectNotify}
           />
           <GlassBridge
             row={3}

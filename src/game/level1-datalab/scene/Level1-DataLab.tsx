@@ -10,7 +10,7 @@ import React, {
 import CharacterController, {
   Controls,
 } from "../../../controllers/CharacterController";
-import { Physics } from "@react-three/rapier";
+import { Physics, RapierRigidBody } from "@react-three/rapier";
 import { GameContext } from "../../../contexts/GameContext";
 import {
   KeyboardControls,
@@ -38,11 +38,13 @@ import ChatwithGoodBot from "../ui/ChatwithGoodBot";
 import CheckListGuideUI from "../ui/CheckListGuideUI";
 import { enemyPartrolProps } from "../scene-object/EnemyDataProps";
 import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
+import { RigidBody, CylinderCollider, CapsuleCollider } from "@react-three/rapier";
+import { Outlines, Cylinder } from "@react-three/drei";
 
-interface HomeProps {}
+interface HomeProps { }
 
 const Level1DataLab: React.FC<HomeProps> = () => {
-  const { debug, currentCamera,isUsingSecurityCamera,isInteracting,currentHit } = useContext(GameContext);
+  const { debug, currentCamera, isUsingSecurityCamera, isInteracting, currentHit } = useContext(GameContext);
 
   const controlMap = useMemo(
     () => [
@@ -55,6 +57,7 @@ const Level1DataLab: React.FC<HomeProps> = () => {
       { name: Controls.interact, keys: ["KeyR"] },
       { name: Controls.ESC, keys: ["Escape"] },
       { name: Controls.L, keys: ["KeyL"] },
+      { name: Controls.G, keys: ["KeyG"] },
     ],
     []
   );
@@ -109,11 +112,21 @@ const Level1DataLab: React.FC<HomeProps> = () => {
   const [isOpenChest, setIsOpenChest] = useState(false);
   const [isOpenDataCamera, setIsOpenDataCamera] = useState(false);
   const craneUpNotAllow = useRef(null);
+
   const securityCameraRef = useRef(null);
+  const laserRef = useRef<RapierRigidBody>(null);
 
   const [imageCollectedList, setImageCollectedList] = useState([]);
   const [textCollectedList, setTextCollectedList] = useState([]);
   const [audioCollectedList, setAudioCollectedList] = useState([]);
+  const [objectCollectedList, setObjectCollectedList] = useState([]);
+  const [numericalCollectedList, setNumericalCollectedList] = useState([]);
+
+  const [maxImageCollected, setMaxImageCollected] = useState(5);
+  const [maxAudioCollected, setMaxAudioCollected] = useState(5);
+  const [maxTextCollected, setMaxTextCollected] = useState(3);
+  const [maxObjectCollected, setMaxObjectCollected] = useState(4);
+  const [maxNumericalCollected, setMaxNumericalCollected] = useState(2);
 
   const [confirmSelectedItems, setConfirmSelectedItems] = useState([]);
   const dataCollectNotify = useRef(null);
@@ -133,9 +146,19 @@ const Level1DataLab: React.FC<HomeProps> = () => {
         preparedImages={["/images/guard-profile.png"]}
         selectedIndices={[0]}
         toggleSelection={(index) => console.log(index)}
+        imageCollectedList={imageCollectedList}
+        textCollectedList={textCollectedList}
+        audioCollectedList={audioCollectedList}
+        objectCollectedList={objectCollectedList}
+        numericalCollectedList={numericalCollectedList}
+        maxImageCollected={maxImageCollected}
+        maxAudioCollected={maxAudioCollected}
+        maxTextCollected={maxTextCollected}
+        maxObjectCollected={maxObjectCollected}
+        maxNumericalCollected={maxNumericalCollected}
       />
 
-      {isOpenChest && <LootBoxUI 
+      {isOpenChest && <LootBoxUI
         confirmSelectedItems={confirmSelectedItems}
         setConfirmSelectedItems={setConfirmSelectedItems}
         dataCollectNotify={dataCollectNotify}
@@ -146,7 +169,7 @@ const Level1DataLab: React.FC<HomeProps> = () => {
         dataCollectNotify={dataCollectNotify}
       />}
       {
-        isInteracting && currentHit==="GoodBot" && (
+        isInteracting && currentHit === "GoodBot" && (
           <ChatwithGoodBot
             confirmSelectedItems={confirmSelectedItems}
             dataCollectNotify={dataCollectNotify}
@@ -162,6 +185,13 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           textCollectedList={textCollectedList}
           imageCollectedList={imageCollectedList}
           audioCollectedList={audioCollectedList}
+          objectCollectedList={objectCollectedList}
+          numericalCollectedList={numericalCollectedList}
+          maxImageCollected={maxImageCollected}
+          maxAudioCollected={maxAudioCollected}
+          maxTextCollected={maxTextCollected}
+          maxObjectCollected={maxObjectCollected}
+          maxNumericalCollected={maxNumericalCollected}
         />
       }
 
@@ -194,10 +224,18 @@ const Level1DataLab: React.FC<HomeProps> = () => {
                 setIsOpenDataCamera={setIsOpenDataCamera}
                 enemyPatrolInScene={enemyPatrolInScene}
                 setEnemyPatrolInScene={setEnemyPatrolInScene}
+                setObjectCollectedList={setObjectCollectedList}
+                setNumericalCollectedList={setNumericalCollectedList}
+                dataCollectNotify={dataCollectNotify}
               />
+
+              {isUsingSecurityCamera &&
+                <>
+
+                  <SecurityCamera cameraRef={securityCameraRef} laserRef={laserRef} />
+                </>}
             </Physics>
           </Suspense>
-          {isUsingSecurityCamera && <SecurityCamera cameraRef={securityCameraRef} />}
         </Canvas>
       </KeyboardControls>
     </>

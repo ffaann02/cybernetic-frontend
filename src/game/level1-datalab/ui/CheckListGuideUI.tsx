@@ -4,6 +4,13 @@ const CheckListGuideUI = ({
   textCollectedList,
   imageCollectedList,
   audioCollectedList,
+  objectCollectedList,
+  numericalCollectedList,
+  maxImageCollected,
+  maxAudioCollected,
+  maxTextCollected,
+  maxObjectCollected,
+  maxNumericalCollected,
 }) => {
   return (
     <div className="absolute z-[50] left-4 top-4 p-2 max-w-[17rem] w-full">
@@ -17,7 +24,7 @@ const CheckListGuideUI = ({
         <div className="mt-2 ml-2 flex flex-col gap-y-2">
           <div className="flex align-items-center">
             <Checkbox
-              checked={imageCollectedList.length >= 5}
+              checked={imageCollectedList.length >= maxImageCollected}
               inputId="ingredient1"
               name="pizza"
               value="Cheese"
@@ -28,8 +35,8 @@ const CheckListGuideUI = ({
               htmlFor="ingredient1"
               className="ml-2 text-sm flex justify-between w-full"
             >
-              <span>Cat Image</span>
-              <span>{imageCollectedList.length}/5</span>
+              <span>Image</span>
+              <span>{imageCollectedList.length}/{maxImageCollected}</span>
             </label>
           </div>
           <div className="flex align-items-center">
@@ -38,7 +45,7 @@ const CheckListGuideUI = ({
               name="pizza"
               value="Cheese"
               className="my-auto"
-              checked={audioCollectedList.length >= 5}
+              checked={audioCollectedList.length >= maxAudioCollected}
               //   onChange={onIngredientsChange}
               //   checked={ingredients.includes("Cheese")}
             />
@@ -47,7 +54,7 @@ const CheckListGuideUI = ({
               className="ml-2 text-sm flex justify-between w-full"
             >
               <span>Audio</span>
-              <span>{audioCollectedList.length}/5</span>
+              <span>{audioCollectedList.length}/{maxAudioCollected}</span>
             </label>
           </div>
           <div className="flex align-items-center">
@@ -56,7 +63,7 @@ const CheckListGuideUI = ({
               name="pizza"
               value="Cheese"
               className="my-auto"
-              checked={textCollectedList.length >= 3}
+              checked={textCollectedList.length >= maxTextCollected}
               //   onChange={onIngredientsChange}
               //   checked={ingredients.includes("Cheese")}
             />
@@ -65,7 +72,7 @@ const CheckListGuideUI = ({
               className="ml-2 text-sm flex justify-between w-full"
             >
               <span>Text</span>
-              <span>{textCollectedList.length}/3</span>
+              <span>{textCollectedList.length}/{maxTextCollected}</span>
             </label>
           </div>
           <div className="flex align-items-center">
@@ -74,6 +81,7 @@ const CheckListGuideUI = ({
               name="pizza"
               value="Cheese"
               className="my-auto"
+              checked={objectCollectedList.length >= maxObjectCollected}
               //   onChange={onIngredientsChange}
               //   checked={ingredients.includes("Cheese")}
             />
@@ -82,7 +90,7 @@ const CheckListGuideUI = ({
               className="ml-2 text-sm flex justify-between w-full"
             >
               <span>Object</span>
-              <span>1/5</span>
+              <span>{objectCollectedList.length}/{maxObjectCollected}</span>
             </label>
           </div>
           <div className="flex align-items-center">
@@ -91,6 +99,7 @@ const CheckListGuideUI = ({
               name="pizza"
               value="Cheese"
               className="my-auto"
+              checked={numericalCollectedList.length >= maxNumericalCollected}
               //   onChange={onIngredientsChange}
               //   checked={ingredients.includes("Cheese")}
             />
@@ -99,7 +108,7 @@ const CheckListGuideUI = ({
               className="ml-2 text-sm flex justify-between w-full"
             >
               <span>Numerical</span>
-              <span>1/2</span>
+              <span>{numericalCollectedList.length}/{maxNumericalCollected}</span>
             </label>
           </div>
         </div>

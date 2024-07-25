@@ -27,6 +27,7 @@ export enum Controls {
   ESC = "ESC",
   L = "L",
   E = "E",
+  G = "G",
 }
 
 const CharacterController: React.FC = () => {
