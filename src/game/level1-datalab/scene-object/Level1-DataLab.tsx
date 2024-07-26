@@ -16,6 +16,7 @@ import ScifiComputer from "../../shared-object/interaction/ScifiComputer";
 import Guard from "./Guard";
 import { Controls } from "../../../controllers/CharacterController";
 import { useFrame } from "@react-three/fiber";
+import { vec3 } from "@react-three/rapier";
 import GlassBridge from "../../shared-object/object/GlassBridge";
 import EnemyFollowController from "../../../controllers/EnemyFollowController";
 import CraneGuardLevel1 from "./CraneGuard-Level1";
@@ -63,11 +64,14 @@ export const Level1DataLabEnvironment = ({
   setObjectCollectedList,
   setNumericalCollectedList,
   dataCollectNotify,
+  isSubmitClicked,
+  setIsSubmitClicked,
+  craneRedBox,
 }) => {
   const [lastPressTime, setLastPressTime] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
 
-  const [currentRoom, setCurrentRoom] = useState(2);
+  const [currentRoom, setCurrentRoom] = useState(1);
   const [allowCraneUp, setAllowCraneUp] = useState(false);
 
   const {
@@ -177,6 +181,23 @@ export const Level1DataLabEnvironment = ({
         setLastPressTime(currentTime);
       }
     }
+    if(craneRedBox && craneRedBox.current && isSubmitClicked){
+
+      const currentPosition = vec3(craneRedBox.current.translation());
+
+      const liftPerFrame = 0.08;
+      const TopReachPoint = 23;
+      const bottomReachPoint = 0.1;
+      if (currentPosition.y < TopReachPoint) {
+        craneRedBox.current.setTranslation({
+          x: currentPosition.x,
+          y: Math.min(currentPosition.y + liftPerFrame, TopReachPoint),
+          z: currentPosition.z,
+        });
+      } else if (currentPosition.y > bottomReachPoint) {
+          setIsSubmitClicked(false);
+      }
+    }
   });
 
   const [doorStatuses, setDoorStatuses] = useState([
@@ -241,7 +262,7 @@ export const Level1DataLabEnvironment = ({
       {currentRoom === 1 && (
         <Room>
           <RigidBody
-            colliders="cuboid"
+            colliders={false}
             name="level1-data-guard-red"
             lockRotations
             lockTranslations
@@ -265,6 +286,7 @@ export const Level1DataLabEnvironment = ({
               setCurrentHit("");
             }}
           >
+            <CuboidCollider args={[0.15, 0.4, 0.35]} position={[0,0,0]} />
             <Guard />
           </RigidBody>
           <RigidBody mass={20} name="RedBox">
@@ -290,10 +312,11 @@ export const Level1DataLabEnvironment = ({
             />
           </RigidBody>
           <RigidBody
+            ref={craneRedBox}
             scale={[0.25, 0.25, 0.5]}
             position={[-24, 10, -5]}
             colliders="trimesh"
-            name="crane01"
+            name="craneRedBox"
             lockRotations
             lockTranslations
             type="fixed"

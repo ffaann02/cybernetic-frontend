@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { GameContext } from "../../../contexts/GameContext";
 import { label } from "three/examples/jsm/nodes/Nodes.js";
+import { vec3 } from "@react-three/rapier";
 
 const GuardDataPanelUI = ({
   showDialog,
@@ -23,6 +24,10 @@ const GuardDataPanelUI = ({
   maxTextCollected,
   maxObjectCollected,
   maxNumericalCollected,
+  isSourceFull,
+  setIsSourceFull,
+  collectedFullNotify,
+  setIsSubmitClicked,
 }) => {
 
   const { setIsInteracting } = useContext(GameContext);
@@ -35,6 +40,8 @@ const GuardDataPanelUI = ({
 
   const maxAllCollected = maxImageCollected + maxAudioCollected + maxTextCollected + maxObjectCollected + maxNumericalCollected;
   const multipleScale = 100 / maxAllCollected
+
+  const [isCraneMoving, setIsCraneMoving] = useState(false);
 
   const values = [
     {
@@ -119,9 +126,22 @@ const GuardDataPanelUI = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log("selectedCollected", selectedCollected);
-  // }, [selectedCollected])
+  useEffect(() => {
+    if (selectedImage.length + selectedAudio.length + selectedText.length + selectedObject.length + selectedNumerical.length === maxAllCollected) {
+      setIsSourceFull(true);
+    } else {
+      setIsSourceFull(false);
+    }
+  }, [selectedImage, selectedAudio, selectedText, selectedObject, selectedNumerical]);
+
+  const moveCraneRedBox = () => {
+    if(isSourceFull){
+      setIsSubmitClicked(true);
+    }
+    else{
+      setIsSubmitClicked(false);
+    }
+  }
 
   return (
     <div
@@ -251,6 +271,15 @@ const GuardDataPanelUI = ({
             >
               <MdCancel className="textes-white text-xl" />
               <span className="text-white">Close</span>
+            </button>
+          </div>
+          <div className="absolute bottom-14 right-3 z-50 text-sm">
+            <button
+              className={`px-3 py-2 rounded-lg bg-green-500/90 hover:bg-green-500/70 flex gap-x-2 items-center ${isSourceFull ? "" : "cursor-not-allowed"}`}
+              disabled={!isSourceFull}
+              onClick={() => moveCraneRedBox()}
+            >
+              <span className="text-white">Go up</span>
             </button>
           </div>
         </div>

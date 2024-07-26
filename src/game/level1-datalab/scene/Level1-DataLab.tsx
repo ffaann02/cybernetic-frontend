@@ -127,6 +127,10 @@ const Level1DataLab: React.FC<HomeProps> = () => {
   const [maxTextCollected, setMaxTextCollected] = useState(3);
   const [maxObjectCollected, setMaxObjectCollected] = useState(4);
   const [maxNumericalCollected, setMaxNumericalCollected] = useState(2);
+  const [isSourceFull, setIsSourceFull] = useState(false);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+  const collectedFullNotify = useRef(null);
+  const craneRedBox = useRef(null);
 
   const [confirmSelectedItems, setConfirmSelectedItems] = useState([]);
   const dataCollectNotify = useRef(null);
@@ -156,6 +160,10 @@ const Level1DataLab: React.FC<HomeProps> = () => {
         maxTextCollected={maxTextCollected}
         maxObjectCollected={maxObjectCollected}
         maxNumericalCollected={maxNumericalCollected}
+        isSourceFull={isSourceFull}
+        setIsSourceFull={setIsSourceFull}
+        collectedFullNotify={collectedFullNotify}
+        setIsSubmitClicked={setIsSubmitClicked}
       />
 
       {isOpenChest && <LootBoxUI
@@ -227,6 +235,9 @@ const Level1DataLab: React.FC<HomeProps> = () => {
                 setObjectCollectedList={setObjectCollectedList}
                 setNumericalCollectedList={setNumericalCollectedList}
                 dataCollectNotify={dataCollectNotify}
+                isSubmitClicked={isSubmitClicked}
+                setIsSubmitClicked={setIsSubmitClicked}
+                craneRedBox={craneRedBox}
               />
 
               {isUsingSecurityCamera &&
