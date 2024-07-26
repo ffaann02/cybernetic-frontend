@@ -51,7 +51,8 @@ const CharacterController: React.FC = () => {
     setMines,
     cooldowns,
     playerRigidBody,
-    isUsingSecurityCamera
+    isUsingSecurityCamera,
+    isCarryingObject
   } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -87,7 +88,7 @@ const CharacterController: React.FC = () => {
 
   const { animationState, setAnimationState, updateAnimationState } =
     useCharacterAnimation();
-  const jumpSound = useAudio("jump", 0.5);
+  const jumpSound = useAudio("/soundfx/character/jump.mp3", 0.5);
 
   const [codingCooldown, setCodingCooldown] = useState(false);
 
@@ -181,6 +182,10 @@ const CharacterController: React.FC = () => {
       adjustZoom = { x: 1, y: -4, z: -4 };
     } else {
       adjustZoom = { x: 0, y: 0, z: 0 };
+    }
+
+    if(isCarryingObject){
+      adjustZoom = { x: -1, y: -1, z: -3 };
     }
 
     if (controls.current && playerRigidBody.current) {

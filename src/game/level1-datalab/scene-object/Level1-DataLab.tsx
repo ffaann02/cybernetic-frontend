@@ -28,7 +28,7 @@ import * as THREE from "three";
 import { LaserTargetObjectProps } from "./room/LaserTargetObject";
 import { LaserTargetObjectData } from "./room/LaserTargetObjectData";
 
-const Room = memo(({ children }) => {
+export const Room = memo(({ children }) => {
   return <>{children}</>;
 });
 

@@ -26,6 +26,7 @@ const GlobalGameUI = () => {
     isInteracting,
     isFadingBetweenRoom,
     isUsingSecurityCamera,
+    isCarryingObject,
   } = useContext(GameContext);
 
   return (
@@ -99,6 +100,50 @@ const GlobalGameUI = () => {
           <AskForInputKeyDown title="Press E to Interact with Robot" />
         ) : (
           <AskForInputKeyDown title="Press E to Leave Robot" />
+        ))}
+
+      {currentHit === "Crane-Computer-Level-3" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Access Controller" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Controller" />
+            <div className="absolute z-[100] bottom-[8.25rem] left-1/2 transform -translate-x-1/2">
+              <h1 className="text-white text-xl">
+                Press Space Bar to Activate Fire
+              </h1>
+            </div>
+          </>
+        ))}
+      {currentHit === "Speaker-Level3" &&
+        (!isCarryingObject ? (
+          <AskForInputKeyDown title="Press E to Pick The Speaker" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave The Speaker" />
+            {/* <div className="absolute z-[100] bottom-[8.25rem] left-1/2 transform -translate-x-1/2">
+              <h1 className="text-white text-xl">
+                Press Space Bar to Activate Fire
+              </h1>
+            </div> */}
+          </>
+        ))}
+      {currentHit === "StereoRack-Level3" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Open Audio Stereo" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Audio Stereo" />
+          </>
+        ))}
+
+      {currentHit === "ComputerVideo-Level3" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Computer" />
+          </>
         ))}
     </>
   );

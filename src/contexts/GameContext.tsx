@@ -37,11 +37,13 @@ interface GameContextProps {
   setIsFadingBetweenRoom?: React.Dispatch<React.SetStateAction<boolean>>;
   isUsingSecurityCamera?: boolean;
   setIsUsingSecurityCamera?: React.Dispatch<React.SetStateAction<boolean>>;
+  isCarryingObject?: boolean;
+  setIsCarryingObject?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-1",
+  currentScene: "game-level-3",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -81,6 +83,9 @@ const initialGameContext: GameContextProps = {
   setIsFadingBetweenRoom: () => {},
   isUsingSecurityCamera: false,
   setIsUsingSecurityCamera: () => {},
+  isCarryingObject: false,
+  playerRigidBody: null,
+  setIsCarryingObject: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -100,6 +105,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [cooldowns, setCooldowns] = useState({ J: 0, K: 0, L: 0 });
   const [isFadingBetweenRoom, setIsFadingBetweenRoom] = useState<boolean>(false);
   const [isUsingSecurityCamera, setIsUsingSecurityCamera] = useState<boolean>(false);
+  const [isCarryingObject, setIsCarryingObject] = useState(false);
   const playerRigidBody = useRef<any>(null);
 
   const setScene = (currentScene: string, nextScene: string) => {
@@ -145,6 +151,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setIsFadingBetweenRoom,
     isUsingSecurityCamera,
     setIsUsingSecurityCamera,
+    isCarryingObject,
+    setIsCarryingObject,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

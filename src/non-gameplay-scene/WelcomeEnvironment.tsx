@@ -52,11 +52,11 @@ export const WelcomeEnviroment = () => {
         shadow-camera-bottom={-20}
       />
 
-      {items.map((item, index) => (
+      {/* {items.map((item, index) => (
         <RigidBody name="item" lockTranslations lockRotations>
           <Item item={item} key={index} />
         </RigidBody>
-      ))}
+      ))} */}
       <Welcome/>
       {/* {camera === 2 && <OrbitControls />} */}
       <OrbitControls />

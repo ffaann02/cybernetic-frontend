@@ -1,4 +1,4 @@
-import { useGLTF, useFBX, useTexture, Outlines } from "@react-three/drei";
+import { useGLTF, useFBX, useTexture, Outlines, Sphere } from "@react-three/drei";
 import { useContext, useMemo } from "react";
 import { OBJLoader, SkeletonUtils } from "three-stdlib";
 import { useLoader } from "@react-three/fiber";
@@ -10,7 +10,7 @@ interface ItemProps {
   item: {
     name: string;
     position: number[];
-    rotation: number;
+    rotation?: number[];
     scale?: number[];
     fileType: string;
     textures?: string[]; // Array of texture paths
@@ -21,6 +21,8 @@ interface ItemProps {
   opacity?: number;
   isOutlined?: boolean;
   status?: string;
+  outlineColor?:string;
+  ref?: any;
 }
 
 export const Item: React.FC<ItemProps> = ({
@@ -30,6 +32,8 @@ export const Item: React.FC<ItemProps> = ({
   opacity,
   isOutlined,
   status,
+  outlineColor,
+  ref
 }) => {
   const { name, position, rotation, scale, fileType, textures, color } = item;
   const { currentHit } = useContext(GameContext);
@@ -73,18 +77,19 @@ export const Item: React.FC<ItemProps> = ({
     <>
       {meshes.map((mesh: any, index: number) => (
         <mesh
-          ref={meshRef ? meshRef : null}
+          ref={ref}
           key={index}
           geometry={(mesh as any).geometry}
           material={(mesh as any).material}
           position={position}
           scale={scale || [1, 1, 1]}
+          rotation={rotation || [0, 0, 0]}
           castShadow
         >
           {isOutlined && (
             <Outlines
               thickness={5}
-              color={status==="close" ? "red" : "green"}
+              color={outlineColor || "white"}
               angle={180}
               screenspace={true}
             />

@@ -35,9 +35,11 @@ interface EnemyPatrolControllerProps {
     showPath?: boolean;
     data: EnemyData;
     setEnemyPatrolInScene: React.Dispatch<React.SetStateAction<any[]>>;
+    isPlayingSound?: boolean;
+    speakerRef?: any;
 }
 
-const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene }) => {
+const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene,isPlayingSound, speakerRef }) => {
 
     const { axiosFetch } = useAxios();
 
@@ -70,12 +72,19 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
     const [isStopped, setIsStopped] = useState(false);
 
     useFrame(() => {
-        if (foundPlayer.current === false) {
+        if (foundPlayer.current === false && !isPlayingSound) {
             moveBetweenWaypoints();
         }
         else {
             setAnimationState(EnemyAnimationState.Running);
-            moveToPlayer(); 
+            if(isPlayingSound && speakerRef.current){
+                // speakerRef.current.play();
+                console.log("move to speaker");
+                moveToSpeaker();
+            }
+            else{
+                moveToPlayer(); 
+            }
         }
     });
 
@@ -282,6 +291,47 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
         }
     }
 
+    const moveToSpeaker = () => {
+        if (speakerRef && speakerRef.current) {
+
+            const playerPosition = speakerRef.current.translation();
+            const enemyPosition = rigidBody.current.translation();
+
+            // Calculate direction to the next waypoint
+            const directionVec = new THREE.Vector3(
+                playerPosition.x - enemyPosition.x,
+                playerPosition.y - enemyPosition.y,
+                playerPosition.z - enemyPosition.z,
+            );
+
+            // Normalize direction
+            const length = directionVec.length();
+            directionVec.normalize();
+
+            // Set direction state
+            setDirection(directionVec.x < 0 ? 'left' : 'right');
+
+            // Move the rigid body towards the current waypoint
+            rigidBody.current.setLinvel({
+                x: directionVec.x * movingSpeed,
+                y: directionVec.y * movingSpeed,
+                z: directionVec.z * movingSpeed,
+            });
+
+            updateFlashLightTarget(enemyPosition, directionVec);
+            updateFlashlight(enemyPosition, length + 4);
+
+            if (chaseTimer <= 0) {
+                foundPlayer.current = false;
+                setIsChasing(false);
+                setChaseTimer(chaseTimeLimit); // Reset timer
+            }
+        }
+        else {
+            console.log('Player rigid body is not available');
+        }
+    }
+
     // Create a line geometry between waypoint
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(
         waypoints.map(waypoint => new THREE.Vector3(waypoint[0], waypoint[1], waypoint[2]))
@@ -393,6 +443,18 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
             }, 1000); // Reset the flag after 1 second
         }
 
+    }
+
+    const onObjectEnterEnemy = ({ other }) => {
+        if (
+            other.rigidBodyObject &&
+            other.rigidBodyObject.name.includes("mine")
+        ) {
+            mineProcessing();
+        }
+        if(other.rigidBodyObject && other.rigidBodyObject.name==="Kaboom-Level3"){
+            console.log("Kaboom!");
+        }
     }
 
     return (
