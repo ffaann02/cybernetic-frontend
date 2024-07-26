@@ -24,7 +24,7 @@ import Room2 from "./room/Room2";
 import { enemyPartrolProps } from "./EnemyDataProps";
 import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
 
-const Room = memo(({ children }) => {
+export const Room = memo(({ children }) => {
   return <>{children}</>;
 });
 

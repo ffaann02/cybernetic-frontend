@@ -1,30 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
-const useAudio = (sound: string, volume: number = 1.0, duration_percent: number = 100) => {
-  const [audio] = useState(new Audio(`/soundfx/character/${sound}.mp3`));
+const useAudio = (sound, volume = 1.0, duration_percent = 100, onEnd) => {
+  const audioRef = useRef(new Audio(sound));
 
   useEffect(() => {
-    audio.volume = volume;
+    if (sound) {
+      audioRef.current.src = sound;
+      audioRef.current.volume = volume;
 
-    const handleLoadedMetadata = () => {
-      const durationInMilliseconds = (audio.duration * duration_percent) / 100 * 1000;
-      audio.addEventListener('play', () => {
-        setTimeout(() => {
-          audio.pause();
-          audio.currentTime = 0;
-        }, durationInMilliseconds);
-      });
-    };
+      const handleLoadedMetadata = () => {
+        const durationInMilliseconds = (audioRef.current.duration * duration_percent) / 100 * 1000;
+        audioRef.current.addEventListener('play', () => {
+          setTimeout(() => {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+          }, durationInMilliseconds);
+        });
+      };
 
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+      const handleEnded = () => {
+        if (onEnd) onEnd();
+      };
 
-    return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-    };
-  }, [audio, volume, duration_percent]);
+      audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+      audioRef.current.addEventListener('ended', handleEnded);
+
+      return () => {
+        audioRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        audioRef.current.removeEventListener('ended', handleEnded);
+      };
+    }
+  }, [sound, volume, duration_percent, onEnd]);
+
+  useEffect(() => {
+    audioRef.current.volume = volume;
+  }, [volume]);
 
   const playAudio = () => {
-    audio.play();
+    audioRef.current.play();
   };
 
   return playAudio;

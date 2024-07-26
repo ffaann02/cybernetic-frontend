@@ -19,6 +19,7 @@ import Level1DataLab from "./game/level1-datalab/scene/Level1-DataLab";
 import { SettingProvider } from "./contexts/SettingContext";
 import Level2ImageLab from "./game/level2-classify/scene/Level2-ImageLab";
 import EnemyEnvironment from "./non-gameplay-scene/EnemyEnvironment";
+import Level3SoundGEN from "./game/level3-sound-generative/scene/Level3-SoundGEN";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -45,6 +46,7 @@ function App() {
                             <Scene title="level-selection" scene={<LevelSelection />} />
                             <Scene title="game-level-1" scene={<Level1DataLab/>} />
                             <Scene title="game-level-2" scene={<Level2ImageLab/>} />
+                            <Scene title="game-level-3" scene={<Level3SoundGEN/>} />
                           </SceneRouter>
                         </LevelProvider>
                       </div>

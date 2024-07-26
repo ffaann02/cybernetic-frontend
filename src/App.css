@@ -100,3 +100,17 @@ a, p, h1, h2, h3, h4, h5, span {
 .fadeOut {
   animation: fadeOut 1s ease-in-out forwards;
 }
+
+.p-slider-range{
+  margin-top: 0.5px;
+}
+
+.p-slider-handle-active{
+  margin-top: -8px;
+  background-color: #007ad9;
+}
+
+#root{
+  background: rgb(36,55,130);
+background: linear-gradient(0deg, rgba(36,55,130,1) 0%, rgba(12,12,87,1) 34%, rgba(0,0,0,1) 100%);
+}
