@@ -16,6 +16,7 @@ import ScifiComputer from "../../shared-object/interaction/ScifiComputer";
 import Guard from "./Guard";
 import { Controls } from "../../../controllers/CharacterController";
 import { useFrame } from "@react-three/fiber";
+import { vec3 } from "@react-three/rapier";
 import GlassBridge from "../../shared-object/object/GlassBridge";
 import EnemyFollowController from "../../../controllers/EnemyFollowController";
 import CraneGuardLevel1 from "./CraneGuard-Level1";
@@ -23,6 +24,9 @@ import Quit from "../../../Quit";
 import Room2 from "./room/Room2";
 import { enemyPartrolProps } from "./EnemyDataProps";
 import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
+import * as THREE from "three";
+import { LaserTargetObjectProps } from "./room/LaserTargetObject";
+import { LaserTargetObjectData } from "./room/LaserTargetObjectData";
 
 export const Room = memo(({ children }) => {
   return <>{children}</>;
@@ -57,6 +61,12 @@ export const Level1DataLabEnvironment = ({
   setIsOpenDataCamera,
   enemyPatrolInScene,
   setEnemyPatrolInScene,
+  setObjectCollectedList,
+  setNumericalCollectedList,
+  dataCollectNotify,
+  isSubmitClicked,
+  setIsSubmitClicked,
+  craneRedBox,
 }) => {
   const [lastPressTime, setLastPressTime] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
@@ -80,6 +90,10 @@ export const Level1DataLabEnvironment = ({
   const door01_destination = useRef<any>(null);
   const [allowRedPad, setAllowRedPad] = useState(false);
   const [allowGreenPad, setAllowGreenPad] = useState(false);
+
+  const [objectData, setObjectData] = useState<LaserTargetObjectProps[]>(LaserTargetObjectData);
+  const [dropedObject, setDropedObject] = useState<LaserTargetObjectProps[]>([]);
+  const [currentLaserTarget, setCurrentLaserTarget] = useState<string | null>(null);
 
   useFrame(() => {
     if (ePressed && currentHit === "level1-data-guard-red") {
@@ -128,7 +142,7 @@ export const Level1DataLabEnvironment = ({
         }
       }
     }
-    if (ePressed && currentHit === "Computer-camera-01") {
+    if (ePressed && currentHit?.includes("Computer-camera-01")) {
       const currentTime = new Date().getTime();
       if (currentTime - lastPressTime > 200) {
         // 500 milliseconds debounce time
@@ -165,6 +179,23 @@ export const Level1DataLabEnvironment = ({
         console.log("GoodBot");
         setIsInteracting((prev) => !prev);
         setLastPressTime(currentTime);
+      }
+    }
+    if(craneRedBox && craneRedBox.current && isSubmitClicked){
+
+      const currentPosition = vec3(craneRedBox.current.translation());
+
+      const liftPerFrame = 0.08;
+      const TopReachPoint = 23;
+      const bottomReachPoint = 0.1;
+      if (currentPosition.y < TopReachPoint) {
+        craneRedBox.current.setTranslation({
+          x: currentPosition.x,
+          y: Math.min(currentPosition.y + liftPerFrame, TopReachPoint),
+          z: currentPosition.z,
+        });
+      } else if (currentPosition.y > bottomReachPoint) {
+          setIsSubmitClicked(false);
       }
     }
   });
@@ -231,7 +262,7 @@ export const Level1DataLabEnvironment = ({
       {currentRoom === 1 && (
         <Room>
           <RigidBody
-            colliders="cuboid"
+            colliders={false}
             name="level1-data-guard-red"
             lockRotations
             lockTranslations
@@ -255,6 +286,7 @@ export const Level1DataLabEnvironment = ({
               setCurrentHit("");
             }}
           >
+            <CuboidCollider args={[0.15, 0.4, 0.35]} position={[0,0,0]} />
             <Guard />
           </RigidBody>
           <RigidBody mass={20} name="RedBox">
@@ -280,10 +312,11 @@ export const Level1DataLabEnvironment = ({
             />
           </RigidBody>
           <RigidBody
+            ref={craneRedBox}
             scale={[0.25, 0.25, 0.5]}
             position={[-24, 10, -5]}
             colliders="trimesh"
-            name="crane01"
+            name="craneRedBox"
             lockRotations
             lockTranslations
             type="fixed"
@@ -363,6 +396,7 @@ export const Level1DataLabEnvironment = ({
           <Level1DataLabRoom1 />
         </Room>
       )}
+
       {/* <Room2 /> */}
       {currentRoom === 2 && (
         <Room>
@@ -380,19 +414,22 @@ export const Level1DataLabEnvironment = ({
               setEnemyPatrolInScene={setEnemyPatrolInScene}
             />
           ))}
-          <EnemyFollowController
-            speed={15}
-            position={[-13, 15, 4]}
-            idleAreaRadius={15}
-            chasingAreaRadius={4}
-            texture="slime"
-          />
 
           <Room2
             totalWeight={totalWeight}
             setTotalWeight={setTotalWeight}
             allowCraneUp={allowCraneUp}
             setAllowCraneUp={setAllowCraneUp}
+            setObjectCollectedList={setObjectCollectedList}
+            setNumericalCollectedList={setNumericalCollectedList}
+            objectData={objectData}
+            // objectData={LaserTargetObjectData}
+            setObjectData={setObjectData}
+            dropedObject={dropedObject}
+            setDropedObject={setDropedObject}
+            currentLaserTarget={currentLaserTarget}
+            setCurrentLaserTarget={setCurrentLaserTarget}
+            dataCollectNotify={dataCollectNotify}
           />
           <GlassBridge
             row={3}

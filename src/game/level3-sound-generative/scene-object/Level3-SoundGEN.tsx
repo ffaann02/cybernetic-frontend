@@ -45,8 +45,7 @@ const Level3SoundGenEnvironment = ({
     <>
       <Environment preset="dawn" environmentIntensity={0.5} />
       <directionalLight
-        ref={parentLight}
-        intensity={2}
+        intensity={5}
         scale={100}
         castShadow
         shadow-mapSize-height={4096 * 3}

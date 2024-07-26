@@ -2,19 +2,32 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { CuboidCollider, RigidBody, vec3 } from "@react-three/rapier";
 import { Item } from "../../../shared-object/object/Item";
 import { degreeNumberToRadian } from "../../../../utils";
-import { Box } from "@react-three/drei";
+import { Box, Cylinder, useKeyboardControls } from "@react-three/drei";
 import CountdownComputer from "./CountdownComputer";
 import FakeGlowMaterial from "../../../../components/FakeGlowMaterial";
 import { useFrame } from "@react-three/fiber";
 import WeightMeterComputer from "./WeightMeterComputer";
 import { GameContext } from "../../../../contexts/GameContext";
 import { GoodBot } from "../../../../GoodBot";
+import { CylinderCollider, CapsuleCollider } from "@react-three/rapier";
+import { Controls } from "../../../../controllers/CharacterController";
+import LaserTargetObject, { LaserTargetObjectProps } from "./LaserTargetObject";
+import { LaserTargetObjectData } from "./LaserTargetObjectData";
 
 const Room2 = ({
   totalWeight,
   setTotalWeight,
   allowCraneUp,
   setAllowCraneUp,
+  setObjectCollectedList,
+  setNumericalCollectedList,
+  objectData,
+  setObjectData,
+  dropedObject,
+  setDropedObject,
+  currentLaserTarget,
+  setCurrentLaserTarget,
+  dataCollectNotify,
 }) => {
   const [laserColor, setLaserColor] = useState("red"); // Initial color is red
   const [countdownOpacities, setCountdownOpacities] = useState([
@@ -50,19 +63,12 @@ const Room2 = ({
     return () => clearInterval(countdownInterval); // Clean up on component unmount
   }, []);
 
-  useFrame((state) => {
-    if (cameraRef.current) {
-      const t = state.clock.getElapsedTime();
-      const yOffset = Math.sin(t * 3) * 0.3; // Floating effect
+  const aPressed = useKeyboardControls((state) => state[Controls.left]);
+  const dPressed = useKeyboardControls((state) => state[Controls.right]);
+  const spacePressed = useKeyboardControls((state) => state[Controls.jump]);
+  const gPressed = useKeyboardControls((state) => state[Controls.G]);
 
-      // Update the RigidBody's translation
-      cameraRef.current.setTranslation({
-        x: -8.2,
-        y: 4.25 + yOffset,
-        z: -15.7,
-      });
-    }
-  });
+  const [lastPressTime, setLastPressTime] = useState(0);
 
   // Dynamically set the name based on the laser's color
   const laserName = laserColor === "red" ? "danger-laser" : "safe-laser";
@@ -136,7 +142,8 @@ const Room2 = ({
         ]);
       }
       if (name.includes("enemy")) {
-        setCurrentPlatformCarrying((prev) => [...prev, { name, weight: 10 }]);
+        console.log("enemy enter: ", name);
+        setCurrentPlatformCarrying((prev) => [...prev, { name, weight: 16 }]);
       }
     }
   };
@@ -211,7 +218,78 @@ const Room2 = ({
   const LootBox01Ref = useRef();
   const LootBox01CraneRef = useRef();
 
-  useFrame((state) => {
+
+  useFrame((state, delta) => {
+
+    if (currentHit?.includes("Computer-camera-01-trigger") && currentLaserTarget !== "") {
+      if (gPressed) {
+        const distance = currentHit.split(":")[1];
+        console.log("get data: ", distance);
+        setNumericalCollectedList((prevList) => {
+          const duplicate = prevList.find((data) => data.name === currentLaserTarget);
+          if (duplicate) {
+            return prevList;
+          }
+          else {
+            const data = {
+              name: currentLaserTarget,
+              value: distance,
+            };
+            return [...prevList, data];
+          }
+        });
+        const currentTime = new Date().getTime();
+        if (currentTime - lastPressTime > 200) {
+          setLastPressTime(currentTime);
+          dataCollectNotify.current.show({
+            unstyled: true,
+            closable: false,
+            life: 2000,
+            content: (props) => (
+              <div className="flex relative z-[100] rounded-lg px-2.5 py-2 gap-x-2">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/6692/6692095.png"
+                  className="w-16 h-16 bg-white rounded-xl"
+                />
+                <div className="">
+                  <p className="text-2xl font-semibold text-white">
+                    Data Collected!
+                  </p>
+                  <p className="text-lg font-semibold text-white">
+                    received 1 numeric.
+                  </p>
+                </div>
+              </div>
+            ),
+          });
+        }
+      }
+      else if (spacePressed) {
+        console.log("drop: ", currentLaserTarget);
+        setDropedObject((prev) => {
+          const dropedObject = objectData.find((object) => object.item.name === currentLaserTarget);
+          if (dropedObject) {
+            return [...prev, dropedObject];
+          }
+          return prev;
+        })
+        setObjectData(objectData.filter((object) => object.item.name !== currentLaserTarget));
+        setCurrentHit("Computer-camera-01");
+      }
+    }
+
+    if (cameraRef.current) {
+      const t = state.clock.getElapsedTime();
+      const yOffset = Math.sin(t * 3) * 0.3; // Floating effect
+
+      // Update the RigidBody's translation
+      cameraRef.current.setTranslation({
+        x: -8.2,
+        y: 4.25 + yOffset,
+        z: -15.7,
+      });
+    }
+
     if (cameraRef.current) {
       const t = state.clock.getElapsedTime();
       const yOffset = Math.sin(t * 3) * 0.3; // Floating effect
@@ -243,6 +321,7 @@ const Room2 = ({
         });
       }
     }
+
     if (LootBox01CraneRef.current && LootBox01Ref.current) {
       const currentCranePosition = vec3(
         LootBox01CraneRef.current.translation()
@@ -359,6 +438,14 @@ const Room2 = ({
 
   return (
     <>
+      <LaserTargetObject
+        objectData={objectData}
+        setCurrentLaserTarget={setCurrentLaserTarget}
+        dropedObject={dropedObject}
+        setDropedObject={setDropedObject}
+        setObjectCollectedList={setObjectCollectedList}
+        dataCollectNotify={dataCollectNotify} />
+
       <RigidBody
         name="Platform01"
         type="fixed"
@@ -451,7 +538,7 @@ const Room2 = ({
         name="GoodBot03"
         key={"GoodBot03"}
         colliders={false}
-        scale={[1.25,1.25,1.25]}
+        scale={[1.25, 1.25, 1.25]}
         position={[-34, 0.1, -21.5]}
         rotation={[
           degreeNumberToRadian(0),
@@ -472,7 +559,7 @@ const Room2 = ({
           degreeNumberToRadian(-20),
           degreeNumberToRadian(0),
         ]}
-        scale={[0.07,0.07,0.07]}
+        scale={[0.07, 0.07, 0.07]}
       >
         <Item
           item={{
@@ -585,6 +672,7 @@ const Room2 = ({
           opacity={0.8}
         />
       </RigidBody>
+
       <RigidBody
         lockRotations
         lockTranslations
@@ -842,7 +930,7 @@ const Room2 = ({
         type="fixed"
         colliders="trimesh"
         position={[-40, 0.1, 19]}
-        scale={[10, 1, 10]}
+        scale={[10, 1.5, 10]}
         mass={20}
         lockRotations
         lockTranslations
@@ -1026,14 +1114,15 @@ const Room2 = ({
           }}
         />
       </RigidBody>
+
       <RigidBody
         lockRotations
         lockTranslations
-        position={[-31, 6.5, -21]}
-        scale={[20, 15, 20]}
+        position={[-8, 6.5, -16]}
+        scale={[15, 15, 15]}
         rotation={[
           degreeNumberToRadian(0),
-          degreeNumberToRadian(25),
+          degreeNumberToRadian(-10),
           degreeNumberToRadian(0),
         ]}
       >
@@ -1047,6 +1136,7 @@ const Room2 = ({
           }}
         />
       </RigidBody>
+
       <RigidBody
         lockRotations
         lockTranslations
@@ -1115,54 +1205,58 @@ const Room2 = ({
           }}
         />
       </RigidBody>
-      {laserColor === "red" && (
-        <RigidBody
-          type="fixed"
-          colliders={"trimesh"} // Conditionally set collider
-          name={laserName} // Use dynamic name based on the laser's color
-          lockRotations
-          lockTranslations
-          position={[-12, 4.65, -10]}
-          rotation={[
-            degreeNumberToRadian(0),
-            degreeNumberToRadian(-31),
-            degreeNumberToRadian(0),
-          ]}
-        >
-          <Box args={[10, 9.5, 0.0001]} castShadow>
+      {
+        laserColor === "red" && (
+          <RigidBody
+            type="fixed"
+            colliders={"trimesh"} // Conditionally set collider
+            name={laserName} // Use dynamic name based on the laser's color
+            lockRotations
+            lockTranslations
+            position={[-12, 4.65, -10]}
+            rotation={[
+              degreeNumberToRadian(0),
+              degreeNumberToRadian(-31),
+              degreeNumberToRadian(0),
+            ]}
+          >
+            <Box args={[10, 9.5, 0.0001]} castShadow>
+              <meshStandardMaterial
+                attach="material"
+                color={laserColor} // Use state variable for color
+                transparent
+                opacity={1}
+                emissive={laserColor} // Add emissive color
+                emissiveIntensity={1} // Set emissive intensity
+              />
+              <FakeGlowMaterial glowColor={laserColor} />
+            </Box>
+          </RigidBody>
+        )
+      }
+      {
+        laserColor === "green" && (
+          <Box
+            position={[-12, 4.65, -10]}
+            args={[10, 9.5, 0.0001]}
+            castShadow
+            rotation={[
+              degreeNumberToRadian(0),
+              degreeNumberToRadian(-31),
+              degreeNumberToRadian(0),
+            ]}
+          >
             <meshStandardMaterial
               attach="material"
-              color={laserColor} // Use state variable for color
+              color={"green"} // Use state variable for color
               transparent
               opacity={1}
-              emissive={laserColor} // Add emissive color
               emissiveIntensity={1} // Set emissive intensity
             />
-            <FakeGlowMaterial glowColor={laserColor} />
+            <FakeGlowMaterial glowColor={"green"} falloff={1} opacity={0.5} />
           </Box>
-        </RigidBody>
-      )}
-      {laserColor === "green" && (
-        <Box
-          position={[-12, 4.65, -10]}
-          args={[10, 9.5, 0.0001]}
-          castShadow
-          rotation={[
-            degreeNumberToRadian(0),
-            degreeNumberToRadian(-31),
-            degreeNumberToRadian(0),
-          ]}
-        >
-          <meshStandardMaterial
-            attach="material"
-            color={"green"} // Use state variable for color
-            transparent
-            opacity={1}
-            emissiveIntensity={1} // Set emissive intensity
-          />
-          <FakeGlowMaterial glowColor={"green"} falloff={1} opacity={0.5} />
-        </Box>
-      )}
+        )
+      }
       <RigidBody
         name="countdown-computer"
         type="fixed"

@@ -44,9 +44,9 @@ const CameraDataPanelUI = ({
       index: 5,
       imageType: "robot",
       name: "Robot05",
-      description: "A robot that can cook.",
+      description: "A little robot that can draw.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230410/pngtree-cute-cartoon-little-robot-futuristic-space-image_2266176.jpg",
+        "https://www.eurokidsindia.com/blog/wp-content/uploads/2023/08/robot-movies.jpg",
     },
     {
       index: 6,
@@ -54,7 +54,7 @@ const CameraDataPanelUI = ({
       name: "Robot06",
       description: "A robot that can clean.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230407/pngtree-colorful-cute-robot-background-image_2178988.jpg",
+        "https://t3.ftcdn.net/jpg/05/73/14/38/360_F_573143889_NVvKlj8AGINKQyT7Pr3tkvCScXShff0F.jpg",
     },
     {
       index: 7,
@@ -62,7 +62,7 @@ const CameraDataPanelUI = ({
       name: "Robot07",
       description: "A robot that can play music.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230410/pngtree-cute-robot-cartoon-background-with-galaxy-stars-image_2266180.jpg",
+        "https://img.freepik.com/premium-photo/cute-gas-station-attendant-service-robot-waiting-customer-filling-car-fuel-innovative-technology-occupation-concept-generative-ai_10307-2950.jpg",
     },
     {
       index: 8,
@@ -70,7 +70,7 @@ const CameraDataPanelUI = ({
       name: "Robot08",
       description: "A robot that can garden.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230410/pngtree-cartoon-robot-background-image_2266183.jpg",
+        "https://img.freepik.com/premium-photo/cute-gas-station-attendant-service-robot-waiting-customer-filling-car-fuel-innovative-technology-occupation-concept-generative-ai_10307-2948.jpg",
     },
     {
       index: 9,
@@ -78,7 +78,7 @@ const CameraDataPanelUI = ({
       name: "Robot09",
       description: "A robot that can paint.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230407/pngtree-robot-cartoon-background-image_2178989.jpg",
+        "https://img.freepik.com/premium-photo/ai-powered-robotic-assistants-robots_964851-77287.jpg",
     },
     {
       index: 10,
@@ -86,7 +86,7 @@ const CameraDataPanelUI = ({
       name: "Robot10",
       description: "A robot that can write.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230408/pngtree-robot-technology-image_2199817.jpg",
+        "https://t4.ftcdn.net/jpg/06/59/79/83/360_F_659798364_bRekkrASYOTkaoAvFqy5tjNfjhc5EGDa.jpg",
     },
     {
       index: 11,
@@ -94,7 +94,7 @@ const CameraDataPanelUI = ({
       name: "Robot11",
       description: "A robot that can draw.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230408/pngtree-cute-robot-image_2199820.jpg",
+        "https://t3.ftcdn.net/jpg/06/13/90/24/360_F_613902473_FAH3VGE1Uf22ErGD20wPrvcS1VveJdM1.jpg",
     },
     {
       index: 12,
@@ -102,7 +102,7 @@ const CameraDataPanelUI = ({
       name: "Robot12",
       description: "A robot that can read.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230408/pngtree-cute-robot-png-image_2199818.jpg",
+        "https://img.freepik.com/premium-photo/chat-robot-ai-customer-support_237803-1361.jpg",
     },
     {
       index: 13,
@@ -110,7 +110,7 @@ const CameraDataPanelUI = ({
       name: "Robot13",
       description: "A robot that can swim.",
       image:
-        "https://png.pngtree.com/thumb_back/fh260/background/20230408/pngtree-cute-robot-with-hearts-image_2199821.jpg",
+        "https://t3.ftcdn.net/jpg/05/62/72/46/360_F_562724678_ViVALsLzUUOosQTStf6htDfZeBXii91h.jpg",
     },
   ]);
   const [currentIndex, setCurrentIndex] = useState(0);

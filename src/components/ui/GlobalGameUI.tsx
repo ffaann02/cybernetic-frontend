@@ -2,10 +2,19 @@ import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import PlayerMainUI from "./player-main-ui/PlayerMainUI";
 import TrainAiComputer from "./computer/train-ai-computer/TrainAiComputer";
+
 const AskForInputKeyDown = ({ title }: { title: string }) => {
   return (
     <div className="absolute z-[100] bottom-40 left-1/2 transform -translate-x-1/2">
       <h1 className="text-white text-3xl">{title}</h1>
+    </div>
+  );
+};
+
+const AskForInputKeyDownSecondary = ({ title }: { title: string }) => {
+  return (
+    <div className="absolute z-[100] bottom-60 left-1/2 transform -translate-x-1/2">
+      <h1 className="text-white text-2xl">{title}</h1>
     </div>
   );
 };
@@ -24,9 +33,8 @@ const GlobalGameUI = () => {
     <>
       {isFadingBetweenRoom && (
         <div
-          className={`absolute z-[12000] bg-black w-full h-full ${
-            isFadingBetweenRoom ? "fadeIn" : "fadeOut"
-          }`}
+          className={`absolute z-[12000] bg-black w-full h-full ${isFadingBetweenRoom ? "fadeIn" : "fadeOut"
+            }`}
         ></div>
       )}
       {/* <PlayerMainUI /> */}
@@ -57,12 +65,25 @@ const GlobalGameUI = () => {
         <AskForInputKeyDown title="Press E to Lift Up The Crane" />
       )}
 
-      {currentHit === "Computer-camera-01" &&
-        (!isUsingSecurityCamera ? (
-          <AskForInputKeyDown title="Press E to Access Security Camera" />
-        ) : (
-          <AskForInputKeyDown title="Press ESC to Leave Security Camera" />
-        ))}
+      {currentHit?.includes("Computer-camera-01") &&
+        (!isUsingSecurityCamera
+          ? <AskForInputKeyDown title="Press E to Access Security Camera" />
+          :
+          currentHit.includes("trigger") === true
+            ? <>
+              <div className="absolute z-[100] top-2 left-1/2 transform -translate-x-1/2">
+                <h1 className="text-white text-xl mt-12">Distance from camera: {currentHit.split(":")[1]} unit</h1>
+              </div>
+              <div className="absolute z-[100] bottom-[18rem] left-1/2 transform -translate-x-1/2">
+                <h1 className="text-white text-xl">Press G to Get Numerical Data (Distance)</h1>
+              </div>
+              <div className="absolute z-[100] bottom-60 left-1/2 transform -translate-x-1/2">
+                <h1 className="text-white text-lgw">Press Space Bar to trigger object</h1>
+              </div>
+              <AskForInputKeyDown title="Press E to Leave Security Camera" />
+            </>
+            : <AskForInputKeyDown title="Press E to Leave Security Camera" />
+        )}
       {currentHit?.includes("Loot") && (
         <AskForInputKeyDown title="Press E to Open Loot Box" />
       )}
