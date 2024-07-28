@@ -30,7 +30,11 @@ export enum Controls {
   G = "G",
 }
 
-const CharacterController: React.FC = () => {
+interface CharacterControllerProps {
+  spawnPosition?: [number, number, number];
+}
+
+const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition }) => {
   const controls = useRef<any>(null);
   const firstPerson = useRef<any>(null);
   const character = useRef<any>(null);
@@ -52,7 +56,9 @@ const CharacterController: React.FC = () => {
     cooldowns,
     playerRigidBody,
     isUsingSecurityCamera,
-    isCarryingObject
+    isCarryingObject,
+    isUsingTurret,
+    setIsUsingTurret,
   } = useContext(GameContext);
   const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -97,18 +103,18 @@ const CharacterController: React.FC = () => {
 
     const impulse = new THREE.Vector3();
 
-    if (forwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
+    if (forwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
       impulse.z -= speed * delta * onAirFraction;
     }
-    if (backwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
+    if (backwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
       impulse.z += speed * delta * onAirFraction;
     }
-    if (leftPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
+    if (leftPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
     }
 
-    if (rightPressed && !isCoding && !isInteracting && !isUsingSecurityCamera) {
+    if (rightPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
     }
@@ -117,7 +123,7 @@ const CharacterController: React.FC = () => {
       jumpPressed &&
       !jumpCooldown.current &&
       isOnFloor.current &&
-      !isUsingSearch && !isUsingSecurityCamera
+      !isUsingSearch && !isUsingSecurityCamera && !isUsingTurret
     ) {
       jumpCooldown.current = true;
       jumpSound();
@@ -259,7 +265,7 @@ const CharacterController: React.FC = () => {
 
   return (
     <group>
-      {currentCamera === 1 && !isUsingSecurityCamera && !isUsingSearch && (
+      {currentCamera === 1 && !isUsingSecurityCamera && !isUsingSearch && !isUsingTurret && (
         <CameraControls ref={controls}/>
       )}
       {isUsingSearch && <CameraControls ref={firstPerson} />}
@@ -268,7 +274,7 @@ const CharacterController: React.FC = () => {
         ref={playerRigidBody}
         colliders={false}
         linearDamping={10}
-        position={[-2, 3, 2]}
+        position={spawnPosition ? spawnPosition : [-2, 3, 2]}
         lockRotations
         mass={50}
         gravityScale={9.8}

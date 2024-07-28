@@ -135,10 +135,10 @@ const GuardDataPanelUI = ({
   }, [selectedImage, selectedAudio, selectedText, selectedObject, selectedNumerical]);
 
   const moveCraneRedBox = () => {
-    if(isSourceFull){
+    if (isSourceFull) {
       setIsSubmitClicked(true);
     }
-    else{
+    else {
       setIsSubmitClicked(false);
     }
   }
@@ -174,14 +174,19 @@ const GuardDataPanelUI = ({
                     <div className="bg-cyan-400 h-[15.78%]"></div>
                     <div className="bg-slate-400 h-[21.05%]"></div>
                     <div className="bg-red-400 h-[10.52%]"></div>
-                  </div>
+                  </div>https://www.youtube.com/watch?v=feozgTt6T2k
 
-                  <div className="border-2 h-[20%] w-[50%] mx-auto rounded-t-xl border-b-0 -mb-0.5"></div>
+                  <div className="border-2 h-[20%] w-[50%] mx-auto rounded-t-xl border-b-0 -mb-0.5">
+                    <button
+                      className={`w-full h-full rounded-lg bg-green-500/90  flex gap-x-2 items-center justify-center ${isSourceFull ? "hover:bg-green-500/70" : "bg-transparent  cursor-not-allowed"}`}
+                      disabled={!isSourceFull}
+                      onClick={() => moveCraneRedBox()}
+                    >
+                      <span className={`${isSourceFull ? "text-white" : "text-slate-400"}`}>Go up</span>
+                    </button>
+                  </div>
                   <div className="border-2 h-[80%] w-[75%] mx-auto rounded-xl relative overflow-hidden">
                     <div className="absolute bottom-0 w-full h-[100%] rounded-b-xl flex flex-col-reverse ">
-                      {/* <div className="h-[44.4%] bg-cyan-400"></div>
-                      <div className="h-[24.1%] bg-orange-400"></div>
-                      <div className="h-[31.5%] bg-green-400"></div> */}
                       <div className="transition-all duration-200 ease-linear" style={{ height: `${selectedImage.length * multipleScale}%`, backgroundColor: '#4ade80' }}></div>
                       <div className="transition-all duration-200 ease-linear" style={{ height: `${selectedAudio.length * multipleScale}%`, backgroundColor: '#fb923c' }}></div>
                       <div className="transition-all duration-200 ease-linear" style={{ height: `${selectedText.length * multipleScale}%`, backgroundColor: '#22d3ee' }}></div>
@@ -253,12 +258,6 @@ const GuardDataPanelUI = ({
                   <MeterGroup values={values} />
                 </div>
               </div>
-              {/* <div className="px-10 mt-2">
-                <div className="border px-3 py-1 rounded-lg bg-red-400/50">
-                  <p>Your Input</p>
-                  <MeterGroup values={inputValues} />
-                </div>
-              </div> */}
             </div>
           </Fieldset>
           <div className="absolute top-14 right-3 z-50 text-sm">
@@ -271,15 +270,6 @@ const GuardDataPanelUI = ({
             >
               <MdCancel className="textes-white text-xl" />
               <span className="text-white">Close</span>
-            </button>
-          </div>
-          <div className="absolute bottom-14 right-3 z-50 text-sm">
-            <button
-              className={`px-3 py-2 rounded-lg bg-green-500/90 hover:bg-green-500/70 flex gap-x-2 items-center ${isSourceFull ? "" : "cursor-not-allowed"}`}
-              disabled={!isSourceFull}
-              onClick={() => moveCraneRedBox()}
-            >
-              <span className="text-white">Go up</span>
             </button>
           </div>
         </div>
