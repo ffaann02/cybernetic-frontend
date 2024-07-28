@@ -22,6 +22,7 @@ interface ItemProps {
   isOutlined?: boolean;
   status?: string;
   outlineColor?:string;
+  outlineThickness?: number;
   ref?: any;
 }
 
@@ -33,6 +34,7 @@ export const Item: React.FC<ItemProps> = ({
   isOutlined,
   status,
   outlineColor,
+  outlineThickness = 0.1,
   ref
 }) => {
   const { name, position, rotation, scale, fileType, textures, color } = item;
@@ -88,7 +90,7 @@ export const Item: React.FC<ItemProps> = ({
         >
           {isOutlined && (
             <Outlines
-              thickness={5}
+              thickness={outlineThickness || 1}
               color={outlineColor || "white"}
               angle={180}
               screenspace={true}
