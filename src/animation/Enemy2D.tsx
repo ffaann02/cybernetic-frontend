@@ -37,13 +37,14 @@ const Enemy2D = ({
             config.plainAnimator.idle.tilesAmountHorizontally, 
             config.plainAnimator.idle.tilesAmountVertically, 
             config.plainAnimator.idle.tilesAmount, 
-            config.plainAnimator.idle.tilesHorizontal),
+            config.plainAnimator.idle.frameRate),
         running: new PlainAnimator(
             runningSpriteTexture, 
             config.plainAnimator.running.tilesAmountHorizontally, 
             config.plainAnimator.running.tilesAmountVertically, 
             config.plainAnimator.running.tilesAmount, 
-            config.plainAnimator.running.tilesHorizontal)
+            config.plainAnimator.running.frameRate
+        )
     });
 
     // Animate based on the current state
@@ -77,7 +78,7 @@ const Enemy2D = ({
             <mesh
                 position={config.mesh.position}
                 scale={[direction === "left" ? -1 : 1, 1, 1]}>
-                <planeGeometry args={[4 * scale, 4 * scale, 1]} />
+                <planeGeometry args={[(config.size.width * scale), (config.size.height * scale), 1]} />
                 <meshStandardMaterial
                     map={animators[animation].texture}
                     transparent={true}

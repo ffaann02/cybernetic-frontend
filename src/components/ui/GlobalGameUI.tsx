@@ -170,6 +170,23 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Computer" />
           </>
         ))}
+        {currentHit?.includes("TurretGun") &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Control Turret Gun" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Turret Gun" />
+          </>
+        ))}
+      
+      {currentHit === "BossHologramComputer" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Access Boss Hologram" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Boss Hologram" />
+          </>
+        ))}
     </>
   );
 };

@@ -39,6 +39,10 @@ interface GameContextProps {
   setIsUsingSecurityCamera?: React.Dispatch<React.SetStateAction<boolean>>;
   isCarryingObject?: boolean;
   setIsCarryingObject?: React.Dispatch<React.SetStateAction<boolean>>;
+  isUsingTurret?: boolean;
+  setIsUsingTurret?: React.Dispatch<React.SetStateAction<boolean>>;
+  turretData?: any;
+  setTurretData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const initialGameContext: GameContextProps = {
@@ -83,6 +87,8 @@ const initialGameContext: GameContextProps = {
   setIsFadingBetweenRoom: () => {},
   isUsingSecurityCamera: false,
   setIsUsingSecurityCamera: () => {},
+  turretData: {},
+  setTurretData: () => {},
   isCarryingObject: false,
   playerRigidBody: null,
   setIsCarryingObject: () => {},
@@ -106,6 +112,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isFadingBetweenRoom, setIsFadingBetweenRoom] = useState<boolean>(false);
   const [isUsingSecurityCamera, setIsUsingSecurityCamera] = useState<boolean>(false);
   const [isCarryingObject, setIsCarryingObject] = useState(false);
+  const [isUsingTurret, setIsUsingTurret] = useState<boolean>(false);
+  const [turretData, setTurretData] = useState<any>({});
   const playerRigidBody = useRef<any>(null);
 
   const setScene = (currentScene: string, nextScene: string) => {
@@ -153,6 +161,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setIsUsingSecurityCamera,
     isCarryingObject,
     setIsCarryingObject,
+    isUsingTurret,
+    setIsUsingTurret,
+    turretData,
+    setTurretData,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };
