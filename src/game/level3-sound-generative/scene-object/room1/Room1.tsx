@@ -30,7 +30,7 @@ import { Controls } from "../../../../controllers/CharacterController";
 import FakeGlowMaterial from "../../../../components/FakeGlowMaterial";
 import { Color, Light, MeshStandardMaterial } from "three";
 import EnemyPatrolController from "../../../../controllers/EnemyPatrolController";
-import { enemyPartrolProps } from "../EnemyDataProps";
+import { enemyPatrolProps } from "../EnemyDataProps";
 import SpeakerObject from "./SpeakerObject";
 import FlameBox from "./FlameBox";
 
@@ -38,7 +38,6 @@ const bloomColor = new Color("#ff0000");
 bloomColor.multiplyScalar(1.2);
 
 const Room1 = ({
-  setEnemyPatrolInScene,
   isOpenAudioInput,
   setIsOpenAudioInput,
   isOpenVideoFootage,
@@ -70,6 +69,9 @@ const Room1 = ({
   const [speakerSparklePosition, setSpeakerSparklePosition] = useState([
     0, 0, 0,
   ]);
+  const [enemies, setEnemies] = useState(enemyPatrolProps);
+
+  const kaboomDangerHitBox = useRef();
 
   const onPlayerEnterComputer = ({ other }) => {
     if (other.rigidBodyObject.name === "player") {
@@ -110,6 +112,9 @@ const Room1 = ({
         // setShowDialog((prev) => !prev);
         setIsUsingSecurityCamera((prev) => !prev);
         setIsInteracting((prev) => !prev);
+        if(kaboom){
+          setKaboom(false);
+        }
         // setCurrentHit("");
         setLastPressTime(currentTime);
       }
@@ -248,11 +253,12 @@ const Room1 = ({
   const [destroyKaboom, setDestroyKaboom] = useState(false);
 
   const handleKaboomFall = ({ other }) => {
-    if (other.rigidBodyObject.name === "floor") {
-      console.log("hit floor");
-      if (kaboom) {
-        setDestroyKaboom(true);
-      }
+    console.log("test");
+    if (other.rigidBodyObject.includes("enemy")) {
+      console.log("hit enemy");
+      // if (kaboom) {
+      //   setDestroyKaboom(true);
+      // }
     }
   };
 
@@ -315,8 +321,6 @@ const Room1 = ({
         luminanceThreshold={0.9} // luminance threshold. Raise this value to mask out darker elements in the scene.
         luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
       /> */}
-
-        {/* <FlameBox/> */}
       <ambientLight ref={light1} intensity={0.5} color={"lightblue"} />
       <RigidBody
         type="fixed"
@@ -578,6 +582,7 @@ const Room1 = ({
         }
       >
         <Sphere
+          visible={isPlayingSound}
           // ref={speakerGlow}
           args={[0.014, 20, 20]} // args=[radius, widthSegments, heightSegments]
           position={[0, 0.0035, 0]}
@@ -612,24 +617,30 @@ const Room1 = ({
           outlineColor="white"
         />
       </RigidBody>
-      <Sparkles
+      {/* <Sparkles
         ref={speakerSparkle}
         position={[
           speakerSparklePosition[0] - 0.5,
           speakerSparklePosition[1] + 1,
           speakerSparklePosition[2],
         ]}
+        rotation={[
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(45),
+          degreeNumberToRadian(0),
+        ]}
         speed={30}
         count={20}
-        size={isPlayingSound ? 75 : 0}
-        scale={isPlayingSound ? [4, 4, 4] : [0, 0, 0]}
+        size={!isPlayingSound ? 100 : 0}
+        scale={!isPlayingSound ? [10, 10, 10] : [0, 0, 0]}
         color={"yellow"}
         opacity={0.7}
-      />
+      /> */}
 
-      {enemyPartrolProps.map((enemyPartrolProp, index) => (
+      {enemies.map((enemyPartrolProp, index) => (
         <EnemyPatrolController
-          key={index}
+          id={enemyPartrolProp.id}
+          key={enemyPartrolProp.id}
           name={enemyPartrolProp.name}
           waypoints={enemyPartrolProp.waypoints}
           angle={enemyPartrolProp.angle}
@@ -638,7 +649,7 @@ const Room1 = ({
           patrolType={enemyPartrolProp.patrolType}
           showPath={enemyPartrolProp.showPath}
           data={enemyPartrolProp.data}
-          setEnemyPatrolInScene={setEnemyPatrolInScene}
+          setEnemyPatrolInScene={setEnemies}
           isPlayingSound={isPlayingSound}
           speakerRef={speaker}
         />
@@ -649,28 +660,35 @@ const Room1 = ({
           <RigidBody
             name="Kaboom-Level3"
             colliders={false}
-            lockTranslations={!kaboom}
+            lockTranslations={true}
             lockRotations
-            position={[boxPosition[0], boxPosition[1] + 32, boxPosition[2]]}
+            position={[boxPosition[0], boxPosition[1], boxPosition[2]]}
             scale={[47, 10, 43]}
             onCollisionEnter={handleKaboomFall}
           >
-            <CylinderCollider args={[0.01, 0.7, 20, 50]} position={[0, 0, 0]} />
+            {kaboom && (
+              <CylinderCollider
+                args={[0.002, 0.7, 20, 50]}
+                position={[0, 0.08, 0]}
+              />
+            )}
             <Sphere
-              args={[0.15, 20, 20]} // args=[radius, widthSegments, heightSegments]
+              args={[0.15, 20, 20]} // args=[radieus, widthSegments, heightSegments]
               position={[0, 0, 0]}
             >
               <meshStandardMaterial
                 attach="material"
-                color="green"
+                color={kaboom?"green":"blue"}
                 emissive="green"
+                emissiveIntensity={4}
                 opacity={1}
-                visible={
-                  currentHit === "Crane-Computer-Level-3" && isInteracting
-                }
+                // visible={
+                //   currentHit === "Crane-Computer-Level-3" && isInteracting
+                // }
+                visible={false}
                 transparent={true}
               />
-              <FakeGlowMaterial glowColor={"green"} opacity={0.4} />
+              {/* <FakeGlowMaterial glowColor={"green"} opacity={0.4} /> */}
             </Sphere>
           </RigidBody>
         )}
@@ -711,7 +729,25 @@ const Room1 = ({
           ]}
         >
           <Cylinder
-            args={[0.06, 0.15, 160, 50]} // args=[radiusTop, radiusBottom, height, radialSegments]
+            args={[0.06, 0.15, 180, 50]} // args=[radiusTop, radiusBottom, height, radialSegments]
+            position={[0, 90, 0]}
+          >
+            <meshStandardMaterial
+              attach="material"
+              color="red"
+              emissive="red"
+              opacity={0.5}
+              transparent={true}
+            />
+            <FakeGlowMaterial
+              glowColor={"red"}
+              opacity={0.7}
+              side={"THREE.DoubleSide"}
+              // glowInternalRadius={2}
+            />
+          </Cylinder>
+          {kaboom && <Cylinder
+            args={[0.06, 0.15, 180, 50]} // args=[radiusTop, radiusBottom, height, radialSegments]
             position={[0, 90, 0]}
           >
             <meshStandardMaterial
@@ -721,8 +757,13 @@ const Room1 = ({
               opacity={0.2}
               transparent={true}
             />
-            <FakeGlowMaterial glowColor={"red"} opacity={0.4} />
-          </Cylinder>
+            <FakeGlowMaterial
+              glowColor={"orange"}
+              opacity={0.7}
+              side={"THREE.DoubleSide"}
+              glowInternalRadius={2}
+            />
+          </Cylinder>}
           <Sphere
             ref={meshRef1}
             args={[0.15, 20, 20]} // args=[radius, widthSegments, heightSegments]
@@ -731,7 +772,7 @@ const Room1 = ({
             <meshStandardMaterial
               attach="material"
               color="red"
-              emissive="red"
+              emissive="blue"
               opacity={0.2}
               transparent={true}
             />

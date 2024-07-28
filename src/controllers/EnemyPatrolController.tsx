@@ -26,6 +26,7 @@ export interface EnemyData {
 }
 
 interface EnemyPatrolControllerProps {
+    id: number;
     name: string;
     waypoints: number[][];
     angle: number;
@@ -37,9 +38,10 @@ interface EnemyPatrolControllerProps {
     setEnemyPatrolInScene: React.Dispatch<React.SetStateAction<any[]>>;
     isPlayingSound?: boolean;
     speakerRef?: any;
+    showLight?: boolean;
 }
 
-const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene,isPlayingSound, speakerRef }) => {
+const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene,isPlayingSound, speakerRef,showLight=true }) => {
 
     const { axiosFetch } = useAxios();
 
@@ -79,7 +81,6 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
             setAnimationState(EnemyAnimationState.Running);
             if(isPlayingSound && speakerRef.current){
                 // speakerRef.current.play();
-                console.log("move to speaker");
                 moveToSpeaker();
             }
             else{
@@ -464,7 +465,6 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
                 colliders={false}
                 name='enemy_patrol'
                 lockRotations
-                // gravityScale={9.8}
                 position={[waypoints[0][0], waypoints[0][1], waypoints[0][2]]}
                 onCollisionEnter={({ other }) => {
                     if (
@@ -472,6 +472,13 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
                         other.rigidBodyObject.name.includes("mine")
                     ) {
                         mineProcessing();
+                    }
+                    if(other.rigidBodyObject &&
+                        other.rigidBodyObject.name==="Kaboom-Level3"){
+                        console.log("Kaboom!");
+                        setEnemyPatrolInScene((prevEnemies)=>(
+                            prevEnemies.filter((enemy)=>(enemy.id!==id))
+                        ))
                     }
                 }}>
                 <Enemy2D
@@ -481,7 +488,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
                     color={color}
                     scale={enemyScale} />
             </RigidBody>
-            {flashLightTargetRef &&
+            {flashLightTargetRef && showLight &&
                 <spotLight
                     ref={flashlightRef}
                     intensity={100}
@@ -492,12 +499,12 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ name, way
                 />
             }
             {/* Spot light target */}
-            <mesh position={[-4, 4, 8]} ref={flashLightTargetRef}>
+            {showLight && <mesh position={[-4, 4, 8]} ref={flashLightTargetRef}>
                 <mesh visible={false}>
                     <sphereGeometry args={[0.1, 32, 32]} />
                     <meshStandardMaterial color="red" />
                 </mesh>
-            </mesh>
+            </mesh>}
             {showPath &&
                 <>
                     <line>

@@ -82,5 +82,32 @@ export const enemyConfigs: { [key: string]: EnemyConfig } = {
             args: [0.2, 1],
             position: [0, 1.4, 0],
         }
+    },
+    Golem: {
+        sprite: {
+            idle: spiderIdleSprite,
+            running: spiderRunningSprite,
+        },
+        plainAnimator: {
+            idle: {
+                tilesAmountHorizontally: 7,
+                tilesAmountVertically: 1,
+                tilesAmount: 7,
+                tilesHorizontal: 7,
+            },
+            running: {
+                tilesAmountHorizontally: 5,
+                tilesAmountVertically: 1,
+                tilesAmount: 5,
+                tilesHorizontal: 5,
+            },
+        },
+        mesh: {
+            position: [0, 2, 0],
+        },
+        collider: {
+            args: [0.2, 1],
+            position: [0, 1.4, 0],
+        }
     }
 };

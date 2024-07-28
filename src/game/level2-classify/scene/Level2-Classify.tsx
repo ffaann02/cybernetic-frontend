@@ -18,26 +18,26 @@ import {
   PerspectiveCamera,
   useKeyboardControls,
 } from "@react-three/drei";
-import Level3SoundGenEnvironment from "../scene-object/Level3-SoundGEN";
+import Level3SoundGenEnvironment from "../scene-object/Level2-Classify";
 import { SecurityCamera } from "../../level1-datalab/scene-object/room/SecurityCamera";
 import { degreeNumberToRadian } from "../../../utils";
 import CheckListGuideUI from "../ui/CheckListGuideUI";
-import AudioInputUI from "../ui/AudioInputUI";
-import VideoFootageUI from "../ui/VideoFootageUI";
-import useAudio from "../../../hooks/useAudio";
 // import useSound from "use-sound";
 import { Howl, Howler } from "howler";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import CDStorageUI from "../ui/CDStorageUI";
-import TrainBrainwashClassifierUI from "../ui/TrainBrainwashClassifierUI";
+import Level2ClassifyEnvironment from "../scene-object/Level2-Classify";
+import VideoFootageUI from "../ui/VideoFootageUI";
+import GlassClassifierUI from "../ui/GlassClassifierUI";
 
 interface HomeProps {}
 
-const Level3SoundGEN: React.FC<HomeProps> = () => {
+const Level2Classify: React.FC<HomeProps> = () => {
   const {
     debug,
     currentCamera,
     isUsingSecurityCamera,
+    setIsUsingSecurityCamera,
     isInteracting,
     currentHit,
     setCurrentHit,
@@ -65,14 +65,11 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
   const [isOpenAudioInput, setIsOpenAudioInput] = useState(false);
   const [isOpenVideoFootage, setIsOpenVideoFootage] = useState(false);
   const [isPlayingSound, setIsPlayingSound] = useState(false);
-  const [playTrigger, setPlayTrigger] = useState(false);
-
-  const [volume, setVolume] = useState(0.5);
-  const [selectedAudioPath, setSelectedAudioPath] = useState("");
-  const [isLooping, setIsLooping] = useState(false);
 
   const [isOpenCD, setIsOpenCD] = useState(false);
   const [isOpenTrainComputer, setIsOpenTrainComputer] = useState(false);
+  const [isOpenGlassClassifier, setIsOpenGlassClassifier] = useState(false);
+  const [isActivateScanner, setIsActivateScanner] = useState(false);
 
   const handleAudioEnd = () => {
     console.log("hello end");
@@ -99,36 +96,24 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
     sound.play();
   };
 
+  const handlePressActivate = () => {
+    console.log("parent pressed");
+    setIsUsingSecurityCamera((prev) => !prev);
+    setIsInteracting(false);
+    setIsActivateScanner((prev) => !prev);
+    setIsOpenGlassClassifier(false);
+  }
+
   return (
     <>
       <CheckListGuideUI />
-      {isOpenAudioInput && (
-        <AudioInputUI
-          setIsOpenAudioInput={setIsOpenAudioInput}
-          isPlayingSound={isPlayingSound}
-          setIsPlayingSound={setIsPlayingSound}
-          handlePlaySound={handlePlaySound}
+      {isOpenGlassClassifier && (
+        <GlassClassifierUI
+          isOpenGlassClassifier={isOpenGlassClassifier}
+          setIsOpenGlassClassifier={setIsOpenGlassClassifier}
+          handlePressActivate={handlePressActivate}
         />
       )}
-      {isOpenVideoFootage && (
-        <VideoFootageUI
-          isOpenVideoFootage={isOpenVideoFootage}
-          setIsOpenVideoFootage={setIsOpenVideoFootage}
-        />
-      )}
-
-      {isOpenCD && (
-        <CDStorageUI isOpenCD={isOpenCD} setIsOpenCD={setIsOpenCD} />
-      )}
-
-      {
-        isOpenTrainComputer && (
-          <TrainBrainwashClassifierUI
-            isOpenTrainComputer={isOpenTrainComputer}
-            setIsOpenTrainComputer={setIsOpenTrainComputer}
-          />
-        )
-      }
 
       <KeyboardControls map={controlMap}>
         <Canvas
@@ -138,37 +123,24 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
           className="z-0"
         >
           {/* <fog attach="fog" args={["skyblue", 15, 30]} /> */}
-          <color attach="background" args={["black"]} />
+          {/* <color attach="background" args={["black"]} /> */}
           {currentCamera === 2 && (
             <PerspectiveCamera makeDefault position={[0, 4, 10]} />
           )}
           {/* <PerspectiveCamera makeDefault position={[0, 2, 10]} /> */}
           <ambientLight intensity={0.5} color={"lightblue"} />
-          {/* <EffectComposer>
-            <Bloom
-              luminanceThreshold={0.1}
-              luminanceSmoothing={0.9}
-              height={50}
-            />
-          </EffectComposer> */}
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              <Level3SoundGenEnvironment
+              <Level2ClassifyEnvironment
                 currentRoom={currentRoom}
                 setCurrentRoom={setCurrentRoom}
                 door01_destination={door01_destination}
                 door01_back={door01_back}
-                isOpenAudioInput={isOpenAudioInput}
-                setIsOpenAudioInput={setIsOpenAudioInput}
-                isOpenVideoFootage={isOpenVideoFootage}
-                setIsOpenVideoFootage={setIsOpenVideoFootage}
-                isPlayingSound={isPlayingSound}
-                setIsPlayingSound={setIsPlayingSound}
-                isOpenCD={isOpenCD}
-                setIsOpenCD={setIsOpenCD}
-                isOpenTrainComputer={isOpenTrainComputer}
-                setIsOpenTrainComputer={setIsOpenTrainComputer}
+                isOpenGlassClassifier={isOpenGlassClassifier}
+                setIsOpenGlassClassifier={setIsOpenGlassClassifier}
+                isActivateScanner={isActivateScanner}
+                setIsActivateScanner={setIsActivateScanner}
               />
             </Physics>
           </Suspense>
@@ -176,7 +148,7 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
             <PerspectiveCamera
               makeDefault
               // ref={cameraRef}
-              position={[-15, 60, 30]}
+              position={[-18, 50, 20]}
               rotation={[
                 degreeNumberToRadian(-50),
                 degreeNumberToRadian(0),
@@ -190,4 +162,4 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
   );
 };
 
-export default Level3SoundGEN;
+export default Level2Classify;

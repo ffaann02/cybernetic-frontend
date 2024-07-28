@@ -1,10 +1,10 @@
 import { Box, Environment, useKeyboardControls } from "@react-three/drei";
-import { Level3SoundGenRoom1 } from "../map/Level3-SoundGEN-Room1";
+import { Level2ClassifyRoom1 } from "../map/Level2-Classify-Room1";
 import { degreeNumberToRadian } from "../../../utils";
 import { useContext, useRef, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import Door from "../../shared-object/object/Door";
-import { Level3SoundGenRoom2 } from "../map/Level3-SoundGEN-Room2";
+import { Level2ClassifyRoom2 } from "../map/Level2-Classify-Room2";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { Room } from "../../level1-datalab/scene-object/Level1-DataLab";
 import Room1 from "./room1/Room1";
@@ -15,21 +15,15 @@ import Room2 from "./room2/Room2";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize, Resolution } from "postprocessing";
 
-const Level3SoundGenEnvironment = ({
+const Level2ClassifyEnvironment = ({
   currentRoom,
   setCurrentRoom,
   door01_destination,
   door01_back,
-  isOpenAudioInput,
-  setIsOpenAudioInput,
-  isOpenVideoFootage,
-  setIsOpenVideoFootage,
-  isPlayingSound,
-  setIsPlayingSound,
-  isOpenCD,
-  setIsOpenCD,
-  isOpenTrainComputer,
-  setIsOpenTrainComputer,
+  isOpenGlassClassifier,
+  setIsOpenGlassClassifier,
+  isActivateScanner,
+  setIsActivateScanner,
 }) => {
   const {
     playerRigidBody,
@@ -67,7 +61,7 @@ const Level3SoundGenEnvironment = ({
             doorname="secure-door-01"
             destinationObject={door01_destination}
             rigidBody={playerRigidBody}
-            position={[3.5, 0, -5]}
+            position={[3.5, 0, 12]}
             rotation={[
               degreeNumberToRadian(0),
               degreeNumberToRadian(0),
@@ -82,10 +76,10 @@ const Level3SoundGenEnvironment = ({
             doorname="secure-door-next-level"
             destinationObject={door01_destination}
             rigidBody={playerRigidBody}
-            position={[-14, 0, -19.5]}
+            position={[-36, 10, -11.5]}
             rotation={[
               degreeNumberToRadian(0),
-              degreeNumberToRadian(90),
+              degreeNumberToRadian(0),
               degreeNumberToRadian(0),
             ]}
             status={"close"}
@@ -94,16 +88,12 @@ const Level3SoundGenEnvironment = ({
             nextRoom={2}
           />
           <Room1
-            isOpenAudioInput={isOpenAudioInput}
-            setIsOpenAudioInput={setIsOpenAudioInput}
-            isOpenVideoFootage={isOpenVideoFootage}
-            setIsOpenVideoFootage={setIsOpenVideoFootage}
-            isPlayingSound={isPlayingSound}
-            setIsPlayingSound={setIsPlayingSound}
-            parentLight={parentLight}
-            speakerMeshRef={speakerMeshRef}
+            isOpenGlassClassifier={isOpenGlassClassifier}
+            setIsOpenGlassClassifier={setIsOpenGlassClassifier}
+            isActivateScanner={isActivateScanner}
+            setIsActivateScanner={setIsActivateScanner}
           />
-          <Level3SoundGenRoom1 />
+          <Level2ClassifyRoom1 />
         </Room>
       )}
 
@@ -113,7 +103,7 @@ const Level3SoundGenEnvironment = ({
             doorname="secure-door-02"
             destinationObject={door01_back}
             rigidBody={playerRigidBody}
-            position={[-36, 0, 16]}
+            position={[-36, 0, 15]}
             rotation={[
               degreeNumberToRadian(0),
               degreeNumberToRadian(0),
@@ -124,13 +114,8 @@ const Level3SoundGenEnvironment = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={1}
           />
-          <Room2
-            isOpenCD={isOpenCD}
-            setIsOpenCD={setIsOpenCD}
-            isOpenTrainComputer={isOpenTrainComputer}
-            setIsOpenTrainComputer={setIsOpenTrainComputer}
-          />
-          <Level3SoundGenRoom2 />
+          <Room2 />
+          <Level2ClassifyRoom2 />
         </Room>
       )}
 
@@ -144,9 +129,9 @@ const Level3SoundGenEnvironment = ({
         type="fixed"
         name="door1-back"
         ref={door01_back}
-        position={[0, 0, -5]}
+        position={[0, 0, 8]}
       ></RigidBody>
     </>
   );
 };
-export default Level3SoundGenEnvironment;
+export default Level2ClassifyEnvironment;
