@@ -33,8 +33,8 @@ export const enemyPatrolProps = [
         id: 2,
         name: "Slime",
         waypoints: [
-            [-11, 1.2, 10],
-            [-14, 1.2, -7],
+            [-11, 20, 10],
+            [-11, 20, 10],
         ],
         angle: 45,
         idleTime: 0.1,

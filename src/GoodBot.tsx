@@ -5,7 +5,7 @@ import { SkeletonUtils } from "three-stdlib";
 
 export function GoodBot(props) {
   const group = useRef();
-  const { scene, materials, animations } = useGLTF("/GoodBot.gltf");
+  const { scene, materials, animations } = useGLTF("/GoodBotNew.gltf");
   const { actions, names } = useAnimations(animations, group);
 
   // Clone the entire scene
@@ -23,4 +23,4 @@ export function GoodBot(props) {
   return <group ref={group} {...props} dispose={null} />;
 }
 
-useGLTF.preload("/GoodBot.gltf");
+useGLTF.preload("/GoodBotNew.gltf");

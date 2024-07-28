@@ -83,7 +83,7 @@ const Enemy2D = ({
                     map={animators[animation].texture}
                     transparent={true}
                     color={color !== "" ? colorCode(color) : "white"}
-                    opacity={1.5}
+                    opacity={2}
                 />
             </mesh>
             <CapsuleCollider
