@@ -23,9 +23,10 @@ const Plate = ({ color, position, warningOpacity, setWarningOpacity }) => {
                 >
                     <mesh>
                         <ringGeometry args={[2, 1.5, 32]} />
-                        <meshStandardMaterial color={"#ff5f5f"} transparent={true} opacity={warningOpacity}  />
+                        <meshStandardMaterial color={"#ff5f5f"} transparent={true} opacity={warningOpacity} />
                     </mesh>
-                </RigidBody> : null}
+                </RigidBody>
+                : null}
         </>
     );
 };

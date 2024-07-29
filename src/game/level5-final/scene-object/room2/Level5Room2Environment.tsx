@@ -68,7 +68,7 @@ const Level5Room2Environment = ({
                         }
                     }
                     isOutlined={true}
-                    outlineThickness={2.5}
+                    outlineThickness={7}
                 />
             </RigidBody>
             <BossHologram bossHoloGramRef={bossHoloGramRef} />

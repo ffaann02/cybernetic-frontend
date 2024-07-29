@@ -19,10 +19,12 @@ export const Level5FinalEnvironment = ({
     bossActionDuration,
     setBossChargingCountDown,
     setBossActionState,
+    bossHealth,
+    setBossHealth,
 }) => {
 
     const { playerRigidBody } = useContext(GameContext);
-    const [currentRoom, setCurrentRoom] = useState(2);
+    const [currentRoom, setCurrentRoom] = useState(1);
 
     const door01_destination = useRef<any>(null);
     const door02_destination = useRef<any>(null);
@@ -64,7 +66,9 @@ export const Level5FinalEnvironment = ({
                     <Level5Room1Environment
                         bossActionDuration={bossActionDuration}
                         setBossChargingCountDown={setBossChargingCountDown}
-                        setBossActionState={setBossActionState} />
+                        setBossActionState={setBossActionState}
+                        bossHealth={bossHealth}
+                        setBossHealth={setBossHealth} />
                 </Room>)}
 
             <RigidBody

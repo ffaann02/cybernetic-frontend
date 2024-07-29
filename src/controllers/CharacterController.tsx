@@ -108,6 +108,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
     }
     if (backwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
       impulse.z += speed * delta * onAirFraction;
+      // console.log(vec3(playerRigidBody.current.translation()).z);
     }
     if (leftPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
       setDirection("left");
