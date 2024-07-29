@@ -154,7 +154,7 @@ const GlobalGameUI = () => {
         ))}
 
       {currentHit === "GlassComputerLevel2" &&
-        (!isUsingSecurityCamera? (
+        (!isUsingSecurityCamera ? (
           <AskForInputKeyDown title="Press E to Access Computer" />
         ) : (
           <>
@@ -170,7 +170,7 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Computer" />
           </>
         ))}
-        {currentHit?.includes("TurretGun") &&
+      {currentHit?.includes("TurretGun") &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Control Turret Gun" />
         ) : (
@@ -178,7 +178,7 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Turret Gun" />
           </>
         ))}
-      
+
       {currentHit === "BossHologramComputer" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Access Boss Hologram" />
@@ -186,6 +186,27 @@ const GlobalGameUI = () => {
           <>
             <AskForInputKeyDown title="Press E to Leave Boss Hologram" />
           </>
+        ))}
+
+      {currentHit?.includes("Glass") &&
+        currentHit !== "ComputerTestGlass" &&
+        (!isCarryingObject ? (
+          currentHit?.includes("RevealGlass") ? (
+            <AskForInputKeyDown title="Press E to Collect A Data" />
+          ) : currentHit?.includes("TestGlass") ? (
+            <AskForInputKeyDown title="Press E to Test A Glass" />
+          ) : (
+            <AskForInputKeyDown title="Press E to Lift A Glass" />
+          )
+        ) : (
+          <AskForInputKeyDown title="Press E to Drop A Glass" />
+        ))}
+
+      {currentHit === "ComputerTestGlass" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Access Computer" />
+        ) : (
+          <AskForInputKeyDown title="Press E to Leave Computer" />
         ))}
     </>
   );

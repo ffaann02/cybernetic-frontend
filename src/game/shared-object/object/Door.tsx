@@ -33,9 +33,11 @@ const Door = ({
     // Wait for 1 second before setting the current room
     setTimeout(() => {
       if (type === "switch-room") {
+        console.log(nextRoom);
         setCurrentRoom(nextRoom);
-      } else {
-        setScene("game-level-1", "game-level-2");
+      // } else {
+      //   setScene("game-level-1", "game-level-2",);
+      // }
       }
       setCurrentHit("");
   

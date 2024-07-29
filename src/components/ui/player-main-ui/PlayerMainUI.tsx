@@ -182,11 +182,11 @@ const PlayerMainUI = () => {
         <div className="absolute left-10 bottom-2 w-fit">
           {/* <img src={playerImage} className="mt-[4%]" /> */}
           <div className="w-full relative">
-            <div className="w-28">
-              <CharacterHead />
+            <div className="w-32">
+              <img src="images/Profile.png"/>
             </div>
-            <div className="text-white absolute left-[145%] bottom-[90%] ">{energy}/10</div>
-            <div className="absolute left-[145%] bottom-[30%] flex flex-col gap-y-4 bg-blue-400/50 rounded-md">
+            <div className="text-white absolute left-[120%] bottom-[80%] ">{energy}/10</div>
+            <div className="absolute left-[120%] bottom-[20%] flex flex-col gap-y-4 bg-blue-400/50 rounded-md">
               <div className="w-[35vh] h-14 border rounded-md rounded-b-none px-1.5 py-1.5 flex gap-1 transition-all duration-100 ease-linear">
                 {Array.from({ length: energy }).map((_, index) => (
                   <div className="w-[10%] h-full rounded-md bg-blue-400 transition-all duration-100 ease-linear"></div>

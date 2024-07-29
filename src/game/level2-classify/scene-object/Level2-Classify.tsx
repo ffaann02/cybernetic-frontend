@@ -12,8 +12,10 @@ import { Item } from "../../shared-object/object/Item";
 import { useFrame } from "@react-three/fiber";
 import { Controls } from "../../../controllers/CharacterController";
 import Room2 from "./room2/Room2";
+import Room3 from "./room3/Room3";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize, Resolution } from "postprocessing";
+import { Level2ClassifyRoom3 } from "../map/Level2-Classify-Room3";
 
 const Level2ClassifyEnvironment = ({
   currentRoom,
@@ -24,6 +26,19 @@ const Level2ClassifyEnvironment = ({
   setIsOpenGlassClassifier,
   isActivateScanner,
   setIsActivateScanner,
+  dataCollectNotify,
+  door02_destination,
+  door02_back,
+  isOpenGlassTest,
+  setIsOpenGlassTest,
+  currentComputerGlassTest,
+  setCurrentComputerGlassTest,
+  resetTrigger,
+  setResetTrigger,
+  dangerPattern,
+  setDangerPattern,
+  ufoActiveList,
+  setUfoActiveList,
 }) => {
   const {
     playerRigidBody,
@@ -114,8 +129,56 @@ const Level2ClassifyEnvironment = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={1}
           />
-          <Room2 />
+          <Door
+            doorname="secure-door-03"
+            destinationObject={door02_destination}
+            rigidBody={playerRigidBody}
+            position={[0, 20.2, -20]}
+            rotation={[
+              degreeNumberToRadian(0),
+              degreeNumberToRadian(90),
+              degreeNumberToRadian(0),
+            ]}
+            status={"open"}
+            type="switch-room"
+            setCurrentRoom={setCurrentRoom}
+            nextRoom={3}
+          />
+          <Room2 dataCollectNotify={dataCollectNotify} />
           <Level2ClassifyRoom2 />
+        </Room>
+      )}
+
+      {currentRoom === 3 && (
+        <Room>
+          <Door
+            doorname="secure-door-03-back"
+            destinationObject={door02_back}
+            rigidBody={playerRigidBody}
+            position={[-36, 0, 15]}
+            rotation={[
+              degreeNumberToRadian(0),
+              degreeNumberToRadian(0),
+              degreeNumberToRadian(0),
+            ]}
+            status={"open"}
+            type="switch-room"
+            setCurrentRoom={setCurrentRoom}
+            nextRoom={2}
+          />
+          <Room3
+            isOpenGlassTest={isOpenGlassTest}
+            setIsOpenGlassTest={setIsOpenGlassTest}
+            currentComputerGlassTest={currentComputerGlassTest}
+            setCurrentComputerGlassTest={setCurrentComputerGlassTest}
+            resetTrigger={resetTrigger}
+            setResetTrigger={setResetTrigger}
+            dangerPattern={dangerPattern}
+            setDangerPattern={setDangerPattern}
+            ufoActiveList={ufoActiveList}
+                setUfoActiveList={setUfoActiveList}
+          />
+          <Level2ClassifyRoom3 />
         </Room>
       )}
 
@@ -130,6 +193,18 @@ const Level2ClassifyEnvironment = ({
         name="door1-back"
         ref={door01_back}
         position={[0, 0, 8]}
+      ></RigidBody>
+      <RigidBody
+        type="fixed"
+        name="door2-enter"
+        ref={door02_destination}
+        position={[-30, 0, 16]}
+      ></RigidBody>
+      <RigidBody
+        type="fixed"
+        name="door2-back"
+        ref={door02_back}
+        position={[0, 22, -14]}
       ></RigidBody>
     </>
   );
