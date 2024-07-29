@@ -120,6 +120,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
       impulse.x += speed * delta * onAirFraction;
     }
 
+    if(isCarryingObject){
+      setAnimationState(AnimationState.Picking);
+    }
+
     if (
       jumpPressed &&
       !jumpCooldown.current &&

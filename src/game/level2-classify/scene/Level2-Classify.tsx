@@ -29,6 +29,8 @@ import CDStorageUI from "../ui/CDStorageUI";
 import Level2ClassifyEnvironment from "../scene-object/Level2-Classify";
 import VideoFootageUI from "../ui/VideoFootageUI";
 import GlassClassifierUI from "../ui/GlassClassifierUI";
+import { Toast } from "primereact/toast";
+import ComputerTestGlassUI from "../ui/ComputerTestGlassUI";
 
 interface HomeProps {}
 
@@ -59,9 +61,12 @@ const Level2Classify: React.FC<HomeProps> = () => {
     []
   );
 
-  const [currentRoom, setCurrentRoom] = useState<number>(2);
+  const [currentRoom, setCurrentRoom] = useState<number>(3);
   const door01_destination = useRef(null);
   const door01_back = useRef(null);
+  const door02_destination = useRef(null);
+  const door02_back = useRef(null);
+
   const [isOpenAudioInput, setIsOpenAudioInput] = useState(false);
   const [isOpenVideoFootage, setIsOpenVideoFootage] = useState(false);
   const [isPlayingSound, setIsPlayingSound] = useState(false);
@@ -70,6 +75,12 @@ const Level2Classify: React.FC<HomeProps> = () => {
   const [isOpenTrainComputer, setIsOpenTrainComputer] = useState(false);
   const [isOpenGlassClassifier, setIsOpenGlassClassifier] = useState(false);
   const [isActivateScanner, setIsActivateScanner] = useState(false);
+  const [currentComputerGlassTest, setCurrentComputerGlassTest] = useState(0);
+  const [isOpenGlassTest, setIsOpenGlassTest] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(0);
+  const [dangerPattern, setDangerPattern] = useState([2,2,2,1,2,2]);
+  const [ufoActiveList, setUfoActiveList] = useState([false, false, false]);
+
 
   const handleAudioEnd = () => {
     console.log("hello end");
@@ -98,20 +109,46 @@ const Level2Classify: React.FC<HomeProps> = () => {
 
   const handlePressActivate = () => {
     console.log("parent pressed");
-    setIsUsingSecurityCamera((prev) => !prev);
+    setCurrentHit("");
     setIsInteracting(false);
-    setIsActivateScanner((prev) => !prev);
+    setIsOpenGlassTest(false);
+    setCurrentComputerGlassTest(-1);
+  };
+
+  const handleActivate = () => {
+    setResetTrigger((prev) => prev + 1);
+    const newDangerPattern = dangerPattern.reverse();
+    setDangerPattern(newDangerPattern);
     setIsOpenGlassClassifier(false);
+    console.log("activate glass");
+    setIsInteracting(false);
+    setCurrentHit("");
+    setIsOpenGlassTest(false);
   }
+
+  const dataCollectNotify = useRef(null);
 
   return (
     <>
-      <CheckListGuideUI />
+      {/* <CheckListGuideUI /> */}
+      <Toast ref={dataCollectNotify} position="top-right" />
       {isOpenGlassClassifier && (
         <GlassClassifierUI
           isOpenGlassClassifier={isOpenGlassClassifier}
           setIsOpenGlassClassifier={setIsOpenGlassClassifier}
           handlePressActivate={handlePressActivate}
+        />
+      )}
+
+      {isOpenGlassTest && (
+        <ComputerTestGlassUI
+          isOpenGlassTest={isOpenGlassTest}
+          setIsOpenGlassTest={setIsOpenGlassTest}
+          currentComputerGlassTest={currentComputerGlassTest}
+          setCurrentComputerGlassTest={setCurrentComputerGlassTest}
+          handleActivate={handleActivate}
+          ufoActiveList={ufoActiveList}
+          setUfoActiveList={setUfoActiveList}
         />
       )}
 
@@ -141,6 +178,19 @@ const Level2Classify: React.FC<HomeProps> = () => {
                 setIsOpenGlassClassifier={setIsOpenGlassClassifier}
                 isActivateScanner={isActivateScanner}
                 setIsActivateScanner={setIsActivateScanner}
+                dataCollectNotify={dataCollectNotify}
+                door02_destination={door02_destination}
+                door02_back={door02_back}
+                isOpenGlassTest={isOpenGlassTest}
+                setIsOpenGlassTest={setIsOpenGlassTest}
+                currentComputerGlassTest={currentComputerGlassTest}
+                setCurrentComputerGlassTest={setCurrentComputerGlassTest}
+                resetTrigger={resetTrigger}
+                setResetTrigger={setResetTrigger}
+                dangerPattern={dangerPattern}
+                setDangerPattern={setDangerPattern}
+                ufoActiveList={ufoActiveList}
+                setUfoActiveList={setUfoActiveList}
               />
             </Physics>
           </Suspense>

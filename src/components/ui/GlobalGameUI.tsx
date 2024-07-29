@@ -186,6 +186,27 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Boss Hologram" />
           </>
         ))}
+
+      {currentHit?.includes("Glass") &&
+        currentHit !== "ComputerTestGlass" &&
+        (!isCarryingObject ? (
+          currentHit?.includes("RevealGlass") ? (
+            <AskForInputKeyDown title="Press E to Collect A Data" />
+          ) : currentHit?.includes("TestGlass") ? (
+            <AskForInputKeyDown title="Press E to Test A Glass" />
+          ) : (
+            <AskForInputKeyDown title="Press E to Lift A Glass" />
+          )
+        ) : (
+          <AskForInputKeyDown title="Press E to Drop A Glass" />
+        ))}
+
+      {currentHit === "ComputerTestGlass" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Access Computer" />
+        ) : (
+          <AskForInputKeyDown title="Press E to Leave Computer" />
+        ))}
       {currentHit === "DoorToBossFight" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Enter Boss Room" />

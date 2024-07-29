@@ -1,13 +1,17 @@
 // useCharacterAnimation.ts
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { GameContext } from "../contexts/GameContext";
 
 export enum AnimationState {
   Idle = "idle",
   Running = "running",
   Jumping = "jumping",
+  Picking = "picking",
+  PickingIdle = "picking_idle",
 }
 
 export const useCharacterAnimation = () => {
+  const { isCarryingObject } = useContext(GameContext);
   const [animationState, setAnimationState] = useState<AnimationState>(
     AnimationState.Idle
   );
@@ -24,22 +28,22 @@ export const useCharacterAnimation = () => {
     if (jumpPressed && !jumpCooldown && isOnFloor) {
       setAnimationState(AnimationState.Jumping);
     } else if (
-      forwardPressed ||
-      backwardPressed ||
-      leftPressed ||
-      rightPressed
+      (forwardPressed || backwardPressed || leftPressed || rightPressed) &&
+      !isCarryingObject
     ) {
       if (!isOnFloor) {
         setAnimationState(AnimationState.Jumping);
       } else {
         setAnimationState(AnimationState.Running);
       }
-    } else {
-      if (!isOnFloor) {
-        setAnimationState(AnimationState.Jumping);
+    } else if (isCarryingObject) {
+      if (forwardPressed || backwardPressed || leftPressed || rightPressed) {
+        setAnimationState(AnimationState.Picking);
       } else {
-        setAnimationState(AnimationState.Idle);
+        setAnimationState(AnimationState.PickingIdle);
       }
+    } else {
+      setAnimationState(AnimationState.Idle);
     }
   };
 
