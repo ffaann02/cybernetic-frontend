@@ -43,11 +43,15 @@ interface GameContextProps {
   setIsUsingTurret?: React.Dispatch<React.SetStateAction<boolean>>;
   turretData?: any;
   setTurretData?: React.Dispatch<React.SetStateAction<any>>;
+  isPlayerInBossArea?: boolean;
+  setIsPlayerInBossArea?: React.Dispatch<React.SetStateAction<boolean>>;
+  bossParameter?: any;
+  setBossParameter?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-2",
+  currentScene: "game-level-5",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -114,6 +118,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isCarryingObject, setIsCarryingObject] = useState(false);
   const [isUsingTurret, setIsUsingTurret] = useState<boolean>(false);
   const [turretData, setTurretData] = useState<any>({});
+  const [isPlayerInBossArea, setIsPlayerInBossArea] = useState<boolean>(false);
+  const [bossParameter, setBossParameter] = useState<any>({});
   const playerRigidBody = useRef<any>(null);
 
   const setScene = (currentScene: string, nextScene: string) => {
@@ -165,6 +171,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setIsUsingTurret,
     turretData,
     setTurretData,
+    isPlayerInBossArea,
+    setIsPlayerInBossArea,
+    bossParameter,
+    setBossParameter,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

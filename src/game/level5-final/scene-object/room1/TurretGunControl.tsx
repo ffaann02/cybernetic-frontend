@@ -26,7 +26,7 @@ const TurretGunControl = ({
     config,
 }) => {
 
-    const { currentHit, setTurretData } = useContext(GameContext);
+    const { currentHit, setTurretData, setBossParameter } = useContext(GameContext);
 
     const turretGunRef = useRef<any>();
     const [currentTurret, setCurrentTurret] = useState<bulletConfig>();
@@ -66,6 +66,10 @@ const TurretGunControl = ({
             const data = config.find((item) => item.bulletName === 'LeftTurretBullet');
             setCurrentTurret(data);
             setTurretData(data);
+            setBossParameter((prev) => ({
+                ...prev,
+                lastActiveTurret: "left"
+            }))
             turretGunRef.current.position.set(leftTurretGunPosition.x, leftTurretGunPosition.y + 5, leftTurretGunPosition.z);
             turretGunRef.current.rotation.set(degreeNumberToRadian(0), degreeNumberToRadian(-30), degreeNumberToRadian(0));
         }
@@ -73,6 +77,10 @@ const TurretGunControl = ({
             const data = config.find((item) => item.bulletName === 'MiddleTurretBullet');
             setCurrentTurret(data);
             setTurretData(data);
+            setBossParameter((prev) => ({
+                ...prev,
+                lastActiveTurret: "middle"
+            }))
             turretGunRef.current.position.set(middleTurretGunPosition.x, middleTurretGunPosition.y + 5, middleTurretGunPosition.z);
             turretGunRef.current.rotation.set(degreeNumberToRadian(0), degreeNumberToRadian(0), degreeNumberToRadian(0));
         }
@@ -80,6 +88,10 @@ const TurretGunControl = ({
             const data = config.find((item) => item.bulletName === 'RightTurretBullet');
             setCurrentTurret(data);
             setTurretData(data);
+            setBossParameter((prev) => ({
+                ...prev,
+                lastActiveTurret: "right"
+            }))
             turretGunRef.current.position.set(rightTurretGunPosition.x, rightTurretGunPosition.y + 5, rightTurretGunPosition.z);
             turretGunRef.current.rotation.set(degreeNumberToRadian(0), degreeNumberToRadian(30), degreeNumberToRadian(0));
             console.log(currentHit);
