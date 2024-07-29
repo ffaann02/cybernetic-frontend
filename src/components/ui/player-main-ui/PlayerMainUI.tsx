@@ -208,6 +208,7 @@ const PlayerMainUI = () => {
               } rounded-lg border-b-4 border-b-cyan-400 hover:bg-cyan-400/50`}
               disabled={cooldowns[item.activate_key] > 0}
             >
+              <img src={item.icon} className="h-16 w-6 mx-auto mt-2 py-2" />
               <div className="absolute z-10 bg-cyan-400 rounded-xl -top-4 -right-2 w-fit px-4 py-1 border-white border-2">
                 <p className="font-bold text-slate-600">{item.activate_key}</p>
               </div>
@@ -217,9 +218,9 @@ const PlayerMainUI = () => {
                   <p className="text-sm">x{item.energy_cost}</p>
                 </div>
               </div>
-              <img src={item.icon} className="p-6" />
+              {/* <img src={"/images/homer.png"} className="p-6 z-[10000]" /> */}
               <div
-                className="absolute w-full bg-white/80 bottom-0 rounded-xl rotate-180 transition-all ease-linear duration-200"
+                className="absolute w-full bg-white/60 bottom-0 rounded-xl rotate-180 transition-all ease-linear duration-200"
                 style={{
                   height: `${
                     (cooldowns[item.activate_key] / item.cooldown) * 100

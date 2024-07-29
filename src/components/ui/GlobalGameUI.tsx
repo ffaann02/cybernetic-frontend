@@ -33,9 +33,8 @@ const GlobalGameUI = () => {
     <>
       {isFadingBetweenRoom && (
         <div
-          className={`absolute z-[12000] bg-black w-full h-full ${
-            isFadingBetweenRoom ? "fadeIn" : "fadeOut"
-          }`}
+          className={`absolute z-[12000] bg-black w-full h-full ${isFadingBetweenRoom ? "fadeIn" : "fadeOut"
+            }`}
         ></div>
       )}
       {/* <PlayerMainUI /> */}
@@ -154,7 +153,7 @@ const GlobalGameUI = () => {
         ))}
 
       {currentHit === "GlassComputerLevel2" &&
-        (!isUsingSecurityCamera? (
+        (!isUsingSecurityCamera ? (
           <AskForInputKeyDown title="Press E to Access Computer" />
         ) : (
           <>
@@ -170,7 +169,7 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Computer" />
           </>
         ))}
-        {currentHit?.includes("TurretGun") &&
+      {currentHit?.includes("TurretGun") &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Control Turret Gun" />
         ) : (
@@ -178,13 +177,29 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Turret Gun" />
           </>
         ))}
-      
+
       {currentHit === "BossHologramComputer" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Access Boss Hologram" />
         ) : (
           <>
             <AskForInputKeyDown title="Press E to Leave Boss Hologram" />
+          </>
+        ))}
+      {currentHit === "DoorToBossFight" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Boss Room" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Boss Room" />
+          </>
+        ))}
+      {currentHit === "ComputerChooseModelLevel5" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer Model Choosing" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Computer Model Choosing" />
           </>
         ))}
     </>

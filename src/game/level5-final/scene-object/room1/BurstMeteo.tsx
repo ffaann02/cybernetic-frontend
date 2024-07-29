@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { MeteoDataInterface } from '../../../../controllers/BossController';
+import FakeGlowMaterial from '../../../../components/FakeGlowMaterial';
 
 interface Props {
     bossState: string;
@@ -23,14 +24,19 @@ const BurstMeteo: React.FC<Props> = ({
                     lockTranslations={meteo.isReachedFloor}
                     lockRotations
                     position={[meteo.position.x, meteo.position.y, meteo.position.z]}
-                    scale={[3, 3, 3]}
+                    scale={[4, 4, 4]}
                     mass={100}
                     gravityScale={10}
                     onCollisionEnter={handleCollisionEnter(meteo.id)}
                 >
                     <mesh>
                         <cylinderGeometry args={[0.4, 0.4, 10]} />
-                        <meshStandardMaterial color="red" transparent opacity={meteo.opacity} />
+                        {/* <meshStandardMaterial color="red" transparent opacity={meteo.opacity} /> */}
+                        <FakeGlowMaterial
+                            glowColor='red'
+                            falloff={2}
+                            glowInternalRadius={4}
+                            opacity={meteo.opacity} />
                     </mesh>
                 </RigidBody>
             ))}

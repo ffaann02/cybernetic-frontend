@@ -5,16 +5,20 @@ import { BossAnimationState, useBossAnimation } from '../hooks/useBossAnimation'
 import BurstDebugPlate from '../game/level5-final/scene-object/room1/BurstDebugPlate';
 import BurstMeteo from '../game/level5-final/scene-object/room1/BurstMeteo';
 import { GameContext } from '../contexts/GameContext';
+import { bossAttackPatternsArray } from '../game/level5-final/scene-object/BossAttackPattern';
+import useAxios from '../hooks/useAxios';
+import axiosInstanceAiService from '../api/aiService';
 
 interface BossControllerProps {
     idleDuration?: number;
     burstDuration?: number;
-    chargingDuration?: number;
-    burstPoints?: number;
+    chargingDuration?: number[];
     setBossChargingCountDown: (count: number) => void;
     setBossActionState: (state: string) => void;
     bulletName: string[];
-    isOpenDoor?: boolean;
+    bossHealth: number;
+    setBossHealth: (health: number) => void;
+    bossRegenaration: { increasePerInterval: number; interval: number };
 }
 
 export interface MeteoDataInterface {
@@ -27,15 +31,17 @@ export interface MeteoDataInterface {
 const BossController: React.FC<BossControllerProps> = ({
     idleDuration = 5,
     burstDuration = 5,
-    chargingDuration = 5,
-    burstPoints = 30,
+    chargingDuration = [2,3,4,5],
     setBossChargingCountDown,
     setBossActionState,
     bulletName,
-    isOpenDoor,
+    bossHealth,
+    setBossHealth,
+    bossRegenaration,
 }) => {
 
-    const { setCurrentHit, setIsUsingTurret } = useContext(GameContext);
+    const { setCurrentHit, setIsUsingTurret, bossParameter, setBossParameter, isPlayerInBossArea } = useContext(GameContext);
+    const { axiosFetch } = useAxios();
     const rigidBody = useRef<any>(null);
 
     const { animationState, setAnimationState } = useBossAnimation();
@@ -54,39 +60,153 @@ const BossController: React.FC<BossControllerProps> = ({
         return Math.floor(Math.random() * (70 - 40 + 1)) + 40;
     }
 
-    const CalculateBurstPosition = () => {
-        const pointsSet = new Set<string>();
-        while (pointsSet.size < burstPoints) {
-            let x = Math.floor(Math.random() * rows);
-            let y = Math.floor(Math.random() * cols);
-            pointsSet.add(`${x},${y}`);
+    const getRandomParameters = () => {
+        const energySources = [...new Set(bossAttackPatternsArray.map(pattern => pattern.energySource))];
+        const soundBreathings = [...new Set(bossAttackPatternsArray.map(pattern => pattern.soundBreathing))];
+        const chargingTimes = [...new Set(bossAttackPatternsArray.map(pattern => pattern.chargingTime))];
+        const turrets = [...new Set(bossAttackPatternsArray.map(pattern => pattern.lastActiveTurret))];
+
+        return {
+            energySource: energySources[Math.floor(Math.random() * energySources.length)],
+            soundBreathing: soundBreathings[Math.floor(Math.random() * soundBreathings.length)],
+            chargingTime: chargingTimes[Math.floor(Math.random() * chargingTimes.length)],
+            lastActiveTurret: bossParameter.lastActiveTurret ? bossParameter.lastActiveTurret : turrets[Math.floor(Math.random() * turrets.length)],
+        };
+    };
+
+    const getPredictPatternByParameter = async (
+        energySource: string, 
+        soundBreathing: string, 
+        chargingTime: number, 
+        lastActiveTurret: string,
+        bossHealth: number
+    ) => {
+        try {
+            const data = {
+                energySource: energySource,
+                soundBreathing: soundBreathing,
+                chargingTime: chargingTime,
+                lastActiveTurret: lastActiveTurret,
+                bossHealth: bossHealth
+            };
+            const response = await axiosFetch({
+                axiosInstance: axiosInstanceAiService,
+                method: "post",
+                url: `/classification/predict`,
+                requestConfig: {
+                    userId: "u111362252",
+                    model: {
+                        name: "level-5-boss-predict-model-v1",
+                        targetVariable: "pattern"
+                    },
+                    data: data
+                },
+            });
+            return response;
+        } catch (error) {
+            console.log('Error:', error);
+            if (error.response) {
+                console.log('Error Response Data:', error.response.data);
+                console.log('Error Response Status:', error.response.status);
+            } 
+        }
+    }
+
+    const getRandomPattern = async() => {
+        const { energySource, soundBreathing, chargingTime, lastActiveTurret } = getRandomParameters();
+        const predictedResult = await getPredictPatternByParameter(energySource, soundBreathing, chargingTime, lastActiveTurret, bossHealth);
+        const predictedPattern = bossAttackPatternsArray.find(pattern => pattern.name === predictedResult.pattern);
+
+        // Try to find an exact matching pattern
+        const exactMatch = bossAttackPatternsArray.find(pattern =>
+            pattern.energySource === energySource &&
+            pattern.soundBreathing === soundBreathing &&
+            pattern.chargingTime === chargingTime &&
+            pattern.lastActiveTurret === lastActiveTurret &&
+            pattern.bossHealth === bossHealth
+        );
+
+        if (exactMatch) {
+            // console.log(`Exact match found for energySource: ${energySource}, soundBreathing: ${soundBreathing}, chargingTime: ${chargingTime}`);
+            // return exactMatch;
+            return { actualPattern: exactMatch, predictPattern: predictedPattern };
         }
 
-        const points = Array.from(pointsSet).map(point => point.split(',').map(Number));
+        // If no exact match, find the closest match
+        const closestMatch = bossAttackPatternsArray.reduce((closest, current) => {
+            let currentScore = 0;
+            let closestScore = 0;
+
+            // Score based on energySource
+            if (current.energySource === energySource) currentScore += 2;
+            if (closest.energySource === energySource) closestScore += 2;
+
+            // Score based on soundBreathingsetBossChargingCountDown
+            if (current.soundBreathing === soundBreathing) currentScore += 3;
+            if (closest.soundBreathing === soundBreathing) closestScore += 3;
+
+            if (current.lastActiveTurret === lastActiveTurret) currentScore += 1;
+            if (closest.lastActiveTurret === lastActiveTurret) closestScore += 1;
+
+            if (current.bossHealth === bossHealth) currentScore += 1;
+            if (closest.bossHealth === bossHealth) closestScore += 1;
+
+            // Score based on chargingTime (1 point for every second difference, negative)
+            currentScore -= Math.abs(current.chargingTime - chargingTime);
+            closestScore -= Math.abs(closest.chargingTime - chargingTime);
+
+            // console.log(`currentScore: ${currentScore}, closestScore: ${closestScore}`);
+            return currentScore > closestScore ? current : closest;
+        });
+
+        // console.log(`No exact match found for energySource: ${energySource}, soundBreathing: ${soundBreathing}, chargingTime: ${chargingTime}`);
+        return { actualPattern: closestMatch, predictPattern: predictedPattern };
+    };
+
+    const MapPatternToPosition = async() => {
+        const { actualPattern, predictPattern } = await getRandomPattern();
+        setBossParameter((prev) => ({
+            ...prev,
+            energySource: actualPattern.energySource,
+            soundBreathing: actualPattern.soundBreathing,
+            chargingTime: actualPattern.chargingTime,
+        }));
+        console.log(`Actual Pattern: ${actualPattern.name}, Predicted Pattern: ${predictPattern.name}`);
+
         const debug: { position: { x: number; y: number; z: number }, color: string }[] = [];
-        const positions: { x: number; y: number; z: number }[] = [];
         const meteos: MeteoDataInterface[] = [];
 
         for (let j = 0; j < rows; j++) {
             for (let i = 0; i < cols; i++) {
-                const color = points.some(([x, y]) => x === j && y === i) ? "red" : "green";
+                const color = actualPattern.distribution[j][i] === 1 ? "red" : "green";
+                const x = i * (3 + gap) - 52;
+                const y = 0;
+                const z = j * (3 + gap) - 30;
+                // debug.push({ position: { x, y, z }, color });
+                if (color === "red") {
+                    meteos.push({ id: meteos.length + 1, position: { x, y: randomMeteoPosY(), z }, isReachedFloor: false, opacity: 1 });
+                }
+            }
+        }
+
+        for (let j = 0; j < rows; j++) {
+            for (let i = 0; i < cols; i++) {
+                const color = predictPattern.distribution[j][i] === 1 ? "red" : "green";
                 const x = i * (3 + gap) - 52;
                 const y = 0;
                 const z = j * (3 + gap) - 30;
                 debug.push({ position: { x, y, z }, color });
-                if (color === "red") {
-                    positions.push({ x, y: randomMeteoPosY(), z });
-                    meteos.push({ id: positions.length, position: { x, y: randomMeteoPosY(), z }, isReachedFloor: false, opacity: 1 });
-                }
             }
         }
 
         setDebugPlatePosition(debug);
         setMeteoData(meteos);
+
+        return { actualPattern: actualPattern, predictPattern: predictPattern };
     }
 
     useEffect(() => {
-        if (isOpenDoor && isOpenDoor === true) {
+        if (isPlayerInBossArea && isPlayerInBossArea === true) {
             let idleTimeout: NodeJS.Timeout;
             let burstTimeout: NodeJS.Timeout;
             if (bossState === 'idle') {
@@ -105,23 +225,21 @@ const BossController: React.FC<BossControllerProps> = ({
                 clearTimeout(burstTimeout);
             };
         }
-        else if (isOpenDoor && isOpenDoor === false){
+        else if (isPlayerInBossArea && isPlayerInBossArea === false) {
             setBossState('idle');
         }
-    }, [bossState, idleDuration, burstDuration, setAnimationState, isOpenDoor]);
+    }, [bossState, idleDuration, burstDuration, setAnimationState, isPlayerInBossArea]);
 
     const idleControl = () => {
-        // console.log("Idle");
         setAnimationState(BossAnimationState.Idle);
         setDebugPlatePosition([]);
         setMeteoData([]);
     }
 
-    const chargeAndBurstControl = (onBurstComplete: () => void) => {
-        CalculateBurstPosition();
-        let countdown = chargingDuration;
+    const chargeAndBurstControl = async(onBurstComplete: () => void) => {
+        const { actualPattern } = await MapPatternToPosition();
+        let countdown = actualPattern.chargingTime;
         const delayInterval = setInterval(() => {
-            // console.log(`charging delay: ${countdown}`);
             setBossActionState('charging');
             setBossChargingCountDown(countdown);
             countdown -= 1;
@@ -133,7 +251,6 @@ const BossController: React.FC<BossControllerProps> = ({
                     setDebugPlatePosition([]);
                     setBossActionState('bursting');
                     setBossState('bursting');
-                    // console.log(`bursting: ${burstCountdown}`);
                     burstCountdown -= 1;
                     if (burstCountdown <= 0) {
                         clearInterval(burstInterval);
@@ -143,6 +260,27 @@ const BossController: React.FC<BossControllerProps> = ({
             }
         }, 1000);
     };
+
+    useEffect(() => {
+        let regenerationInterval: NodeJS.Timeout;
+        if (!isPlayerInBossArea && bossHealth > 0 && bossHealth < 100) {
+            regenerationInterval = setInterval(() => {
+                setBossHealth(prevHealth => Math.min(prevHealth + bossRegenaration.increasePerInterval, 100));
+            }, bossRegenaration.interval); // Regenerate 1 health every 3 seconds
+        }
+        return () => {
+            if (regenerationInterval) {
+                clearInterval(regenerationInterval);
+            }
+        };
+    }, [isPlayerInBossArea, bossHealth, setBossHealth]);
+
+    useEffect(() => {
+        setBossParameter((prev) => ({
+            ...prev,
+            bossHealth: bossHealth
+        }));
+    }, [bossHealth])
 
     const handleCollisionEnter = (id: number) => ({ other }) => {
         const colliderName = other.colliderObject.name;
@@ -180,7 +318,7 @@ const BossController: React.FC<BossControllerProps> = ({
     const bossBodyColliderEnter = ({ other }) => {
         const { userData } = other.rigidBodyObject;
         if (bulletName.includes(userData.bulletName)) {
-            console.log(`got hit by ${userData.bulletName}`);
+            setBossHealth(prevHealth => prevHealth - userData.damage);
         }
     }
 
@@ -203,7 +341,8 @@ const BossController: React.FC<BossControllerProps> = ({
             <BurstDebugPlate
                 debugPlatePosition={debugPlatePosition}
                 warningOpacity={warningOpacity}
-                setWarningOpacity={setWarningOpacity} />
+                setWarningOpacity={setWarningOpacity}
+            />
         </group>
     );
 }
