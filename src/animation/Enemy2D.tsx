@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { useState } from 'react';
 import * as THREE from 'three';
-import { PlainAnimator } from "three-plain-animator";
+import { PlainAnimator } from 'three-plain-animator';
 import { CapsuleCollider } from '@react-three/rapier';
 import { enemyConfigs, EnemyConfig } from './EnemyConfig';
 import { EnemyAnimationState } from '../hooks/useEnemyAnimation';
@@ -12,44 +12,86 @@ const Enemy2D = ({
     direction,
     color,
     scale,
+    opacityOptional,
 }: {
     name: string;
     animation: EnemyAnimationState;
     direction: "left" | "right";
     color?: string;
     scale: number;
+    opacityOptional?: number;
 }) => {
     const config: EnemyConfig = enemyConfigs[name];
 
     // Load textures
     const idleSpriteTexture = useLoader(THREE.TextureLoader, config.sprite.idle);
     const runningSpriteTexture = useLoader(THREE.TextureLoader, config.sprite.running);
+    const attackSpriteTexture = config.sprite.attack ? useLoader(THREE.TextureLoader, config.sprite.attack) : null;
 
     // Adjust texture settings for pixel art
-    [idleSpriteTexture, runningSpriteTexture].forEach(texture => {
-        texture.minFilter = THREE.NearestFilter;
-    });
+    useEffect(() => {
+        [idleSpriteTexture, runningSpriteTexture, attackSpriteTexture].forEach(texture => {
+            if (texture) texture.minFilter = THREE.NearestFilter;
+        });
+    }, [idleSpriteTexture, runningSpriteTexture, attackSpriteTexture]);
 
     // Initialize animators
-    const [animators] = useState<{ [key in EnemyAnimationState]: PlainAnimator }>({
+    const [animators, setAnimators] = useState<{ [key in EnemyAnimationState]: PlainAnimator | null }>({
         idle: new PlainAnimator(
-            idleSpriteTexture, 
-            config.plainAnimator.idle.tilesAmountHorizontally, 
-            config.plainAnimator.idle.tilesAmountVertically, 
-            config.plainAnimator.idle.tilesAmount, 
-            config.plainAnimator.idle.frameRate),
+            idleSpriteTexture,
+            config.plainAnimator.idle.tilesAmountHorizontally,
+            config.plainAnimator.idle.tilesAmountVertically,
+            config.plainAnimator.idle.tilesAmount,
+            config.plainAnimator.idle.frameRate
+        ),
         running: new PlainAnimator(
-            runningSpriteTexture, 
-            config.plainAnimator.running.tilesAmountHorizontally, 
-            config.plainAnimator.running.tilesAmountVertically, 
-            config.plainAnimator.running.tilesAmount, 
+            runningSpriteTexture,
+            config.plainAnimator.running.tilesAmountHorizontally,
+            config.plainAnimator.running.tilesAmountVertically,
+            config.plainAnimator.running.tilesAmount,
             config.plainAnimator.running.frameRate
-        )
+        ),
+        attack: attackSpriteTexture ? new PlainAnimator(
+            attackSpriteTexture,
+            config.plainAnimator.attack.tilesAmountHorizontally,
+            config.plainAnimator.attack.tilesAmountVertically,
+            config.plainAnimator.attack.tilesAmount,
+            config.plainAnimator.attack.frameRate
+        ) : null,
     });
+
+    // Update animators when name or animation changes
+    useEffect(() => {
+        setAnimators({
+            idle: new PlainAnimator(
+                idleSpriteTexture,
+                config.plainAnimator.idle.tilesAmountHorizontally,
+                config.plainAnimator.idle.tilesAmountVertically,
+                config.plainAnimator.idle.tilesAmount,
+                config.plainAnimator.idle.frameRate
+            ),
+            running: new PlainAnimator(
+                runningSpriteTexture,
+                config.plainAnimator.running.tilesAmountHorizontally,
+                config.plainAnimator.running.tilesAmountVertically,
+                config.plainAnimator.running.tilesAmount,
+                config.plainAnimator.running.frameRate
+            ),
+            attack: attackSpriteTexture ? new PlainAnimator(
+                attackSpriteTexture,
+                config.plainAnimator.attack.tilesAmountHorizontally,
+                config.plainAnimator.attack.tilesAmountVertically,
+                config.plainAnimator.attack.tilesAmount,
+                config.plainAnimator.attack.frameRate
+            ) : null,
+        });
+    }, [name, animation, idleSpriteTexture, runningSpriteTexture, attackSpriteTexture]);
 
     // Animate based on the current state
     useFrame(() => {
-        animators[animation].animate();
+        if (animators[animation]) {
+            animators[animation].animate();
+        }
     });
 
     const colorCode = (color: any) => {
@@ -80,10 +122,10 @@ const Enemy2D = ({
                 scale={[direction === "left" ? -1 : 1, 1, 1]}>
                 <planeGeometry args={[(config.size.width * scale), (config.size.height * scale), 1]} />
                 <meshStandardMaterial
-                    map={animators[animation].texture}
+                    map={animators[animation]?.texture}
                     transparent={true}
                     color={color !== "" ? colorCode(color) : "white"}
-                    opacity={2}
+                    opacity={opacityOptional !== null ? opacityOptional : 2}
                 />
             </mesh>
             <CapsuleCollider

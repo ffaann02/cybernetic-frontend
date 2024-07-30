@@ -284,6 +284,22 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Computer Model Choosing" />
           </>
         ))}
+      {currentHit === "ComputerEnemyLab" &&
+        (!isUsingSecurityCamera ? (
+          <AskForInputKeyDown title="Press E to Enter Computer Enemy Lab" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Computer Enemy Lab" />
+          </>
+        ))}
+      {currentHit === "ComputerTrainingEnemyLab" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer Training" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Computer Training" />
+          </>
+        ))}
     </>
   );
 };

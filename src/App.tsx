@@ -21,6 +21,7 @@ import Level2Classify from "./game/level2-classify/scene/Level2-Classify";
 import EnemyEnvironment from "./non-gameplay-scene/EnemyEnvironment";
 import Level3SoundGEN from "./game/level3-sound-generative/scene/Level3-SoundGEN";
 import Level5Final from "./game/level5-final/scene/Level5-Final";
+import SlimeLab from "./game/slime-lab/scene/SlimeLab";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -49,6 +50,7 @@ function App() {
                             <Scene title="game-level-2" scene={<Level2Classify/>} />
                             <Scene title="game-level-3" scene={<Level3SoundGEN/>} />
                             <Scene title="game-level-5" scene={<Level5Final/>} />
+                            <Scene title="slime-lab" scene={<SlimeLab/>} />
                           </SceneRouter>
                         </LevelProvider>
                       </div>

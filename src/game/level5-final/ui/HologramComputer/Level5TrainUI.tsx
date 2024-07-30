@@ -75,6 +75,16 @@ const Level5TrainUI = ({
         setTrainPercentage(100 - parseInt(e.target.value));
     };
 
+    const handleModelChange = (e) => {
+        const selectedModel = predictionModelChoices.find((item) => item.value === e.target.value);
+        if (selectedModel) {
+          setBossAttackPatternPredictModel({
+            name: selectedModel.name,
+            value: selectedModel.value,
+          });
+        }
+      };
+
     return (
         <>
             <div className='w-full flex justify-center items-center'>
@@ -222,7 +232,7 @@ const Level5TrainUI = ({
                                                 label="Prediction Model"
                                                 value={BossAttackPatternPredictModel.value}
                                                 options={predictionModelChoices}
-                                                onChange={(e) => setBossAttackPatternPredictModel({ name: e.target.value, value: e.target.value })} />
+                                                onChange={handleModelChange} />
                                         </div>
                                     </div>
                                 </div>
