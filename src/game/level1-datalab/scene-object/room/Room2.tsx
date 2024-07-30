@@ -334,9 +334,9 @@ const Room2 = ({
       const lootTopReachPoint = 10;
       const lootBottomReachPoint = 0.6;
 
-      const lootDown = true;
+      // const lootDown = true;
       // const lootDown = false;
-      // const lootDown = undefined;
+      const lootDown = undefined;
       // Calculate the new position for the LootBox01 to move in the opposite direction of craneRef
       if (
         (allowCraneUp && currentCranePosition.y <= craneTopReachPoint) ||

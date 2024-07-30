@@ -19,6 +19,7 @@ interface BossControllerProps {
     bossHealth: number;
     setBossHealth: (health: number) => void;
     bossRegenaration: { increasePerInterval: number; interval: number };
+    setPredictionStat: (stat: any) => void;
 }
 
 export interface MeteoDataInterface {
@@ -38,6 +39,8 @@ const BossController: React.FC<BossControllerProps> = ({
     bossHealth,
     setBossHealth,
     bossRegenaration,
+    BossAttackPatternPredictModel,
+    setPredictionStat,
 }) => {
 
     const { setCurrentHit, setIsUsingTurret, bossParameter, setBossParameter, isPlayerInBossArea } = useContext(GameContext);
@@ -96,7 +99,7 @@ const BossController: React.FC<BossControllerProps> = ({
                 requestConfig: {
                     userId: "u111362252",
                     model: {
-                        name: "level-5-boss-predict-model-v1",
+                        name: BossAttackPatternPredictModel.value,
                         targetVariable: "pattern"
                     },
                     data: data
@@ -172,6 +175,39 @@ const BossController: React.FC<BossControllerProps> = ({
             chargingTime: actualPattern.chargingTime,
         }));
         console.log(`Actual Pattern: ${actualPattern.name}, Predicted Pattern: ${predictPattern.name}`);
+        if(actualPattern.name === predictPattern.name) {
+            setPredictionStat((prev) => {
+                return prev.map((item) => {
+                    if (item.name === BossAttackPatternPredictModel.name) {
+                        console.log('Correct Prediction');
+                        return {
+                            name: item.name,
+                            predict: {
+                                correct: item.predict.correct + 1,
+                                wrong: item.predict.wrong
+                            }
+                        }
+                    }
+                    return item;
+                });
+            })
+        }
+        else{
+            setPredictionStat((prev) => {
+                return prev.map((item) => {
+                    if (item.name === BossAttackPatternPredictModel.name) {
+                        return {
+                            name: item.name,
+                            predict: {
+                                correct: item.predict.correct,
+                                wrong: item.predict.wrong + 1
+                            }
+                        }
+                    }
+                    return item;
+                });
+            })
+        }
 
         const debug: { position: { x: number; y: number; z: number }, color: string }[] = [];
         const meteos: MeteoDataInterface[] = [];

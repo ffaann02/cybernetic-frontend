@@ -2,8 +2,9 @@ import slimeIdleSprite from "/images/EnemySlimeIdleAnim.png";
 import slimeRunningSprite from "/images/EnemySlimeRunningAnim.png";
 import spiderIdleSprite from "/images/Spider_IdleAnim.png";
 import spiderRunningSprite from "/images/Spider_RunAnim.png";
-import BossIdleSprite from "/images/BossIdleAnim.png";
-import BossBurstSprite from "/images/BossBurstAnim.png";
+import golemAttackSprite from "/images/GolemAttack.png";
+import golemIdleSprite from "/images/GolemIdle.png";
+import golemRunningSprite from "/images/GolemWalk.png";
 
 interface PlainAnimator {
     tilesAmountHorizontally: number;
@@ -20,10 +21,12 @@ export interface EnemyConfig {
     sprite: {
         idle: string;
         running: string;
+        attack?: string;
     };
     plainAnimator: {
         idle: PlainAnimator; 
         running: PlainAnimator;
+        attack?: PlainAnimator;
     };
     mesh: {
         position: [number, number, number];
@@ -98,22 +101,33 @@ export const enemyConfigs: { [key: string]: EnemyConfig } = {
         }
     },
     Golem: {
+        size:{
+            width: 6,
+            height: 6,
+        },
         sprite: {
-            idle: spiderIdleSprite,
-            running: spiderRunningSprite,
+            idle: golemIdleSprite,
+            running: golemRunningSprite,
+            attack: golemAttackSprite,
         },
         plainAnimator: {
             idle: {
-                tilesAmountHorizontally: 7,
+                tilesAmountHorizontally: 6,
                 tilesAmountVertically: 1,
-                tilesAmount: 7,
-                tilesHorizontal: 7,
+                tilesAmount: 6,
+                frameRate: 6,
             },
             running: {
                 tilesAmountHorizontally: 5,
                 tilesAmountVertically: 1,
                 tilesAmount: 5,
-                tilesHorizontal: 5,
+                frameRate: 5,
+            },
+            attack: {
+                tilesAmountHorizontally: 5,
+                tilesAmountVertically: 1,
+                tilesAmount: 5,
+                frameRate: 5,
             },
         },
         mesh: {

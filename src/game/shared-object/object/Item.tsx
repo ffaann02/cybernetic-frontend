@@ -64,7 +64,7 @@ export const Item: React.FC<ItemProps> = ({
           const material = new THREE.MeshStandardMaterial({
             color: color, // Default to white if no color is provided
             opacity: opacity !== undefined ? opacity : 1, // Default to fully opaque if no opacity is provided
-            transparent: opacity !== undefined && opacity < 1, // Set transparent if opacity is less than 1
+            transparent: true
           });
           (child as any).material = material;
         }

@@ -51,7 +51,7 @@ interface GameContextProps {
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-5",
+  currentScene: "game-level-1",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -65,6 +65,8 @@ const initialGameContext: GameContextProps = {
     "game-level-1",
     "game-level-2",
     "game-level-3",
+    "game-level-5",
+    "slime-lab",
   ],
   currentCamera: 1,
   cameraList: [1, 2, 3],
