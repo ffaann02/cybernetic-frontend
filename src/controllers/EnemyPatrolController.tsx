@@ -461,6 +461,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
     return (
         <group>
             <RigidBody
+                type='dynamic'
                 ref={rigidBody}
                 colliders={false}
                 name='enemy_patrol'

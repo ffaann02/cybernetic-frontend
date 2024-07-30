@@ -43,6 +43,7 @@ const Level3SoundGenEnvironment = ({
   const [lastPressTime, setLastPressTime] = useState(0);
   const parentLight = useRef();
   const speakerMeshRef = useRef();
+  const [kaboom, setKaboom] = useState(false);
 
   return (
     <>
@@ -88,7 +89,7 @@ const Level3SoundGenEnvironment = ({
               degreeNumberToRadian(90),
               degreeNumberToRadian(0),
             ]}
-            status={"close"}
+            status={kaboom ? "open" : "close"}
             type="switch-room"
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
@@ -102,6 +103,8 @@ const Level3SoundGenEnvironment = ({
             setIsPlayingSound={setIsPlayingSound}
             parentLight={parentLight}
             speakerMeshRef={speakerMeshRef}
+            kaboom={kaboom}
+            setKaboom={setKaboom}
           />
           <Level3SoundGenRoom1 />
         </Room>

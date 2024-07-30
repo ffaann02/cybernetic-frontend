@@ -1,25 +1,14 @@
 import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { PlainAnimator } from "three-plain-animator";
-import idleSprite from "/images/idle.png";
-import runningSprite from "/images/running.png";
-import jumpSprite from "/images/jump.png";
+import rhythmSprite from "/images/Rhythm.png";
 
 const AudioPanel2D = () => {
   // Load textures
-  const idleSpriteTexture = useLoader(THREE.TextureLoader, idleSprite);
-  const runningSpriteTexture = useLoader(THREE.TextureLoader, runningSprite);
-  const jumpSpriteTexture = useLoader(THREE.TextureLoader, jumpSprite);
+  const graphRunningSpriteTexture = useLoader(THREE.TextureLoader, rhythmSprite);
 
-  // Adjust texture settings for pixel art
-  [idleSpriteTexture, runningSpriteTexture, jumpSpriteTexture].forEach(
-    (texture) => {
-      texture.minFilter = THREE.NearestFilter;
-    }
-  );
-
-  const graphRunning = new PlainAnimator(runningSpriteTexture, 6, 1, 6, 8);
+  const graphRunning = new PlainAnimator(graphRunningSpriteTexture, 12, 1, 12, 8);
 
   // Animate based on the current state
   useFrame(() => {
@@ -30,7 +19,7 @@ const AudioPanel2D = () => {
     <mesh
       key="graph_running_audio"
       position={[0, 4, 0]}
-      scale={[1,1,1]}
+      scale={[1, 1, 1]}
     >
       {/* Use PlaneGeometry for a flat surface */}
       <planeGeometry args={[4, 5]} />

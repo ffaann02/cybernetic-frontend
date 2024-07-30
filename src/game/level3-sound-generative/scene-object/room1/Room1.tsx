@@ -46,6 +46,8 @@ const Room1 = ({
   setIsPlayingSound,
   parentLight,
   speakerMeshRef,
+  kaboom,
+  setKaboom
 }) => {
   const {
     currentHit,
@@ -93,7 +95,6 @@ const Room1 = ({
   const meshRef1 = useRef();
   const light1 = useRef();
   const UFO = useRef();
-  const [kaboom, setKaboom] = useState(false);
   const speaker = useRef();
   const [initSpeakerPosition, setInitSpeakerPosition] = useState([-20, 0, -16]);
   const [trackSpeakerPosition, setTrackSpeakerPosition] = useState([0, 0, 0]);
@@ -112,9 +113,6 @@ const Room1 = ({
         // setShowDialog((prev) => !prev);
         setIsUsingSecurityCamera((prev) => !prev);
         setIsInteracting((prev) => !prev);
-        if(kaboom){
-          setKaboom(false);
-        }
         // setCurrentHit("");
         setLastPressTime(currentTime);
       }
@@ -254,6 +252,7 @@ const Room1 = ({
 
   const handleKaboomFall = ({ other }) => {
     console.log("test");
+    console.log(other.rigidBodyObject.name);
     if (other.rigidBodyObject.includes("enemy")) {
       console.log("hit enemy");
       // if (kaboom) {
@@ -637,7 +636,7 @@ const Room1 = ({
         opacity={0.7}
       /> */}
 
-      {enemies.map((enemyPartrolProp, index) => (
+      {!kaboom && enemies.map((enemyPartrolProp, index) => (
         <EnemyPatrolController
           id={enemyPartrolProp.id}
           key={enemyPartrolProp.id}
@@ -658,6 +657,7 @@ const Room1 = ({
       <>
         {!destroyKaboom && (
           <RigidBody
+            type="fixed"
             name="Kaboom-Level3"
             colliders={false}
             lockTranslations={true}

@@ -79,7 +79,7 @@ const generateGlassParameters = (state) => {
   }
 };
 
-const Room2 = ({ dataCollectNotify }) => {
+const Room2 = ({ dataCollectNotify, glassParameters, setGlassParameters }) => {
   const [vodkaGlasses, setVodkaGlasses] = useState([]);
   const wPressed = useKeyboardControls((state) => state[Controls.forward]);
   const sPressed = useKeyboardControls((state) => state[Controls.backward]);
@@ -103,7 +103,6 @@ const Room2 = ({ dataCollectNotify }) => {
   const [isLiftGlass, setIsLiftGlass] = useState(false);
   const [currentGlassId, setCurrentGlassId] = useState(-1);
   const [currentLiftGlassId, setCurrentLiftGlassId] = useState(-1);
-  const [glassParameters, setGlassParameters] = useState([]);
   const [checkedWaterGlass, setCheckedWaterGlass] = useState([]);
   const [checkedWeightGlass, setCheckedWeightGlass] = useState([]);
   const [checkedPressureGlass, setCheckedPressureGlass] = useState([]);
@@ -281,7 +280,6 @@ const Room2 = ({ dataCollectNotify }) => {
         // console.log(glassId);
         setVodkaGlasses((prev) => prev.filter((glass) => glass.id !== glassId));
         setCurrentHit("");
-
       }
 
       // pick glass

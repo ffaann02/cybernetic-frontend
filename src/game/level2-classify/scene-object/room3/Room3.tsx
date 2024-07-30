@@ -52,6 +52,10 @@ const Room3 = ({
   setDangerPattern,
   ufoActiveList,
   setUfoActiveList,
+  glassParameters,
+  setGlassParameters,
+  isOpenTrainComputer,
+  setIsOpenTrainComputer,
 }) => {
   const {
     currentHit,
@@ -117,66 +121,92 @@ const Room3 = ({
       }
     };
 
-    const ufoPositionRefs = [
-      useRef(ufoPosition1Z),
-      useRef(ufoPosition2Z),
-      useRef(ufoPosition3Z),
-    ];
-  
-    useEffect(() => {
-      ufoPositionRefs[0].current = ufoPosition1Z;
-      ufoPositionRefs[1].current = ufoPosition2Z;
-      ufoPositionRefs[2].current = ufoPosition3Z;
-    }, [ufoPosition1Z, ufoPosition2Z, ufoPosition3Z]);
-
-    useFrame(() => {
-      const currentTime = new Date().getTime();
-      
-      if (ePressed && currentTime - lastPressTime > 200) {
-        if (currentHit === "ComputerTestGlass") {
-          setIsInteracting((prev) => !prev);
-          setCurrentComputerGlassTest(currentHitComputerId);
-          setIsOpenGlassTest((prev) => !prev);
-        }
-        setLastPressTime(currentTime);
+    const onPlayerEnterTrainGlassComputer = ({other}) => {
+      if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
+        setCurrentHit("ComputerGlassTrainLevel2");
       }
-    
-      // Handle UFO movement logic
-      setUfoActiveList((prevList) => {
-        const newList = [...prevList];
-        if (newList[0]) {
-          setUfoPosition1Z((prevZ) => {
-            const newZ = prevZ - 0.03;
-            if (newZ <= -18) {
-              newList[0] = false;
-              return -18;
-            }
-            return newZ;
-          });
-        }
-        if (newList[1]) {
-          setUfoPosition2Z((prevZ) => {
-            const newZ = prevZ - 0.03;
-            if (newZ <= -18) {
-              newList[0] = false;
-              return -18;
-            }
-            return newZ;
-          });
-        }
-        if (newList[2]) {
-          setUfoPosition3Z((prevZ) => {
-            const newZ = prevZ - 0.03;
-            if (newZ <= -18) {
-              newList[0] = false;
-              return -18;
-            }
-            return newZ;
-          });
-        }
-        return newList;
-      });
+    }
+
+    const onPlayerExitTrainGlassComputer = ({other}) => {
+      if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
+        setCurrentHit("");
+        setCurrentHitComputerId(-1);
+      }
+    }
+
+  const ufoPositionRefs = [
+    useRef(ufoPosition1Z),
+    useRef(ufoPosition2Z),
+    useRef(ufoPosition3Z),
+  ];
+
+  useEffect(() => {
+    ufoPositionRefs[0].current = ufoPosition1Z;
+    ufoPositionRefs[1].current = ufoPosition2Z;
+    ufoPositionRefs[2].current = ufoPosition3Z;
+  }, [ufoPosition1Z, ufoPosition2Z, ufoPosition3Z]);
+
+  useFrame(() => {
+    const currentTime = new Date().getTime();
+
+    if (ePressed && currentTime - lastPressTime > 200) {
+      if (currentHit === "ComputerTestGlass") {
+        setIsInteracting((prev) => !prev);
+        setCurrentComputerGlassTest(currentHitComputerId);
+        setIsOpenGlassTest((prev) => !prev);
+      }
+      if(currentHit === "ComputerGlassTrainLevel2"){
+        setIsInteracting((prev) => !prev);
+        setIsOpenTrainComputer((prev) => !prev);
+      }
+      setLastPressTime(currentTime);
+    }
+
+    // Handle UFO movement logic
+    setUfoActiveList((prevList) => {
+      const newList = [...prevList];
+      const rotationIncrement = 10;
+      const movementSpeed = 0.03;
+
+      if (newList[0]) {
+        setUfoPosition1Z((prevZ) => {
+          const newZ = prevZ - movementSpeed;
+          if (newZ <= -18) {
+            newList[0] = false;
+            return 0; // Reset position to zero
+          }
+          return newZ;
+        });
+        setUfoRotation1Y((prevY) => prevY + rotationIncrement); // Rotate around Y-axis
+      }
+
+      if (newList[1]) {
+        setUfoPosition2Z((prevZ) => {
+          const newZ = prevZ - movementSpeed;
+          if (newZ <= -18) {
+            newList[1] = false;
+            return 0; // Reset position to zero
+          }
+          return newZ;
+        });
+        setUfoRotation2Y((prevY) => prevY + rotationIncrement); // Rotate around Y-axis
+      }
+
+      if (newList[2]) {
+        setUfoPosition3Z((prevZ) => {
+          const newZ = prevZ - movementSpeed;
+          if (newZ <= -18) {
+            newList[2] = false;
+            return 0; // Reset position to zero
+          }
+          return newZ;
+        });
+        setUfoRotation3Y((prevY) => prevY + rotationIncrement); // Rotate around Y-axis
+      }
+
+      return newList;
     });
+  });
 
   const [glassBridges, setGlassBridges] = useState([
     {
@@ -221,82 +251,192 @@ const Room3 = ({
     ]);
   }, [resetTrigger]);
 
+  const [glowColor1, setGlowColor1] = useState("red");
+  const [glowColor2, setGlowColor2] = useState("red");
+  const [glowColor3, setGlowColor3] = useState("red");
+
+  useEffect(() => {
+    const interval1 = setInterval(() => {
+      setGlowColor1((prevColor) => (prevColor === "red" ? "green" : "red"));
+    }, 1000);
+
+    return () => clearInterval(interval1);
+  }, []);
+
+  useEffect(() => {
+    const interval2 = setInterval(() => {
+      setGlowColor2((prevColor) => (prevColor === "red" ? "green" : "red"));
+    }, 1000);
+
+    return () => clearInterval(interval2);
+  }, []);
+
+  useEffect(() => {
+    const interval3 = setInterval(() => {
+      setGlowColor3((prevColor) => (prevColor === "red" ? "green" : "red"));
+    }, 1000);
+
+    return () => clearInterval(interval3);
+  }, []);
+
   return (
     <>
       <ambientLight intensity={0.5} color={"lightblue"} />
 
       <RigidBody
         type="fixed"
-        name="UFO-Glass-Scanner1-Left"
         colliders={false}
         lockTranslations
         lockRotations
-        position={[-20.5, 4, ufoPosition1Z]}
-        ref={UFO1}
-        scale={[30, 0.1, 30]}
-        rotation={[0, degreeNumberToRadian(ufoRotation1Y), 0]}
+        position={[0, 0, 10]}
+        scale={[400, 400, 300]}
+        rotation={[
+          degreeNumberToRadian(-90),
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(-45),
+        ]}
+        onCollisionEnter={onPlayerEnterTrainGlassComputer}
+        onCollisionExit={onPlayerExitTrainGlassComputer}
       >
-        <CuboidCollider args={[0.03, 12, 0.02]} position={[-0.05, -8, 0.005]} />
-        <CuboidCollider args={[0.03, 12, 0.02]} position={[0.05, -10, 0.005]} />
+        <CuboidCollider args={[0.003, 0.004, 0.005]} position={[0, 0, 0.005]} />
         <Item
           item={{
-            name: "BlueUFO",
-            position: [0, 4, 0],
-            scale: [0.0005, 0.2, 0.0005],
+            name: "ClassifyComputer",
+            position: [0, 0, 0],
+            scale: [1, 1, 1],
             fileType: "glb",
           }}
-          opacity={0}
+          isOutlined
+          outlineColor="white"
+          outlineThickness={3}
         />
       </RigidBody>
 
-      <RigidBody
-        type="fixed"
-        name="UFO-Glass-Scanner2"
-        colliders={false}
-        lockTranslations
-        lockRotations
-        position={[-12.5, 4, ufoPosition2Z]}
-        ref={UFO2}
-        scale={[30, 0.1, 30]}
-        rotation={[0, degreeNumberToRadian(ufoRotation2Y), 0]}
-      >
-        <CuboidCollider args={[0.03, 12, 0.02]} position={[-0.05, -8, 0.005]} />
-        <CuboidCollider args={[0.03, 12, 0.02]} position={[0.05, -10, 0.005]} />
-        <Item
-          item={{
-            name: "BlueUFO",
-            position: [0, 4, 0],
-            scale: [0.0005, 0.2, 0.0005],
-            fileType: "glb",
-          }}
-          opacity={0}
-        />
-      </RigidBody>
+      {ufoActiveList[0] === true && (
+        <RigidBody
+          type="fixed"
+          name="UFO-Glass-Scanner1-Left"
+          colliders={false}
+          lockTranslations
+          lockRotations
+          position={[-20.5, 4, ufoPosition1Z]}
+          ref={UFO1}
+          scale={[30, 0.1, 30]}
+          // rotation={[0, degreeNumberToRadian(0), 0]}
+        >
+          <mesh scale={[0.5, 50, 0.5]} position={[0, -4, 0]}>
+            <sphereGeometry args={[0.5, 24, 24]} />
+            <FakeGlowMaterial
+              glowColor={glowColor1}
+              falloff={2}
+              glowInternalRadius={10}
+              opacity={1}
+            />
+          </mesh>
 
-      <RigidBody
-        type="fixed"
-        name="UFO-Glass-Scanner3"
-        colliders={false}
-        lockTranslations
-        lockRotations
-        position={[-4.5, 4, ufoPosition3Z]}
-        ref={UFO3}
-        scale={[30, 0.1, 30]}
-        rotation={[0, degreeNumberToRadian(ufoRotation3Y), 0]}
-      >
-                <CuboidCollider args={[0.03, 12, 0.02]} position={[-0.05, -8, 0.005]} />
-                <CuboidCollider args={[0.03, 12, 0.02]} position={[0.05, -10, 0.005]} />
-        <Item
-          item={{
-            name: "BlueUFO",
-            position: [0, 4, 0],
-            scale: [0.0005, 0.2, 0.0005],
-            fileType: "glb",
-          }}
-          opacity={0}
-        />
-      </RigidBody>
+          <CuboidCollider
+            args={[0.03, 12, 0.02]}
+            position={[-0.05, -8, 0.005]}
+          />
+          <CuboidCollider
+            args={[0.03, 12, 0.02]}
+            position={[0.05, -10, 0.005]}
+          />
+          <Item
+            item={{
+              name: "BlueUFO",
+              position: [0, 4, 0],
+              scale: [0.0005, 0.2, 0.0005],
+              fileType: "glb",
+              rotation: [0, degreeNumberToRadian(ufoRotation1Y), 0],
+            }}
+            opacity={0}
+          />
+        </RigidBody>
+      )}
 
+      {ufoActiveList[1] === true && (
+        <RigidBody
+          type="fixed"
+          name="UFO-Glass-Scanner2"
+          colliders={false}
+          lockTranslations
+          lockRotations
+          position={[-12.5, 4, ufoPosition2Z]}
+          ref={UFO2}
+          scale={[30, 0.1, 30]}
+          // rotation={[0, degreeNumberToRadian(ufoRotation2Y), 0]}
+        >
+          <mesh scale={[0.5, 50, 0.5]} position={[0, -4, 0]}>
+            <sphereGeometry args={[0.5, 24, 24]} />
+            <FakeGlowMaterial
+              glowColor={glowColor2}
+              falloff={2}
+              glowInternalRadius={10}
+              opacity={1}
+            />
+          </mesh>
+          <CuboidCollider
+            args={[0.03, 12, 0.02]}
+            position={[-0.05, -8, 0.005]}
+          />
+          <CuboidCollider
+            args={[0.03, 12, 0.02]}
+            position={[0.05, -10, 0.005]}
+          />
+          <Item
+            item={{
+              name: "BlueUFO",
+              position: [0, 4, 0],
+              scale: [0.0005, 0.2, 0.0005],
+              fileType: "glb",
+              rotation: [0, degreeNumberToRadian(ufoRotation2Y), 0],
+            }}
+            opacity={0}
+          />
+        </RigidBody>
+      )}
+
+      {ufoActiveList[2] === true && (
+        <RigidBody
+          type="fixed"
+          name="UFO-Glass-Scanner3"
+          colliders={false}
+          lockTranslations
+          lockRotations
+          position={[-4.5, 4, ufoPosition3Z]}
+          ref={UFO3}
+          scale={[30, 0.1, 30]}
+        >
+          <mesh scale={[0.5, 50, 0.5]} position={[0, -4, 0]}>
+            <sphereGeometry args={[0.5, 24, 24]} />
+            <FakeGlowMaterial
+              glowColor={glowColor3}
+              falloff={2}
+              glowInternalRadius={10}
+              opacity={1}
+            />
+          </mesh>
+          <CuboidCollider
+            args={[0.03, 12, 0.02]}
+            position={[-0.05, -8, 0.005]}
+          />
+          <CuboidCollider
+            args={[0.03, 12, 0.02]}
+            position={[0.05, -10, 0.005]}
+          />
+          <Item
+            item={{
+              name: "BlueUFO",
+              position: [0, 4, 0],
+              scale: [0.0005, 0.2, 0.0005],
+              fileType: "glb",
+              rotation: [0, degreeNumberToRadian(ufoRotation3Y), 0],
+            }}
+            opacity={0}
+          />
+        </RigidBody>
+      )}
       <GlassBridge
         row={2}
         col={6}

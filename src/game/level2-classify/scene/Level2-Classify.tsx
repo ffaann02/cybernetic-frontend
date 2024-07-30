@@ -31,6 +31,7 @@ import VideoFootageUI from "../ui/VideoFootageUI";
 import GlassClassifierUI from "../ui/GlassClassifierUI";
 import { Toast } from "primereact/toast";
 import ComputerTestGlassUI from "../ui/ComputerTestGlassUI";
+import TrainGlassClassifierUI from "../ui/TrainGlassClassifierUI";
 
 interface HomeProps {}
 
@@ -61,7 +62,7 @@ const Level2Classify: React.FC<HomeProps> = () => {
     []
   );
 
-  const [currentRoom, setCurrentRoom] = useState<number>(3);
+  const [currentRoom, setCurrentRoom] = useState<number>(1);
   const door01_destination = useRef(null);
   const door01_back = useRef(null);
   const door02_destination = useRef(null);
@@ -80,7 +81,7 @@ const Level2Classify: React.FC<HomeProps> = () => {
   const [resetTrigger, setResetTrigger] = useState(0);
   const [dangerPattern, setDangerPattern] = useState([2,2,2,1,2,2]);
   const [ufoActiveList, setUfoActiveList] = useState([false, false, false]);
-
+  const [glassParameters, setGlassParameters] = useState([]);
 
   const handleAudioEnd = () => {
     console.log("hello end");
@@ -108,11 +109,15 @@ const Level2Classify: React.FC<HomeProps> = () => {
   };
 
   const handlePressActivate = () => {
+    setResetTrigger((prev) => prev + 1);
     console.log("parent pressed");
     setCurrentHit("");
     setIsInteracting(false);
     setIsOpenGlassTest(false);
-    setCurrentComputerGlassTest(-1);
+    setIsOpenGlassClassifier(false);
+    setTimeout(() => {
+      setIsActivateScanner(true);
+    }, 1000); // 1 second delay
   };
 
   const handleActivate = () => {
@@ -152,6 +157,16 @@ const Level2Classify: React.FC<HomeProps> = () => {
         />
       )}
 
+      {
+        isOpenTrainComputer &&
+        <TrainGlassClassifierUI
+        isOpenTrainComputer={isOpenTrainComputer}
+        setIsOpenTrainComputer={setIsOpenTrainComputer}
+        glassParameters = {glassParameters}
+        setGlassParameters = {setGlassParameters}
+        />
+      }
+
       <KeyboardControls map={controlMap}>
         <Canvas
           dpr={[1, 2]}
@@ -168,7 +183,9 @@ const Level2Classify: React.FC<HomeProps> = () => {
           <ambientLight intensity={0.5} color={"lightblue"} />
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
-              <CharacterController />
+              <CharacterController spawnPosition={[
+                -2,6,8
+              ]} />
               <Level2ClassifyEnvironment
                 currentRoom={currentRoom}
                 setCurrentRoom={setCurrentRoom}
@@ -191,6 +208,10 @@ const Level2Classify: React.FC<HomeProps> = () => {
                 setDangerPattern={setDangerPattern}
                 ufoActiveList={ufoActiveList}
                 setUfoActiveList={setUfoActiveList}
+                glassParameters={glassParameters}
+                setGlassParameters={setGlassParameters}
+                isOpenTrainComputer={isOpenTrainComputer}
+                setIsOpenTrainComputer={setIsOpenTrainComputer}
               />
             </Physics>
           </Suspense>

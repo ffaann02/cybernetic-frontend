@@ -8,10 +8,11 @@ export enum AnimationState {
   Jumping = "jumping",
   Picking = "picking",
   PickingIdle = "picking_idle",
+  Death = "death"
 }
 
 export const useCharacterAnimation = () => {
-  const { isCarryingObject } = useContext(GameContext);
+  const { isCarryingObject, isDeath } = useContext(GameContext);
   const [animationState, setAnimationState] = useState<AnimationState>(
     AnimationState.Idle
   );

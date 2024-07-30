@@ -39,6 +39,10 @@ const Level2ClassifyEnvironment = ({
   setDangerPattern,
   ufoActiveList,
   setUfoActiveList,
+  glassParameters,
+  setGlassParameters,
+  isOpenTrainComputer,
+                setIsOpenTrainComputer,
 }) => {
   const {
     playerRigidBody,
@@ -107,6 +111,8 @@ const Level2ClassifyEnvironment = ({
             setIsOpenGlassClassifier={setIsOpenGlassClassifier}
             isActivateScanner={isActivateScanner}
             setIsActivateScanner={setIsActivateScanner}
+            resetTrigger={resetTrigger}
+            setResetTrigger={setResetTrigger}
           />
           <Level2ClassifyRoom1 />
         </Room>
@@ -144,7 +150,11 @@ const Level2ClassifyEnvironment = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={3}
           />
-          <Room2 dataCollectNotify={dataCollectNotify} />
+          <Room2
+            dataCollectNotify={dataCollectNotify}
+            glassParameters={glassParameters}
+            setGlassParameters={setGlassParameters}
+          />
           <Level2ClassifyRoom2 />
         </Room>
       )}
@@ -176,7 +186,11 @@ const Level2ClassifyEnvironment = ({
             dangerPattern={dangerPattern}
             setDangerPattern={setDangerPattern}
             ufoActiveList={ufoActiveList}
-                setUfoActiveList={setUfoActiveList}
+            setUfoActiveList={setUfoActiveList}
+            glassParameters={glassParameters}
+                setGlassParameters={setGlassParameters}
+                isOpenTrainComputer={isOpenTrainComputer}
+                setIsOpenTrainComputer={setIsOpenTrainComputer}
           />
           <Level2ClassifyRoom3 />
         </Room>

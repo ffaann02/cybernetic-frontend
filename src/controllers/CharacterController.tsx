@@ -34,7 +34,9 @@ interface CharacterControllerProps {
   spawnPosition?: [number, number, number];
 }
 
-const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition }) => {
+const CharacterController: React.FC<CharacterControllerProps> = ({
+  spawnPosition,
+}) => {
   const controls = useRef<any>(null);
   const firstPerson = useRef<any>(null);
   const character = useRef<any>(null);
@@ -59,8 +61,17 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
     isCarryingObject,
     isUsingTurret,
     setIsUsingTurret,
+    energy,
+    setEnergy,
+    isDeath,
+    setIsDeath
   } = useContext(GameContext);
+
   const [direction, setDirection] = useState<"left" | "right">("right");
+  
+  useEffect(()=>{
+
+  })
 
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
   const forwardPressed = useKeyboardControls(
@@ -103,24 +114,48 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
 
     const impulse = new THREE.Vector3();
 
-    if (forwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
+    if (
+      forwardPressed &&
+      !isCoding &&
+      !isInteracting &&
+      !isUsingSecurityCamera &&
+      !isUsingTurret && !isDeath
+    ) {
       impulse.z -= speed * delta * onAirFraction;
     }
-    if (backwardPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
+    if (
+      backwardPressed &&
+      !isCoding &&
+      !isInteracting &&
+      !isUsingSecurityCamera &&
+      !isUsingTurret && !isDeath
+    ) {
       impulse.z += speed * delta * onAirFraction;
       // console.log(vec3(playerRigidBody.current.translation()).z);
     }
-    if (leftPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
+    if (
+      leftPressed &&
+      !isCoding &&
+      !isInteracting &&
+      !isUsingSecurityCamera &&
+      !isUsingTurret && !isDeath
+    ) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
     }
 
-    if (rightPressed && !isCoding && !isInteracting && !isUsingSecurityCamera && !isUsingTurret) {
+    if (
+      rightPressed &&
+      !isCoding &&
+      !isInteracting &&
+      !isUsingSecurityCamera &&
+      !isUsingTurret && !isDeath
+    ) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
     }
 
-    if(isCarryingObject){
+    if (isCarryingObject) {
       setAnimationState(AnimationState.Picking);
     }
 
@@ -128,7 +163,9 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
       jumpPressed &&
       !jumpCooldown.current &&
       isOnFloor.current &&
-      !isUsingSearch && !isUsingSecurityCamera && !isUsingTurret
+      !isUsingSearch &&
+      !isUsingSecurityCamera &&
+      !isUsingTurret && !isDeath
     ) {
       jumpCooldown.current = true;
       jumpSound();
@@ -191,11 +228,15 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
     let adjustZoom = { x: 0, y: 0, z: 0 };
     if (isCoding || isInteracting) {
       adjustZoom = { x: 1, y: -4, z: -4 };
-    } else {
+    } 
+    if (isDeath){
+      adjustZoom = { x: -1, y: -6, z: -6 };
+    }
+    else {
       adjustZoom = { x: 0, y: 0, z: 0 };
     }
 
-    if(isCarryingObject){
+    if (isCarryingObject) {
       adjustZoom = { x: -1, y: -1, z: -3 };
     }
 
@@ -268,11 +309,15 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
     handleUseItem();
   });
 
+  const [lastCollisionTime, setLastCollisionTime] = useState(0);
+  const collisionDelay = 1000; // 1 second delay
+
   return (
     <group>
-      {currentCamera === 1 && !isUsingSecurityCamera && !isUsingSearch && !isUsingTurret && (
-        <CameraControls ref={controls}/>
-      )}
+      {currentCamera === 1 &&
+        !isUsingSecurityCamera &&
+        !isUsingSearch &&
+        !isUsingTurret && <CameraControls ref={controls} />}
       {isUsingSearch && <CameraControls ref={firstPerson} />}
       <RigidBody
         name="player"
@@ -284,11 +329,21 @@ const CharacterController: React.FC<CharacterControllerProps> = ({ spawnPosition
         mass={50}
         gravityScale={9.8}
         onCollisionEnter={({ other }) => {
+          const currentTime = Date.now();
           if (
             other.rigidBodyObject &&
             other.rigidBodyObject.name.includes("checkpoint")
           ) {
             console.log(other.rigidBodyObject.name);
+          }
+          if (
+            other.rigidBodyObject &&
+            other.rigidBodyObject.name === "spiker-danger"
+          ) {
+            if (currentTime - lastCollisionTime >= collisionDelay) {
+              setEnergy((prev) => Math.max(prev - 1, 0));
+              setLastCollisionTime(currentTime);
+            }
           }
         }}
       >

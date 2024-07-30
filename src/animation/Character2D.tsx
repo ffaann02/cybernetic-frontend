@@ -9,6 +9,7 @@ import runningSprite from "/images/RunningSpriteNew.png";
 import pickUpRunningSprite from "/images/PickRunningSpriteNew.png";
 import pickUpIdleSprite from "/images/PickIdleSpriteNew.png";
 import jumpSprite from "/images/jump.png";
+import deathSprite from "/images/Death.png";
 import { AnimationState } from "../hooks/useCharacterAnimation";
 import { GameContext } from "../contexts/GameContext";
 
@@ -19,13 +20,20 @@ const Character2D = ({
   direction: "left" | "right";
   animation: AnimationState;
 }) => {
-  const { isHidden } = useContext(GameContext);
+  const { isHidden, isDeath } = useContext(GameContext);
   // Load textures
   const idleSpriteTexture = useLoader(THREE.TextureLoader, idleSprite);
   const runningSpriteTexture = useLoader(THREE.TextureLoader, runningSprite);
   const jumpSpriteTexture = useLoader(THREE.TextureLoader, jumpSprite);
-  const pickUpRunningSpriteTexture = useLoader(THREE.TextureLoader, pickUpRunningSprite);
-  const pickUpIdleSpriteTexture = useLoader(THREE.TextureLoader, pickUpIdleSprite);
+  const pickUpRunningSpriteTexture = useLoader(
+    THREE.TextureLoader,
+    pickUpRunningSprite
+  );
+  const pickUpIdleSpriteTexture = useLoader(
+    THREE.TextureLoader,
+    pickUpIdleSprite
+  );
+  const deathSpriteTexture = useLoader(THREE.TextureLoader, deathSprite);
 
   // Adjust texture settings for pixel art
   [idleSpriteTexture, runningSpriteTexture, jumpSpriteTexture].forEach(
@@ -41,6 +49,7 @@ const Character2D = ({
     jumping: new PlainAnimator(jumpSpriteTexture, 3, 1, 3, 4),
     picking: new PlainAnimator(pickUpRunningSpriteTexture, 9, 1, 9, 9),
     picking_idle: new PlainAnimator(pickUpIdleSpriteTexture, 4, 1, 4, 4),
+    death: new PlainAnimator(deathSpriteTexture, 10, 1, 10, 3),
   });
 
   // Animate based on the current state
@@ -59,7 +68,7 @@ const Character2D = ({
       <meshStandardMaterial
         map={animators[animation].texture}
         color={isHidden ? new THREE.Color("#0096FF") : new THREE.Color("white")}
-        opacity={isHidden ? 0.5 : 1}
+        opacity={isDeath ? 0 : isHidden ? 0.5 : 1}
         transparent={true}
       />
     </mesh>

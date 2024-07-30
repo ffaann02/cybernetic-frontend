@@ -65,7 +65,7 @@ const TrainBrainwashClassifierUI = ({
           </p>
           <Steps activeIndex={activeIndex} model={items} />
         </div>
-        <div className="w-full h-full pl-4 pr-2 pt-4">
+        <div className="w-full pl-4 pr-2 pt-4">
           <div className="w-full h-full bg-white/50 rounded-lg border grid grid-cols-6 p-2">
             <div className="col-span-4 flex flex-col gap-y-2 overflow-y-auto pr-2 pb-14">
               {fakeArray.map((_, index) => (

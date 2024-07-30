@@ -183,7 +183,7 @@ const Room2 = ({
 
   const onPlayerEnterCDLoot = ({ other }) => {
     if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
-      setCurrentHit("Teleport2");
+      setCurrentHit("CD");
     }
   };
 
