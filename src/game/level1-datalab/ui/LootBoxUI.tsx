@@ -89,7 +89,7 @@ const LootBoxUI = ({
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-10"
+                  className="w-[50px]"
                 />
               </div>
               <div className="my-auto font-semibold">

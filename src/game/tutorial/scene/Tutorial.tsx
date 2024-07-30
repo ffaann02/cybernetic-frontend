@@ -148,7 +148,7 @@ const Tutorial: React.FC<HomeProps> = () => {
         >
           <fog attach="fog" args={["skyblue", 15, 30]} />
           <color attach="background" args={["black"]} />
-          {camera === 2 && (
+          {currentCamera === 2 && (
             <PerspectiveCamera makeDefault position={[0, 6, 10]} />
           )}
           <ambientLight intensity={1} />

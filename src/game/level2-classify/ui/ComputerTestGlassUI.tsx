@@ -1,5 +1,4 @@
 import { Fieldset } from "primereact/fieldset";
-import { Slider } from "primereact/slider";
 import { useContext, useState } from "react";
 import "primeflex/primeflex.css";
 import { GameContext } from "../../../contexts/GameContext";
@@ -16,6 +15,7 @@ const ComputerTestGlassUI = ({
   setUfoActiveList,
 }) => {
   const { setCurrentHit, setIsInteracting } = useContext(GameContext);
+  const [selectedModel, setSelectedModel] = useState(null);
 
   const handleClose = () => {
     setCurrentHit("");
@@ -37,6 +37,14 @@ const ComputerTestGlassUI = ({
     setCurrentComputerGlassTest(-1);
   };
 
+  const handleSelectModel = (model) => {
+    if (selectedModel === model) {
+      setSelectedModel(null);
+    } else {
+      setSelectedModel(model);
+    }
+  };
+
   return (
     <div className="w-full h-screen bg-black/50 absolute z-50 flex items-center justify-center">
       <div
@@ -44,7 +52,6 @@ const ComputerTestGlassUI = ({
           currentComputerGlassTest <= 0 ? "max-w-md" : "max-w-3xl"
         }`}
       >
-        {" "}
         <button
           className="text-red-600 absolute bg-white right-1 top-6 z-[50] border-red-600 
             border px-2 py-0.5 rounded-xl hover:bg-red-100 transition-all duration-200 ease-linear"
@@ -96,8 +103,7 @@ const ComputerTestGlassUI = ({
               </div>
               <div className="col-span-3 pl-3">
                 <p className="text-white text-lg">
-                  There's invisible danger glass here. You have to activate
-                  glass classifier to predict which glass is safe or dangerous.
+                  You can test your AI Classification Model to predict which glass is danger of safe.
                 </p>
                 <div className="mt-2">
                   <label className="text-white font-semibold text-lg">
@@ -107,7 +113,7 @@ const ComputerTestGlassUI = ({
                     <div className="flex">
                       <BsRobot className="text-4xl text-white" />
                       <p className="my-auto text-white pt-0.5 ml-2">
-                        GlassClass01
+                        {selectedModel || "-"}
                       </p>
                     </div>
                   </div>
@@ -116,33 +122,29 @@ const ComputerTestGlassUI = ({
                   <label className="text-white font-semibold text-lg -mb-2">
                     Available List
                   </label>
-                  <div className="bg-cyan-300/50 w-full px-2 py-2 border rounded-lg flex justify-between">
-                    <div className="flex">
-                      <BsRobot className="text-4xl text-white" />
-                      <p className="my-auto text-white pt-0.5 ml-2">
-                        GlassClass01
-                      </p>
-                    </div>
-                    <button className="bg-white px-2.5 rounded-lg">
-                      Select
-                    </button>
-                  </div>
-                  <div className="bg-cyan-300/50 w-full px-2 py-2 border rounded-lg">
-                    <div className="flex">
-                      <BsRobot className="text-4xl text-white" />
-                      <p className="my-auto text-white pt-0.5 ml-2">
-                        GlassClass02
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-cyan-300/50 w-full px-2 py-2 border rounded-lg">
-                    <div className="flex">
-                      <BsRobot className="text-4xl text-white" />
-                      <p className="my-auto text-white pt-0.5 ml-2">
-                        GlassClass03
-                      </p>
-                    </div>
-                  </div>
+                  {["GlassClass01", "GlassClass02", "GlassClass03"].map(
+                    (model) => (
+                      <div
+                        key={model}
+                        className={`bg-cyan-300/50 w-full px-2 py-2 border rounded-lg flex justify-between ${
+                          selectedModel === model ? "border-2" : ""
+                        }`}
+                      >
+                        <div className="flex">
+                          <BsRobot className="text-4xl text-white" />
+                          <p className="my-auto text-white pt-0.5 ml-2">
+                            {model}
+                          </p>
+                        </div>
+                        <button
+                          className="bg-white px-2.5 rounded-lg"
+                          onClick={() => handleSelectModel(model)}
+                        >
+                          {selectedModel === model ? "Remove" : "Select"}
+                        </button>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </div>

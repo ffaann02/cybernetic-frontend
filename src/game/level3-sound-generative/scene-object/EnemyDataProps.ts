@@ -11,7 +11,7 @@ export const enemyPatrolProps = [
         idleTime: 2,
         chaseTimeLimit: 5,
         patrolType: "turnback",
-        showPath: true,
+        showPath: false,
         data: {
             data_type: "enemy",
             name: "Robotic Slime - enemy",
@@ -40,7 +40,7 @@ export const enemyPatrolProps = [
         idleTime: 0.1,
         chaseTimeLimit: 6,
         patrolType: "turnback",
-        showPath: true,
+        showPath: false,
         data: {
             data_type: "enemy",
             name: "Robotic Slime - enemy",
@@ -69,7 +69,7 @@ export const enemyPatrolProps = [
         idleTime: 0.2,
         chaseTimeLimit: 6,
         patrolType: "turnback",
-        showPath: true,
+        showPath: false,
         data: {
             data_type: "enemy",
             name: "Robotic Slime - enemy",

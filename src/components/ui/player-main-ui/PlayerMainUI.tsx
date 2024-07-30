@@ -12,7 +12,10 @@ const PlayerMainUI = () => {
     setIsPlanting,
     cooldowns,
     setCooldowns,
-    currentScene
+    currentScene,
+    energy, 
+    setEnergy,
+    isDeath
   } = useContext(GameContext);
 
   const [starterItem, setStarterItem] = useState([
@@ -45,7 +48,6 @@ const PlayerMainUI = () => {
     },
   ]);
 
-  const [energy, setEnergy] = useState(10);
   const [progress, setProgress] = useState(0);
   const [openInventory, setOpenInventory] = useState(false);
 
@@ -161,7 +163,7 @@ const PlayerMainUI = () => {
 
   return (
     <div
-      className={`absolute bottom-0 w-full z-[9998] px-0 py-10 ${currentScene?.includes("game") ? "block":"hidden"} ${
+      className={`absolute bottom-0 w-full ${isDeath ? "opacity-0" : "opacity-100"} z-[9998] px-0 py-10 ${currentScene?.includes("game") ? "block":"hidden"} ${
         isUsingSearch ? "h-full" : "h-fit"
       }`}
       id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}

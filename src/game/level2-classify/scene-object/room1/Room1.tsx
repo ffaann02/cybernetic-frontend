@@ -46,6 +46,8 @@ const Room1 = ({
   setIsOpenGlassClassifier,
   isActivateScanner,
   setIsActivateScanner,
+  resetTrigger,
+  setResetTrigger,
 }) => {
   const {
     currentHit,
@@ -72,7 +74,19 @@ const Room1 = ({
   const [ufoRotationY, setUfoRotationY] = useState(0);
   const [ufoPositionX, setUfoPositionX] = useState(-8);
   const [stopTimer, setStopTimer] = useState(null);
-
+  const [glassBridges, setGlassBridges] = useState([
+    {
+      row: 3,
+      col: 8,
+      position: [-8, 7, -7],
+      rotation: [
+        degreeNumberToRadian(0),
+        degreeNumberToRadian(180),
+        degreeNumberToRadian(0),
+      ],
+      timestamp: Date.now(),
+    },
+  ]);
   const onPlayerEnterGlassComputer = ({ other }) => {
     console.log("test");
     if (other.rigidBodyObject.name === "player") {
@@ -91,6 +105,28 @@ const Room1 = ({
     }
   };
 
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setGlassBridges([
+      {
+        row: 3,
+        col: 8,
+        position: [-8, 7, -7],
+        rotation: [
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(180),
+          degreeNumberToRadian(0),
+        ],
+        timestamp: Date.now(), // Add a unique identifier
+      },
+    ]);
+  }, [resetTrigger]);
+
   useFrame(
     ({
       state,
@@ -103,44 +139,23 @@ const Room1 = ({
         const newRotation = (elapsedTime * 90) % 360;
         setUfoRotationY(newRotation);
         UFO.current.setRotation([0, degreeNumberToRadian(newRotation), 0]);
-  
-        if (isActivateScanner && ufoPositionX > -30) {
-          setUfoPositionX((prev) => prev - 0.1);
-        }
 
-        if (isActivateScanner && ufoPositionX <= -30 && !stopTimer) {
-          // Stop and start the timer
-          setStopTimer(setTimeout(() => {
-            setIsActivateScanner(false);
-            setCurrentHit("");
-            setIsInteracting(false);
-            setIsUsingSecurityCamera(false);
-            setStopTimer(null);
+        if (isActivateScanner) {
+          if (ufoPositionX > -34) {
+            setUfoPositionX((prev) => prev - 0.03);
+          } else {
             setUfoPositionX(-8);
-          }, 2000));
+            setIsActivateScanner(false);
+          }
         }
       }
-  
+
       if (ePressed && currentHit === "GlassComputerLevel2") {
         const currentTime = new Date().getTime();
         if (currentTime - lastPressTime > 200) {
           console.log("TEST");
-          if(isActivateScanner || isOpenGlassClassifier) {
-            setIsActivateScanner(false);
-            setCurrentHit("");
-            setIsInteracting(false);
-            setIsUsingSecurityCamera(false);
-            setIsOpenGlassClassifier(false);
-            setUfoPositionX(-8);
-          }
-          else{
-            setIsOpenGlassClassifier(true);
-            setIsInteracting(true);
-            setIsPredict(false);
-            setReAlign(
-              Date.now()
-            );
-          }
+          setIsOpenGlassClassifier((prev) => !prev);
+          setIsInteracting((prev) => !prev);
           setLastPressTime(currentTime);
         }
       }
@@ -156,34 +171,60 @@ const Room1 = ({
     };
   }, [stopTimer]);
 
+  const [glowColor1, setGlowColor1] = useState("red");
+
+  useEffect(() => {
+    const interval1 = setInterval(() => {
+      setGlowColor1((prevColor) => (prevColor === "red" ? "green" : "red"));
+    }, 1000);
+
+    return () => clearInterval(interval1);
+  }, []);
+
   return (
     <>
       <ambientLight intensity={0.5} color={"lightblue"} />
       <Spike />
-      {isActivateScanner && <RigidBody
-        type="fixed"
-        colliders={false}
-        lockTranslations
-        lockRotations
-        position={[ufoPositionX, 14, -10]}
-        ref={UFO}
-        scale={[50, 0.2, 50]}
-        rotation={[
-          degreeNumberToRadian(0),
-          degreeNumberToRadian(ufoRotationY), // Apply Y-axis rotation
-          degreeNumberToRadian(0),
-        ]}
-      >
-        <Item
-          item={{
-            name: "BlueUFO",
-            position: [0, 4, 0],
-            scale: [0.0005, 0.2, 0.0005],
-            fileType: "glb",
-          }}
-          opacity={0}
-        />
-      </RigidBody>}
+      
+      {isActivateScanner && (
+        <RigidBody
+          name="UFO-Glass-Scanner-Real"
+          type="fixed"
+          colliders={false}
+          lockTranslations
+          lockRotations
+          position={[ufoPositionX, 14, -10]}
+          ref={UFO}
+          scale={[50, 0.2, 50]}
+        >
+                    <mesh scale={[0.5, 50, 0.5]} position={[0, -4, 0]}>
+            <sphereGeometry args={[0.5, 24, 24]} />
+            <FakeGlowMaterial
+              glowColor={glowColor1}
+              falloff={2}
+              glowInternalRadius={10}
+              opacity={1}
+            />
+          </mesh>
+          <CuboidCollider
+            args={[0.02, 20, 0.08]}
+            position={[-0.0, -7, 0.006]}
+          />
+          <Item
+            item={{
+              name: "BlueUFO",
+              position: [0, 4, 0],
+              scale: [0.0005, 0.2, 0.0005],
+              fileType: "glb",
+              rotation: [
+                degreeNumberToRadian(0),
+                degreeNumberToRadian(ufoRotationY), // Apply Y-axis rotation
+                degreeNumberToRadian(0),
+              ],
+            }}
+          />
+        </RigidBody>
+      )}
       <RigidBody
         type="fixed"
         colliders={"trimesh"}
@@ -199,11 +240,15 @@ const Room1 = ({
           <FakeGlowMaterial glowColor="gray" />
         </Box>
       </RigidBody>
-      <GlassBridge row={3} col={8} position={[-8, 7, -7]} predict={isActivateScanner} rotation={[
-        degreeNumberToRadian(0),
-        degreeNumberToRadian(180),
-        degreeNumberToRadian(0),
-      ]} reAlign={reAlign}/>
+      {glassBridges.map((bridge, index) => (
+        <GlassBridge
+          key={index}
+          row={bridge.row}
+          col={bridge.col}
+          position={bridge.position}
+          rotation={bridge.rotation}
+        />
+      ))}
       <RigidBody
         type="fixed"
         colliders={"trimesh"}

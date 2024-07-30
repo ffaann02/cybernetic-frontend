@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import PlayerMainUI from "./player-main-ui/PlayerMainUI";
 import TrainAiComputer from "./computer/train-ai-computer/TrainAiComputer";
+import { MdOutlineReplay } from "react-icons/md";
+import { IoIosHome } from "react-icons/io";
 
 const AskForInputKeyDown = ({ title }: { title: string }) => {
   return (
@@ -20,6 +22,9 @@ const AskForInputKeyDownSecondary = ({ title }: { title: string }) => {
 };
 
 const GlobalGameUI = () => {
+  const [showDeathContainer, setShowDeathContainer] = useState(false);
+  const [showPlayAgain, setShowPlayAgain] = useState(false);
+
   const {
     currentHit,
     isCoding,
@@ -27,14 +32,67 @@ const GlobalGameUI = () => {
     isFadingBetweenRoom,
     isUsingSecurityCamera,
     isCarryingObject,
+    isDeath,
+    currentScene,
+    setScene,
   } = useContext(GameContext);
+
+  useEffect(() => {
+    if (isDeath) {
+      setShowDeathContainer(true);
+      const timer = setTimeout(() => {
+        setShowDeathContainer(false);
+        setShowPlayAgain(true);
+      }, 5000); // 5 seconds
+
+      // Cleanup the timer if the component unmounts or isDeath changes
+      return () => clearTimeout(timer);
+    }
+  }, [isDeath]);
 
   return (
     <>
+      {showDeathContainer && <div id="death-container"></div>}
+      {showPlayAgain && (
+        <div
+          className={`absolute ${
+            showPlayAgain ? "opacity-100" : "opacity-0"
+          } inset-0 flex items-center justify-center z-[100000] 
+          flex-col w-full h-full bg-red-400/50`}
+        >
+          <div className="w-52 -rotate-45 mb-10">
+            <img src="/images/Profile.png" />
+          </div>
+          <button
+            className="text-3xl w-80 bg-cyan-400/80 px-4 py-3 border-2 text-slate-600 duration-200 hover:text-white
+            font-semibold justify-between rounded-xl flex tracking-wider hover:bg-cyan-500/80 hover:scale-105 transition-all easer-linear"
+            onClick={() => {
+              location.reload();
+              setShowPlayAgain(false);
+            }}
+          >
+            <MdOutlineReplay className="my-auto mr-2" />
+            <span>Play Again</span>
+          </button>
+          <button
+            className="text-3xl w-80 min-w-xl mt-2 bg-cyan-400/80 px-4 py-3 border-2 text-slate-600 duration-200 hover:text-white
+            font-semibold justify-between rounded-xl flex tracking-wider hover:bg-cyan-500/80 hover:scale-105 transition-all easer-linear"
+            onClick={() => {
+              // location.reload();
+              setScene(currentScene,"home");
+              setShowPlayAgain(false);
+            }}
+          >
+            <IoIosHome className="my-auto mr-2" />
+            <span>Back to Home</span>
+          </button>
+        </div>
+      )}
       {isFadingBetweenRoom && (
         <div
-          className={`absolute z-[12000] bg-black w-full h-full ${isFadingBetweenRoom ? "fadeIn" : "fadeOut"
-            }`}
+          className={`absolute z-[12000] bg-black w-full h-full ${
+            isFadingBetweenRoom ? "fadeIn" : "fadeOut"
+          }`}
         ></div>
       )}
       {/* <PlayerMainUI /> */}
@@ -161,14 +219,15 @@ const GlobalGameUI = () => {
           </>
         ))}
 
-      {currentHit === "ComputerTrainAILevel3" &&
-        (!isInteracting ? (
-          <AskForInputKeyDown title="Press E to Access Computer" />
-        ) : (
-          <>
-            <AskForInputKeyDown title="Press E to Leave Computer" />
-          </>
-        ))}
+      {currentHit === "ComputerTrainAILevel3" ||
+        (currentHit === "ComputerGlassTrainLevel2" &&
+          (!isInteracting ? (
+            <AskForInputKeyDown title="Press E to Access Computer" />
+          ) : (
+            <>
+              <AskForInputKeyDown title="Press E to Leave Computer" />
+            </>
+          )))}
       {currentHit?.includes("TurretGun") &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Control Turret Gun" />
@@ -189,6 +248,8 @@ const GlobalGameUI = () => {
 
       {currentHit?.includes("Glass") &&
         currentHit !== "ComputerTestGlass" &&
+        currentHit !== "GlassComputerLevel2" &&
+        currentHit !== "ComputerGlassTrainLevel2" &&
         (!isCarryingObject ? (
           currentHit?.includes("RevealGlass") ? (
             <AskForInputKeyDown title="Press E to Collect A Data" />

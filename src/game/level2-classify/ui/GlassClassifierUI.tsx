@@ -1,5 +1,4 @@
 import { Fieldset } from "primereact/fieldset";
-import { Slider } from "primereact/slider";
 import { useContext, useState } from "react";
 import "primeflex/primeflex.css";
 import { GameContext } from "../../../contexts/GameContext";
@@ -9,9 +8,11 @@ import { IoMdPlayCircle } from "react-icons/io";
 const GlassClassifierUI = ({
   isOpenGlassClassifier,
   setIsOpenGlassClassifier,
-  handlePressActivate
+  handlePressActivate,
 }) => {
   const { setCurrentHit, setIsInteracting } = useContext(GameContext);
+  const [selectedModel, setSelectedModel] = useState("GlassClass01");
+  const availableModels = ["GlassClass01", "GlassClass02", "GlassClass03"];
 
   const handleClose = () => {
     setCurrentHit("");
@@ -19,15 +20,17 @@ const GlassClassifierUI = ({
     setIsOpenGlassClassifier(false);
   };
 
+  const handleSelectModel = (model) => {
+    setSelectedModel(model);
+  };
+
+  const handleDeselectModel = () => {
+    setSelectedModel("");
+  };
+
   return (
     <div className="w-full h-screen bg-black/50 absolute z-50 flex items-center justify-center">
       <div className="max-w-3xl w-full mb-20 flex relative">
-        {/* <div
-          className="bg-white cursor-pointer text-red-600 hover:text-red-400 rounded-full 
-            absolute z-50 top-10 right-4 text-2xl"
-        >
-          <FaCircleXmark className="" />
-        </div> */}
         <button
           className="text-red-600 absolute bg-white right-1 top-6 z-[50] border-red-600 
             border px-2 py-0.5 rounded-xl hover:bg-red-100 transition-all duration-200 ease-linear"
@@ -46,9 +49,11 @@ const GlassClassifierUI = ({
                 src="/images/computer-checkpoint.png"
                 className="w-fit h-fit"
               />
-              <button className="absolute flex bottom-5 left-1/2 transform -translate-x-1/2 
+              <button
+                className="absolute flex bottom-5 left-1/2 transform -translate-x-1/2 
                 bg-green-600/60 hover:bg-green-600/80 border px-2 py-1.5 rounded-xl"
-                onClick={handlePressActivate}>
+                onClick={handlePressActivate}
+              >
                 <IoMdPlayCircle className="text-4xl text-white" />
                 <p className="my-auto text-white ml-1">Activate</p>
               </button>
@@ -62,11 +67,11 @@ const GlassClassifierUI = ({
                 <label className="text-white font-semibold text-lg">
                   Selected Model
                 </label>
-                <div className="bg-green-500/50 w-full px-2 py-2 border rounded-lg">
+                <div className="bg-green-500/50 w-full px-2 py-2 border rounded-lg flex justify-between items-center">
                   <div className="flex">
                     <BsRobot className="text-4xl text-white" />
                     <p className="my-auto text-white pt-0.5 ml-2">
-                      GlassClass01
+                      {selectedModel ? selectedModel : "-"}
                     </p>
                   </div>
                 </div>
@@ -75,31 +80,34 @@ const GlassClassifierUI = ({
                 <label className="text-white font-semibold text-lg -mb-2">
                   Available List
                 </label>
-                <div className="bg-cyan-300/50 w-full px-2 py-2 border rounded-lg flex justify-between">
-                  <div className="flex">
-                    <BsRobot className="text-4xl text-white" />
-                    <p className="my-auto text-white pt-0.5 ml-2">
-                      GlassClass01
-                    </p>
+                {availableModels.map((model) => (
+                  <div
+                    key={model}
+                    className={`bg-cyan-300/50 w-full px-2 py-2 border rounded-lg flex justify-between ${
+                      selectedModel === model ? "bg-cyan-500" : ""
+                    }`}
+                  >
+                    <div className="flex">
+                      <BsRobot className="text-4xl text-white" />
+                      <p className="my-auto text-white pt-0.5 ml-2">{model}</p>
+                    </div>
+                    {selectedModel === model ? (
+                      <button
+                        className="border-2 border-red-400 text-red-400 px-2.5 rounded-lg bg-white"
+                        onClick={handleDeselectModel}
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        className="bg-white px-2.5 rounded-lg"
+                        onClick={() => handleSelectModel(model)}
+                      >
+                        Select
+                      </button>
+                    )}
                   </div>
-                  <button className="bg-white px-2.5 rounded-lg">Select</button>
-                </div>
-                <div className="bg-cyan-300/50 w-full px-2 py-2 border rounded-lg">
-                  <div className="flex">
-                    <BsRobot className="text-4xl text-white" />
-                    <p className="my-auto text-white pt-0.5 ml-2">
-                      GlassClass02
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-cyan-300/50 w-full px-2 py-2 border rounded-lg">
-                  <div className="flex">
-                    <BsRobot className="text-4xl text-white" />
-                    <p className="my-auto text-white pt-0.5 ml-2">
-                      GlassClass03
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

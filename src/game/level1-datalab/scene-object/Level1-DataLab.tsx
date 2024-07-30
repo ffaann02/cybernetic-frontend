@@ -36,7 +36,6 @@ const items = [
   {
     name: "LandingPad",
     position: [-1.2, -0.3, -6],
-    rotation: -45,
     fileType: "glb",
     scale: [100, 100, 100],
     color: "green",
@@ -44,7 +43,6 @@ const items = [
   {
     name: "LandingPad",
     position: [-6.8, -0.3, -6],
-    rotation: 1,
     fileType: "glb",
     scale: [120, 100, 120],
     color: "red",
@@ -208,8 +206,10 @@ export const Level1DataLabEnvironment = ({
   ]);
 
   const onColliderRedPadEnter = ({ other }) => {
+    console.log(other.rigidBodyObject.name);
     if (other.rigidBodyObject) {
-      if (other.rigidBodyObject.name === "RedBox" && !allowRedPad) {
+      if (other.rigidBodyObject.name === "RedBox") {
+        consoel.log("helloawdawd");
         setAllowRedPad(true);
       }
     }
@@ -217,16 +217,15 @@ export const Level1DataLabEnvironment = ({
 
   const onColliderRedPadExit = ({ other }) => {
     if (other.rigidBodyObject) {
-      if (other.rigidBodyObject.name === "RedBox" && allowRedPad) {
+      if (other.rigidBodyObject.name === "RedBox") {
         setAllowRedPad(false);
       }
     }
   };
 
   const onColliderGreenPadEnter = ({ other }) => {
-    if (other.rigidBodyObject) {
-      console.log("hello1");
-      if (other.rigidBodyObject.name === "GreenBox" && !allowGreenPad) {
+    if (other.rigidBodyObject.name) {
+      if (other.rigidBodyObject.name === "GreenBox") {
         setAllowGreenPad(true);
       }
     }
@@ -234,13 +233,13 @@ export const Level1DataLabEnvironment = ({
 
   const onColliderGreenPadExit = ({ other }) => {
     if (other.rigidBodyObject) {
-      console.log("hello2");
       console.log(other.rigidBodyObject.name);
-      if (other.rigidBodyObject.name === "GreenBox" && allowGreenPad) {
+      if (other.rigidBodyObject.name === "GreenBox") {
         setAllowGreenPad(false);
       }
     }
   };
+
 
   return (
     <>
@@ -372,7 +371,7 @@ export const Level1DataLabEnvironment = ({
           >
             <CuboidCollider
               args={[0.7, 0.5, 0.7]}
-              position={[-6.9, -0.1, -6]}
+              position={[-6.9, 0.05, -6]}
             />
             <Item item={items[1]} key={"pad1"} opacity={0.8} />
           </RigidBody>
@@ -388,7 +387,7 @@ export const Level1DataLabEnvironment = ({
           >
             <CuboidCollider
               args={[0.7, 0.5, 0.7]}
-              position={[-1.2, -0.1, -6]}
+              position={[-1.2, 0.1, -6]}
             />
             <Item item={items[0]} key={"pad2"} opacity={0.8} />
           </RigidBody>
@@ -515,7 +514,9 @@ export const Level1DataLabEnvironment = ({
               degreeNumberToRadian(90),
               degreeNumberToRadian(0),
             ]}
-            status={doorStatuses[1]}
+            status={
+              allowGreenPad===true && allowRedPad===true ? "open": "close"
+            }
             type="switch-room"
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}

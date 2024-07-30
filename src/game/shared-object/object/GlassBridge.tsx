@@ -20,7 +20,7 @@ const callGeminiApi = async (cellData) => {
   return text;
 };
 
-const Cell = ({ cellData, position, fall, locked, setLocked, onReveal, answer }) => {
+const Cell = ({ cellData, position, fall, locked, setLocked, onReveal, onBreak, answer }) => {
   const ref = useRef();
   const [revealedType, setRevealedType] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,14 +32,18 @@ const Cell = ({ cellData, position, fall, locked, setLocked, onReveal, answer })
   }, [locked]);
 
   const handleCollision = async ({ other }) => {
-    // console.log("Collision out");
-    if (other.rigidBodyObject && (
-      other.rigidBodyObject.name.includes("UFO-Glass-Scanner")
-    ) && !revealedType && !isProcessing) {
-      // console.log("Collision in");
+    if (other.rigidBodyObject && other.rigidBodyObject.name === "spiker-danger") {
+      onBreak();
+      return;
+    }
+
+    if (
+      other.rigidBodyObject &&
+      other.rigidBodyObject.name.includes("UFO-Glass-Scanner") &&
+      !revealedType &&
+      !isProcessing
+    ) {
       setIsProcessing(true);
-      console.log("fetch");
-      console.log(cellData);
       if (answer) {
         return;
       }
@@ -48,18 +52,16 @@ const Cell = ({ cellData, position, fall, locked, setLocked, onReveal, answer })
       setRevealedType(result);
       onReveal(result);
     }
-    if(other.rigidBodyObject && other.rigidBodyObject.name==="player"){
-      console.log(cellData.type);
+
+    if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
       setLocked(false);
     }
   };
 
   const getCellColor = () => {
     if (answer) {
-      // Show the actual color of the cell
       return cellData.color;
     }
-    // Otherwise, show the color based on revealedType
     if (!revealedType) return "white";
     return revealedType === "safe" ? "green" : "red";
   };
@@ -94,16 +96,16 @@ const Cell = ({ cellData, position, fall, locked, setLocked, onReveal, answer })
   );
 };
 
-const GlassBridge = ({ 
-  row, 
-  col, 
-  gap = 0.5, 
-  position = [0, 0, 0], 
-  rotation = [0, 0, 0], 
-  answer = false, 
-  fixed = false, 
+const GlassBridge = ({
+  row,
+  col,
+  gap = 0.5,
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  answer = false,
+  fixed = false,
   dangerArray = [],
-  resetTrigger = 0  // New prop to trigger reset
+  resetTrigger = 0,
 }) => {
   const [cellStates, setCellStates] = useState(() => createInitialCellStates());
   const [visible, setVisible] = useState(true);
@@ -113,7 +115,7 @@ const GlassBridge = ({
     for (let i = 0; i < col; i++) {
       const column = [];
       let safeRowIndex;
-      
+
       if (fixed && dangerArray[i] !== undefined) {
         safeRowIndex = dangerArray[i] - 1; // Convert 1-based to 0-based index
       } else {
@@ -143,21 +145,30 @@ const GlassBridge = ({
   }
 
   const handleCellReveal = (i, j, revealedType) => {
-    setCellStates(prevStates => {
+    setCellStates((prevStates) => {
       const newStates = [...prevStates];
       newStates[i][j].revealedType = revealedType;
       return newStates;
     });
   };
 
-  // Effect to reset the pattern when resetTrigger changes
+  const handleCellBreak = (i, j) => {
+    setCellStates((prevStates) => {
+      const newStates = prevStates.map((column, colIndex) =>
+        colIndex === i
+          ? column.filter((_, rowIndex) => rowIndex !== j)
+          : column
+      );
+      return newStates;
+    });
+  };
+
   useEffect(() => {
-    console.log("reset"); 
     setVisible(false);
     setTimeout(() => {
       setCellStates(createInitialCellStates());
       setVisible(true);
-    }, 1000); // Hide for 1 second before showing the new glass group
+    }, 1000);
   }, [resetTrigger, row, col, fixed, gap, ...dangerArray]);
 
   return visible ? (
@@ -171,13 +182,14 @@ const GlassBridge = ({
             fall={cell.fall}
             locked={cell.locked}
             setLocked={(value) => {
-              setCellStates(prevStates => {
+              setCellStates((prevStates) => {
                 const newStates = [...prevStates];
                 newStates[i][j].locked = value;
                 return newStates;
               });
             }}
             onReveal={(revealedType) => handleCellReveal(i, j, revealedType)}
+            onBreak={() => handleCellBreak(i, j)}
             answer={answer}
           />
         ))

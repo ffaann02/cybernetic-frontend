@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 
 interface GameContextProps {
   currentScene: string;
@@ -47,11 +47,15 @@ interface GameContextProps {
   setIsPlayerInBossArea?: React.Dispatch<React.SetStateAction<boolean>>;
   bossParameter?: any;
   setBossParameter?: React.Dispatch<React.SetStateAction<any>>;
+  energy: number;
+  setEnergy: React.Dispatch<React.SetStateAction<number>>;
+  isDeath: boolean;
+  setIsDeath: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-5",
+  currentScene: "game-level-3",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -96,6 +100,10 @@ const initialGameContext: GameContextProps = {
   isCarryingObject: false,
   playerRigidBody: null,
   setIsCarryingObject: () => {},
+  energy: 10,
+  setEnergy: () => {},
+  isDeath: false,
+  setIsDeath: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -113,14 +121,18 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [dataStorage, setDataStorage] = useState<any>({});
   const [mines, setMines] = useState<any>([]);
   const [cooldowns, setCooldowns] = useState({ J: 0, K: 0, L: 0 });
-  const [isFadingBetweenRoom, setIsFadingBetweenRoom] = useState<boolean>(false);
-  const [isUsingSecurityCamera, setIsUsingSecurityCamera] = useState<boolean>(false);
+  const [isFadingBetweenRoom, setIsFadingBetweenRoom] =
+    useState<boolean>(false);
+  const [isUsingSecurityCamera, setIsUsingSecurityCamera] =
+    useState<boolean>(false);
   const [isCarryingObject, setIsCarryingObject] = useState(false);
   const [isUsingTurret, setIsUsingTurret] = useState<boolean>(false);
   const [turretData, setTurretData] = useState<any>({});
   const [isPlayerInBossArea, setIsPlayerInBossArea] = useState<boolean>(false);
   const [bossParameter, setBossParameter] = useState<any>({});
   const playerRigidBody = useRef<any>(null);
+  const [energy, setEnergy] = useState(10);
+  const [isDeath, setIsDeath] = useState(false);
 
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
@@ -129,6 +141,13 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       previousScene: currentScene,
     }));
   };
+
+  useEffect(()=>{
+    if(energy<=0 && !isDeath){
+      console.log("death");
+      setIsDeath(true);
+    }
+  },[energy, isDeath])
 
   const value = {
     currentScene: gameState.currentScene,
@@ -175,6 +194,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setIsPlayerInBossArea,
     bossParameter,
     setBossParameter,
+    energy,
+    setEnergy,
+    isDeath,
+    setIsDeath,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

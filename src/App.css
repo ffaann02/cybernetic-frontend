@@ -115,3 +115,25 @@ a, p, h1, h2, h3, h4, h5, span {
 background: linear-gradient(0deg, rgba(36,55,130,1) 0%, rgba(12,12,87,1) 34%, rgba(0,0,0,1) 100%);
 }
 
+#death-container {
+  width: 388.2px;
+  height: 380px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  background: url("../public/images/Death.png");
+  /*Steps should be equal to number of frames*/
+  animation: death 5s steps(10);
+  z-index: 10000;
+}
+@keyframes death {
+  0% {
+    background-position: 0 0;
+  }
+  /* Use height of image here as y position */
+  100% {
+    background-position: -3882px 0;
+  }
+}
+

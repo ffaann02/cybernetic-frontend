@@ -59,10 +59,10 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/create-character" element={<CreateCharacter />} />
                 {/* Private Route */}
-                <Route element={<RequireAuth />}>
+                {/* <Route element={<RequireAuth />}>
                   <Route path="/online-lobby" element={<OnlineLobby />} />
                   <Route path="/online-room/:roomid" element={<OnlineRoom />} />
-                </Route>
+                </Route> */}
                 <Route path="*" element={<div>404</div>} />
               </Routes>
             </Router>
