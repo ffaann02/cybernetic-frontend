@@ -21,6 +21,8 @@ export const Level5FinalEnvironment = ({
     setBossActionState,
     bossHealth,
     setBossHealth,
+    BossAttackPatternPredictModel,
+    setPredictionStat,
 }) => {
 
     const { playerRigidBody } = useContext(GameContext);
@@ -68,7 +70,9 @@ export const Level5FinalEnvironment = ({
                         setBossChargingCountDown={setBossChargingCountDown}
                         setBossActionState={setBossActionState}
                         bossHealth={bossHealth}
-                        setBossHealth={setBossHealth} />
+                        setBossHealth={setBossHealth}
+                        BossAttackPatternPredictModel={BossAttackPatternPredictModel}
+                        setPredictionStat={setPredictionStat}/>
                 </Room>)}
 
             <RigidBody

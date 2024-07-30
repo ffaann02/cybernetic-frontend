@@ -174,7 +174,7 @@ const GuardDataPanelUI = ({
                     <div className="bg-cyan-400 h-[15.78%]"></div>
                     <div className="bg-slate-400 h-[21.05%]"></div>
                     <div className="bg-red-400 h-[10.52%]"></div>
-                  </div>https://www.youtube.com/watch?v=feozgTt6T2k
+                  </div>
 
                   <div className="border-2 h-[20%] w-[50%] mx-auto rounded-t-xl border-b-0 -mb-0.5">
                     <button

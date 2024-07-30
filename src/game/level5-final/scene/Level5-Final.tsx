@@ -33,6 +33,29 @@ const Level5Final: React.FC<Props> = () => {
         name: "v1",
         value: "level-5-boss-predict-model-v1",
     });
+    const [predictionStat, setPredictionStat] = useState<any>([
+        {
+            name: "v1",
+            predict: {
+                correct: 0,
+                wrong: 0,
+            }
+        },
+        {
+            name: "v2",
+            predict: {
+                correct: 0,
+                wrong: 0,
+            }
+        },
+        {
+            name: "v3",
+            predict: {
+                correct: 0,
+                wrong: 0,
+            }
+        }
+    ]);
 
     const controlMap = useMemo(
         () => [
@@ -65,7 +88,9 @@ const Level5Final: React.FC<Props> = () => {
                 predictionModelChoices={predictionModelChoices} />
             <Level5ModelChoosingUI
                 predictionModelChoices={predictionModelChoices}
-                BossAttackPatternPredictModel={BossAttackPatternPredictModel}/>
+                BossAttackPatternPredictModel={BossAttackPatternPredictModel}
+                setBossAttackPatternPredictModel={setBossAttackPatternPredictModel}
+                predictionStat={predictionStat} />
             <KeyboardControls map={controlMap}>
                 <Canvas
                     dpr={[1, 2]}
@@ -83,7 +108,7 @@ const Level5Final: React.FC<Props> = () => {
 
                     <Suspense fallback={null}>
                         <Physics debug={debug} gravity={[0, -9.81, 0]}>
-                            <CharacterController spawnPosition={[-28, 2, 20]}/>
+                            <CharacterController spawnPosition={[-28, 2, 20]} />
                             {/* <CharacterController /> */}
                             <Level5FinalEnvironment
                                 bossActionDuration={bossActionDuration}
@@ -92,6 +117,7 @@ const Level5Final: React.FC<Props> = () => {
                                 bossHealth={bossHealth}
                                 setBossHealth={setBossHealth}
                                 BossAttackPatternPredictModel={BossAttackPatternPredictModel}
+                                setPredictionStat={setPredictionStat}
                             />
                         </Physics>
                     </Suspense>

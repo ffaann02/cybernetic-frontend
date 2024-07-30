@@ -19,6 +19,8 @@ const Level5Room1Environment = ({
     setBossActionState,
     bossHealth,
     setBossHealth,
+    BossAttackPatternPredictModel,
+    setPredictionStat,
 }) => {
 
     const { playerRigidBody, currentHit, setCurrentHit, isUsingTurret, setIsUsingTurret, isPlayerInBossArea, setIsPlayerInBossArea, setIsInteracting } = useContext(GameContext);
@@ -79,7 +81,6 @@ const Level5Room1Environment = ({
         if (ePressed && currentHit && currentHit === ('ComputerChooseModelLevel5')) {
             const currentTime = new Date().getTime();
             if (currentTime - lastPressTime > 200) {
-                console.log('ComputerChooseModelLevel5');
                 setLastPressTime(currentTime);
                 setIsInteracting((prev) => !prev);
             }
@@ -108,7 +109,9 @@ const Level5Room1Environment = ({
                         bossRegenaration={{
                             increasePerInterval: 1,
                             interval: 1000,
-                        }} />
+                        }}
+                        BossAttackPatternPredictModel={BossAttackPatternPredictModel}
+                        setPredictionStat={setPredictionStat}/>
                     <DoorToBossFight
                         leftDoorToBossFightRef={leftDoorToBossFightRef}
                         rightDoorToBossFightRef={rightDoorToBossFightRef}
