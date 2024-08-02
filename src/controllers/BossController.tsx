@@ -19,6 +19,7 @@ interface BossControllerProps {
     bossHealth: number;
     setBossHealth: (health: number) => void;
     bossRegenaration: { increasePerInterval: number; interval: number };
+    BossAttackPatternPredictModel: { name: string; value: string };
     setPredictionStat: (stat: any) => void;
 }
 

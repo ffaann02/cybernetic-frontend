@@ -147,7 +147,7 @@ const OnlineRoom = () => {
     }, [roomid, user]);
 
     return (
-        <div className="w-full flex-grow flex flex-col max-h-screen p-24 bg-gradient-to-r from-cyan-400 to-blue-400">
+        <div className="w-full flex-grow flex flex-col max-h-screen p-12 bg-gradient-to-r from-cyan-400 to-blue-400">
             <div className="grid grid-cols-10 flex-grow border-t-2 border-t-cyan-400 rounded-xl w-full h-full bg-white/80 shadow-xl shadow-slate-200">
                 <div className='col-span-6 pl-8 pr-4 py-8 flex flex-col h-full'>
                     {roomInfo &&

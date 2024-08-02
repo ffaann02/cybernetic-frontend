@@ -6,6 +6,7 @@ import { Steps } from 'primereact/steps';
 import Level5TrainUI from './HologramComputer/Level5TrainUI';
 import useAxios from '../../../hooks/useAxios';
 import axiosInstanceAiService from '../../../api/aiService';
+import ReponseModal from '../../../components/ui/ReponseModal';
 
 type Props = {}
 
@@ -33,6 +34,10 @@ const BossHologramUI = ({
     BossAttackPatternPredictModel,
     setBossAttackPatternPredictModel,
     predictionModelChoices,
+    isDisplayTrainingModal,
+    setIsDisplayTrainingModal,
+    trainningResponse,
+    setTrainningResponse,
 }) => {
 
     const { axiosFetch } = useAxios();
@@ -102,9 +107,24 @@ const BossHologramUI = ({
                     data: modifiedCollectedData
                 },
             });
-            return response;
+            setTrainningResponse({
+                isError: false,
+                head: "Training Model",
+                isAccurate: true,
+                title: "Training is successful",
+                body: "Your model is trained successfully",
+            });
+            setIsDisplayTrainingModal(true);
         } catch (error) {
             console.log(error);
+            setTrainningResponse({
+                isError: true,
+                head: "Training Model",
+                isAccurate: false,
+                title: "Training is failed",
+                body: "Your model is failed to train, may be your data is not enough",
+            });
+            setIsDisplayTrainingModal(true);
         }
     }
 
@@ -209,6 +229,22 @@ const BossHologramUI = ({
 
     return (
         <>
+            {isDisplayTrainingModal && trainningResponse &&
+                <ReponseModal
+                    isError={trainningResponse.isError}
+                    head={trainningResponse.head}
+                    isAccurate={trainningResponse.isAccurate}
+                    title={trainningResponse.title}
+                    body={trainningResponse.body}
+                    onClose={() => {
+                        setIsDisplayTrainingModal(false)
+                        setTrainningResponse(null)
+                    }}
+                    onConfirm={() => {
+                        setIsDisplayTrainingModal(false)
+                        setTrainningResponse(null)
+                    }}
+                />}
             {currentHit === "BossHologramComputer" && isInteracting && (
                 <div className='absolute w-full h-full z-[10000] flex justify-center'>
                     <div className='flex justify-center items-center max-w-7xl py-32 gap-x-4 relative '>

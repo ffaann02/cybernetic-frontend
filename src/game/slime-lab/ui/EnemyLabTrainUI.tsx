@@ -5,6 +5,7 @@ import { Steps } from 'primereact/steps';
 import { Checkbox } from 'primereact/checkbox';
 import useAxios from '../../../hooks/useAxios';
 import axiosInstanceAiService from '../../../api/aiService';
+import ReponseModal from '../../../components/ui/ReponseModal';
 
 interface Category {
     name: string;
@@ -138,12 +139,15 @@ const EnemyLabTrainUI = ({
         );
     };
 
+    const [isDisplayModal, setIsDisplayModal] = useState(false);
+    const [trainningResponse, setTrainningResponse] = useState(null);
+
     const handleTrainModel = async (modelName: string) => {
         console.log("Training model: ", modelName);
-        console.log("Collected data: ", predictionModelSelected);
+        console.log("Collected data: ", selectedTrainData);
 
         try {
-            const modifiedCollectedData = collectedEnemyData.map((data) => {
+            const modifiedCollectedData = selectedTrainData.map((data) => {
                 return {
                     element: data.element,
                     size: data.size,
@@ -167,14 +171,46 @@ const EnemyLabTrainUI = ({
                     data: modifiedCollectedData
                 },
             });
-            return response;
+            console.log(response);
+            setTrainningResponse({
+                isError: false,
+                head: "Training Model",
+                isAccurate: true,
+                title: "Training is successful",
+                body: "Your model is trained successfully",
+            });
+            setIsDisplayModal(true);
         } catch (error) {
             console.log(error);
+            setTrainningResponse({
+                isError: true,
+                head: "Training Model",
+                isAccurate: false,
+                title: "Training is failed",
+                body: "Your model is failed to train, may be your data is not enough",
+            });
+            setIsDisplayModal(true);
         }
     }
 
     return (
         <>
+            {isDisplayModal && trainningResponse &&
+                <ReponseModal
+                    isError={trainningResponse.isError}
+                    head={trainningResponse.head}
+                    isAccurate={trainningResponse.isAccurate}
+                    title={trainningResponse.title}
+                    body={trainningResponse.body}
+                    onClose={() => {
+                        setIsDisplayModal(false)
+                        setTrainningResponse(null)
+                    }}
+                    onConfirm={() => {
+                        setIsDisplayModal(false)
+                        setTrainningResponse(null)
+                    }}
+                />}
             {currentHit === "ComputerTrainingEnemyLab" && isInteracting &&
                 < div className='absolute w-full h-full z-[10000] flex justify-center'>
                     <div className='flex justify-center items-center max-w-7xl py-32 gap-x-4 relative '>
