@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 
-const TypeWriter = ({ text, delay, infinite = false, clearText = false }) => {
+const TypeWriter = ({ text="", delay=100, infinite = false, clearText = false }) => {
   const [currentText, setCurrentText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    let timeout;
+    let timeout: NodeJS.Timeout | number;
 
     if (clearText) {
       // Clear the text if clearText is true

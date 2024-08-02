@@ -1,17 +1,20 @@
 import { Checkbox } from "primereact/checkbox";
+import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
 
-const CheckListGuideUI = ({
-  textCollectedList,
-  imageCollectedList,
-  audioCollectedList,
-  objectCollectedList,
-  numericalCollectedList,
-  maxImageCollected,
-  maxAudioCollected,
-  maxTextCollected,
-  maxObjectCollected,
-  maxNumericalCollected,
-}) => {
+const CheckListGuideUI = () => {
+  const {
+    imageCollectedList,
+    audioCollectedList,
+    textCollectedList,
+    objectCollectedList,
+    numericalCollectedList,
+    maxImageCollected,
+    maxAudioCollected,
+    maxTextCollected,
+    maxObjectCollected,
+    maxNumericalCollected
+  } = useLevel1Context();
+
   return (
     <div className="absolute z-[50] left-4 top-4 p-2 max-w-[17rem] w-full">
       <div className="bg-cyan-400/50 w-full rounded-t-lg py-2">

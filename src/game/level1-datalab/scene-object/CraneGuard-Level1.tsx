@@ -11,6 +11,7 @@ const CraneGuardLevel1=(props)=> {
   const { nodes, materials, animations } = useGLTF('/animated/test-robot1.gltf')
   const { actions } = useAnimations(animations, group)
   useEffect(()=>{
+    console.log("HELLO");
     console.log(actions);
   },[])
   return (

@@ -22,6 +22,7 @@ import EnemyEnvironment from "./non-gameplay-scene/EnemyEnvironment";
 import Level3SoundGEN from "./game/level3-sound-generative/scene/Level3-SoundGEN";
 import Level5Final from "./game/level5-final/scene/Level5-Final";
 import SlimeLab from "./game/slime-lab/scene/SlimeLab";
+import { Level1ContextProvider } from "./contexts/SceneContext/Level1Context";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -29,8 +30,8 @@ function App() {
     <>
       <GameProvider>
         <SettingProvider>
-        <div className="w-full min-h-screen flex flex-col font-ibm relative overflow-hidden">
-          {showDebugTools && <DebugToolsBar />}
+          <div className="w-full min-h-screen flex flex-col font-ibm relative overflow-hidden">
+            {showDebugTools && <DebugToolsBar />}
             <Router>
               <GlobalGameUI />
               <Routes>
@@ -40,17 +41,39 @@ function App() {
                     element={
                       <div className="h-screen">
                         <LevelProvider>
-                          <SceneRouter >
+                          <SceneRouter>
                             <Scene title="welcome" scene={<Welcome />} />
                             <Scene title="home" scene={<Home />} />
-                            <Scene title="enemy-environment" scene={<EnemyEnvironment />} />
+                            <Scene
+                              title="enemy-environment"
+                              scene={<EnemyEnvironment />}
+                            />
                             <Scene title="tutorial" scene={<Tutorial />} />
-                            <Scene title="level-selection" scene={<LevelSelection />} />
-                            <Scene title="game-level-1" scene={<Level1DataLab/>} />
-                            <Scene title="game-level-2" scene={<Level2Classify/>} />
-                            <Scene title="game-level-3" scene={<Level3SoundGEN/>} />
-                            <Scene title="game-level-5" scene={<Level5Final/>} />
-                            <Scene title="slime-lab" scene={<SlimeLab/>} />
+                            <Scene
+                              title="level-selection"
+                              scene={<LevelSelection />}
+                            />
+                              <Scene
+                                title="game-level-1"
+                                scene={
+                                  <Level1ContextProvider>
+                                    <Level1DataLab />
+                                  </Level1ContextProvider>
+                                }
+                              />
+                            <Scene
+                              title="game-level-2"
+                              scene={<Level2Classify />}
+                            />
+                            <Scene
+                              title="game-level-3"
+                              scene={<Level3SoundGEN />}
+                            />
+                            <Scene
+                              title="game-level-5"
+                              scene={<Level5Final />}
+                            />
+                            <Scene title="slime-lab" scene={<SlimeLab />} />
                           </SceneRouter>
                         </LevelProvider>
                       </div>

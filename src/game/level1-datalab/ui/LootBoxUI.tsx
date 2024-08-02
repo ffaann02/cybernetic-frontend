@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
 
-const LootBoxUI = ({
-  confirmSelectedItems, setConfirmSelectedItems
-}) => {
+const LootBoxUI = () => {
+  const {confirmSelectedItems, setConfirmSelectedItems} = useLevel1Context();
+
   const [itemList, setItemList] = useState([
     {
       index: 1,

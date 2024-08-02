@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { CuboidCollider, RigidBody, vec3 } from "@react-three/rapier";
 import { Item } from "../../../shared-object/object/Item";
 import { degreeNumberToRadian } from "../../../../utils";
-import { Box, Cylinder, useKeyboardControls } from "@react-three/drei";
+import { Box,useKeyboardControls } from "@react-three/drei";
 import CountdownComputer from "./CountdownComputer";
 import FakeGlowMaterial from "../../../../components/FakeGlowMaterial";
 import { useFrame } from "@react-three/fiber";
-import WeightMeterComputer from "./WeightMeterComputer";
 import { GameContext } from "../../../../contexts/GameContext";
 import { GoodBot } from "../../../../GoodBot";
-import { CylinderCollider, CapsuleCollider } from "@react-three/rapier";
 import { Controls } from "../../../../controllers/CharacterController";
 import LaserTargetObject, { LaserTargetObjectProps } from "./LaserTargetObject";
-import { LaserTargetObjectData } from "./LaserTargetObjectData";
 
 const Room2 = ({
   totalWeight,
