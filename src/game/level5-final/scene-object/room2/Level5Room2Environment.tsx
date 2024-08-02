@@ -10,7 +10,7 @@ import { useKeyboardControls } from '@react-three/drei'
 import { Controls } from '../../../../controllers/CharacterController'
 
 const Level5Room2Environment = ({
-
+    
 }) => {
 
     const { currentHit, setCurrentHit, setIsInteracting } = useContext(GameContext);

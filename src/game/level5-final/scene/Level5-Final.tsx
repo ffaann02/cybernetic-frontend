@@ -57,6 +57,9 @@ const Level5Final: React.FC<Props> = () => {
         }
     ]);
 
+    const [isDisplayTrainingModal, setIsDisplayTrainingModal] = useState(false);
+    const [trainningResponse, setTrainningResponse] = useState(null);
+
     const controlMap = useMemo(
         () => [
             { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
@@ -85,7 +88,11 @@ const Level5Final: React.FC<Props> = () => {
                 setCollectedBossData={setCollectedBossData}
                 BossAttackPatternPredictModel={BossAttackPatternPredictModel}
                 setBossAttackPatternPredictModel={setBossAttackPatternPredictModel}
-                predictionModelChoices={predictionModelChoices} />
+                predictionModelChoices={predictionModelChoices} 
+                isDisplayTrainingModal={isDisplayTrainingModal}
+                setIsDisplayTrainingModal={setIsDisplayTrainingModal}
+                trainningResponse={trainningResponse}
+                setTrainningResponse={setTrainningResponse}/>
             <Level5ModelChoosingUI
                 predictionModelChoices={predictionModelChoices}
                 BossAttackPatternPredictModel={BossAttackPatternPredictModel}
@@ -118,6 +125,8 @@ const Level5Final: React.FC<Props> = () => {
                                 setBossHealth={setBossHealth}
                                 BossAttackPatternPredictModel={BossAttackPatternPredictModel}
                                 setPredictionStat={setPredictionStat}
+                                setIsDisplayTrainingModal={setIsDisplayTrainingModal}
+                                setTrainningResponse={setTrainningResponse}
                             />
                         </Physics>
                     </Suspense>
