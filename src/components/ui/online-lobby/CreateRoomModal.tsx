@@ -166,7 +166,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ closeModal }) => {
                         <h1 className="text-2xl">สร้างห้อง</h1>
                         <IoCloseCircle className='absolute top-4 right-4 text-3xl cursor-pointer text-red-400' onClick={closeModal} />
                     </div>
-                    <div className='px-8 py-8'>
+                    <div className='px-8 py-2'>
                         <h2 className='text-xl'>เลือกด่าน</h2>
 
                         <Carousel

@@ -7,7 +7,6 @@ import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
 
 const GuardDataPanelUI = ({
 }) => {
-
   const {
     showDialog,
     setShowDialog,

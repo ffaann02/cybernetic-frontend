@@ -1,12 +1,12 @@
 import { Box, Environment, useKeyboardControls } from "@react-three/drei";
-import { Level3SoundGenRoom1 } from "../map/Level3-SoundGEN-Room1";
+import { MapRoom1 } from "../map/MapRoom1";
 import { degreeNumberToRadian } from "../../../utils";
 import { useContext, useRef, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import Door from "../../shared-object/object/Door";
-import { Level3SoundGenRoom2 } from "../map/Level3-SoundGEN-Room2";
+import { MapRoom2 } from "../map/MapRoom2";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
-import { Room } from "../../level1-datalab/scene-object/Level1-DataLab";
+import Room from "../../shared-object/Room";
 import Room1 from "./room1/Room1";
 import { Item } from "../../shared-object/object/Item";
 import { useFrame } from "@react-three/fiber";
@@ -14,22 +14,13 @@ import { Controls } from "../../../controllers/CharacterController";
 import Room2 from "./room2/Room2";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize, Resolution } from "postprocessing";
+import { useLevel3Context } from "../../../contexts/SceneContext/Level3Context";
 
-const Level3SoundGenEnvironment = ({
+const SceneObject = ({
   currentRoom,
   setCurrentRoom,
   door01_destination,
   door01_back,
-  isOpenAudioInput,
-  setIsOpenAudioInput,
-  isOpenVideoFootage,
-  setIsOpenVideoFootage,
-  isPlayingSound,
-  setIsPlayingSound,
-  isOpenCD,
-  setIsOpenCD,
-  isOpenTrainComputer,
-  setIsOpenTrainComputer,
 }) => {
   const {
     playerRigidBody,
@@ -38,12 +29,25 @@ const Level3SoundGenEnvironment = ({
     setIsInteracting,
     setIsUsingSecurityCamera,
   } = useContext(GameContext);
+  const {
+    isOpenAudioInput,
+    setIsOpenAudioInput,
+    isOpenVideoFootage,
+    setIsOpenVideoFootage,
+    isPlayingSound,
+    setIsPlayingSound,
+    isOpenCD,
+    setIsOpenCD,
+    isOpenTrainComputer,
+    setIsOpenTrainComputer,
+    kaboom,
+    setKaboom
+  } = useLevel3Context();
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
 
   const [lastPressTime, setLastPressTime] = useState(0);
   const parentLight = useRef();
   const speakerMeshRef = useRef();
-  const [kaboom, setKaboom] = useState(false);
 
   return (
     <>
@@ -95,18 +99,10 @@ const Level3SoundGenEnvironment = ({
             nextRoom={2}
           />
           <Room1
-            isOpenAudioInput={isOpenAudioInput}
-            setIsOpenAudioInput={setIsOpenAudioInput}
-            isOpenVideoFootage={isOpenVideoFootage}
-            setIsOpenVideoFootage={setIsOpenVideoFootage}
-            isPlayingSound={isPlayingSound}
-            setIsPlayingSound={setIsPlayingSound}
             parentLight={parentLight}
             speakerMeshRef={speakerMeshRef}
-            kaboom={kaboom}
-            setKaboom={setKaboom}
           />
-          <Level3SoundGenRoom1 />
+          <MapRoom1/>
         </Room>
       )}
 
@@ -128,12 +124,8 @@ const Level3SoundGenEnvironment = ({
             nextRoom={1}
           />
           <Room2
-            isOpenCD={isOpenCD}
-            setIsOpenCD={setIsOpenCD}
-            isOpenTrainComputer={isOpenTrainComputer}
-            setIsOpenTrainComputer={setIsOpenTrainComputer}
           />
-          <Level3SoundGenRoom2 />
+          <MapRoom2/>
         </Room>
       )}
 
@@ -152,4 +144,4 @@ const Level3SoundGenEnvironment = ({
     </>
   );
 };
-export default Level3SoundGenEnvironment;
+export default SceneObject;

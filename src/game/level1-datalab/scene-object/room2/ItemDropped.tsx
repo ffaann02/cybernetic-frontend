@@ -3,7 +3,6 @@ import { useContext, useMemo, useRef } from "react";
 import { OBJLoader, SkeletonUtils } from "three-stdlib";
 import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
-import FakeGlowMaterial from "../../../components/FakeGlowMaterial";
 import { GameContext } from "../../../../contexts/GameContext";
 
 interface ItemProps {

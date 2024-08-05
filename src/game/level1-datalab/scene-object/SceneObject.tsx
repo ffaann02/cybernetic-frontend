@@ -5,14 +5,13 @@ import {
 } from "@react-three/drei";
 import { Item } from "../../shared-object/object/Item";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
-import { memo, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import { degreeNumberToRadian } from "../../../utils";
 import { Mine } from "../../shared-object/object/Mine";
-import { Level1DataLabRoom1 } from "../map/MapRoom1";
-import { Level1DataLabRoom2 } from "../map/MapRoom2";
+import { MapRoom1 } from "../map/MapRoom1";
+import {MapRoom2 } from "../map/MapRoom2";
 import Door from "../../shared-object/object/Door";
-import ScifiComputer from "../../shared-object/interaction/ScifiComputer";
 import Guard from "./Guard";
 import { Controls } from "../../../controllers/CharacterController";
 import { useFrame } from "@react-three/fiber";
@@ -22,12 +21,13 @@ import Room2 from "./room/Room2";
 import { enemyPartrolProps } from "./EnemyDataProps";
 import EnemyPatrolController from "../../../controllers/EnemyPatrolController";
 import * as THREE from "three";
-import { LaserTargetObjectProps } from "./room/LaserTargetObject";
-import { LaserTargetObjectData } from "./room/LaserTargetObjectData";
+import { LaserTargetObjectProps } from "./room2/LaserTargetObject";
+import { LaserTargetObjectData } from "./room2/LaserTargetObjectData";
+import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
+import Room  from "../../shared-object/Room";
+import NPC from "./room1/NPC";
+import Object from "./room1/Object";
 
-export const Room = memo(({ children }) => {
-  return <>{children}</>;
-});
 
 const items = [
   {
@@ -46,23 +46,28 @@ const items = [
   },
 ];
 
-export const Level1DataLabEnvironment = ({
-  showDialog,
-  setShowDialog,
-  craneUpNotAllow,
-  isOpenChest,
-  setIsOpenChest,
-  isOpenDataCamera,
-  setIsOpenDataCamera,
+const SceneObject = ({
   enemyPatrolInScene,
   setEnemyPatrolInScene,
-  setObjectCollectedList,
-  setNumericalCollectedList,
-  dataCollectNotify,
-  isSubmitClicked,
-  setIsSubmitClicked,
-  craneRedBox,
 }) => {
+  const {
+    showDialog,
+    setShowDialog,
+    craneUpNotAllow,
+    isOpenChest,
+    setIsOpenChest,
+    isOpenDataCamera,
+    setIsOpenDataCamera,
+    setObjectCollectedList,
+    setNumericalCollectedList,
+    dataCollectNotify,
+    isSubmitClicked,
+    setIsSubmitClicked,
+    craneRedBox,
+    allowGreenPad,
+    allowRedPad
+  } = useLevel1Context();
+
   const [lastPressTime, setLastPressTime] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
 
@@ -83,12 +88,6 @@ export const Level1DataLabEnvironment = ({
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
   const door01_self = useRef<any>(null);
   const door01_destination = useRef<any>(null);
-  const [allowRedPad, setAllowRedPad] = useState(false);
-  const [allowGreenPad, setAllowGreenPad] = useState(false);
-
-  const [objectData, setObjectData] = useState<LaserTargetObjectProps[]>(LaserTargetObjectData);
-  const [dropedObject, setDropedObject] = useState<LaserTargetObjectProps[]>([]);
-  const [currentLaserTarget, setCurrentLaserTarget] = useState<string | null>(null);
 
   useFrame(() => {
     if (ePressed && currentHit === "level1-data-guard-red") {
@@ -176,8 +175,7 @@ export const Level1DataLabEnvironment = ({
         setLastPressTime(currentTime);
       }
     }
-    if(craneRedBox && craneRedBox.current && isSubmitClicked){
-
+    if (craneRedBox && craneRedBox.current && isSubmitClicked) {
       const currentPosition = vec3(craneRedBox.current.translation());
 
       const liftPerFrame = 0.08;
@@ -190,7 +188,7 @@ export const Level1DataLabEnvironment = ({
           z: currentPosition.z,
         });
       } else if (currentPosition.y > bottomReachPoint) {
-          setIsSubmitClicked(false);
+        setIsSubmitClicked(false);
       }
     }
   });
@@ -201,42 +199,6 @@ export const Level1DataLabEnvironment = ({
     "open",
     "open",
   ]);
-
-  const onColliderRedPadEnter = ({ other }) => {
-    console.log(other.rigidBodyObject.name);
-    if (other.rigidBodyObject) {
-      if (other.rigidBodyObject.name === "RedBox") {
-        consoel.log("helloawdawd");
-        setAllowRedPad(true);
-      }
-    }
-  };
-
-  const onColliderRedPadExit = ({ other }) => {
-    if (other.rigidBodyObject) {
-      if (other.rigidBodyObject.name === "RedBox") {
-        setAllowRedPad(false);
-      }
-    }
-  };
-
-  const onColliderGreenPadEnter = ({ other }) => {
-    if (other.rigidBodyObject.name) {
-      if (other.rigidBodyObject.name === "GreenBox") {
-        setAllowGreenPad(true);
-      }
-    }
-  };
-
-  const onColliderGreenPadExit = ({ other }) => {
-    if (other.rigidBodyObject) {
-      console.log(other.rigidBodyObject.name);
-      if (other.rigidBodyObject.name === "GreenBox") {
-        setAllowGreenPad(false);
-      }
-    }
-  };
-
 
   return (
     <>
@@ -257,139 +219,9 @@ export const Level1DataLabEnvironment = ({
 
       {currentRoom === 1 && (
         <Room>
-          <RigidBody
-            colliders={false}
-            name="level1-data-guard-red"
-            lockRotations
-            lockTranslations
-            type="fixed"
-            position={[-20, 3.5, 2]}
-            scale={[9, 9, 9]}
-            rotation={[
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(-45),
-              degreeNumberToRadian(0),
-            ]}
-            onCollisionEnter={({ other }) => {
-              if (
-                other.rigidBodyObject &&
-                other.rigidBodyObject.name === "player"
-              ) {
-                setCurrentHit("level1-data-guard-red");
-              }
-            }}
-            onCollisionExit={({ other }) => {
-              setCurrentHit("");
-            }}
-          >
-            <CuboidCollider args={[0.15, 0.4, 0.35]} position={[0,0,0]} />
-            <Guard />
-          </RigidBody>
-          <RigidBody mass={20} name="RedBox">
-            <Item
-              item={{
-                name: "WeightBox",
-                position: [-22.5, 15, 0.5],
-                scale: [200, 200, 200],
-                fileType: "glb",
-                color: "red",
-              }}
-            />
-          </RigidBody>
-          <RigidBody mass={20} name="GreenBox">
-            <Item
-              item={{
-                name: "WeightBox",
-                position: [-17, 4, 4],
-                scale: [200, 200, 200],
-                fileType: "glb",
-                color: "green",
-              }}
-            />
-          </RigidBody>
-          <RigidBody
-            ref={craneRedBox}
-            scale={[0.25, 0.25, 0.5]}
-            position={[-24, 10, -5]}
-            colliders="trimesh"
-            name="craneRedBox"
-            lockRotations
-            lockTranslations
-            type="fixed"
-            rotation={[
-              degreeNumberToRadian(-90),
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(180),
-            ]}
-          >
-            <mesh castShadow position={[-17, 8, -12]}>
-              <boxGeometry args={[2, 2, 16]} />
-              <meshStandardMaterial
-                color={"yellow"}
-                opacity={0.9}
-                transparent={true}
-              />
-            </mesh>
-            <mesh castShadow position={[-18, 10, -19]}>
-              <boxGeometry args={[16, 16, 0.25]} />
-              <meshStandardMaterial
-                color={"yellow"}
-                opacity={0.9}
-                transparent={true}
-              />
-            </mesh>
-            <Item
-              item={{
-                name: "crane",
-                position: [-17, 8, -2],
-                scale: [1, 1, 1],
-                fileType: "fbx",
-              }}
-              opacity={0.9}
-            />
-          </RigidBody>
-          <ScifiComputer
-            position={[0, 0, -9]}
-            rotation={[
-              degreeNumberToRadian(-90),
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(-130),
-            ]}
-          />
-          <RigidBody
-            colliders={false}
-            type="fixed"
-            lockRotations
-            lockTranslations
-            position={items[1].position}
-            scale={[1, 1, 1]}
-            onCollisionEnter={onColliderRedPadEnter}
-            onCollisionExit={onColliderRedPadExit}
-          >
-            <CuboidCollider
-              args={[0.7, 0.5, 0.7]}
-              position={[-6.9, 0.05, -6]}
-            />
-            <Item item={items[1]} key={"pad1"} opacity={0.8} />
-          </RigidBody>
-          <RigidBody
-            colliders="trimesh"
-            type="fixed"
-            lockRotations
-            lockTranslations
-            position={items[0].position}
-            scale={[1, 1, 1]}
-            onCollisionEnter={onColliderGreenPadEnter}
-            onCollisionExit={onColliderGreenPadExit}
-          >
-            <CuboidCollider
-              args={[0.7, 0.5, 0.7]}
-              position={[-1.2, 0.1, -6]}
-            />
-            <Item item={items[0]} key={"pad2"} opacity={0.8} />
-          </RigidBody>
-
-          <Level1DataLabRoom1 />
+          <NPC/>
+          <Object items={items} />
+          <MapRoom1 />
         </Room>
       )}
 
@@ -399,6 +231,7 @@ export const Level1DataLabEnvironment = ({
           {enemyPartrolProps.map((enemyPartrolProp, index) => (
             <EnemyPatrolController
               key={index}
+              id={index}
               name={enemyPartrolProp.name}
               waypoints={enemyPartrolProp.waypoints}
               angle={enemyPartrolProp.angle}
@@ -410,7 +243,6 @@ export const Level1DataLabEnvironment = ({
               setEnemyPatrolInScene={setEnemyPatrolInScene}
             />
           ))}
-
           <Room2
             totalWeight={totalWeight}
             setTotalWeight={setTotalWeight}
@@ -418,65 +250,9 @@ export const Level1DataLabEnvironment = ({
             setAllowCraneUp={setAllowCraneUp}
             setObjectCollectedList={setObjectCollectedList}
             setNumericalCollectedList={setNumericalCollectedList}
-            objectData={objectData}
-            // objectData={LaserTargetObjectData}
-            setObjectData={setObjectData}
-            dropedObject={dropedObject}
-            setDropedObject={setDropedObject}
-            currentLaserTarget={currentLaserTarget}
-            setCurrentLaserTarget={setCurrentLaserTarget}
             dataCollectNotify={dataCollectNotify}
           />
-          <GlassBridge
-            row={3}
-            col={9}
-            position={[132, 20, -25]}
-            rotation={[
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(90),
-              degreeNumberToRadian(0),
-            ]}
-          />
-          <RigidBody
-            colliders="trimesh"
-            type="fixed"
-            lockRotations
-            lockTranslations
-            position={[132, 0, -20]}
-            scale={[100, 100, 100]}
-            rotation={[
-              degreeNumberToRadian(-90),
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(45),
-            ]}
-            onCollisionEnter={({ other }) => {
-              if (
-                other.rigidBodyObject &&
-                other.rigidBodyObject.name === "player"
-              ) {
-                // console.log("test");
-                setCurrentHit("bridge-head-computer");
-              }
-            }}
-            onCollisionExit={({ other }) => {
-              if (
-                other.rigidBodyObject &&
-                other.rigidBodyObject.name === "player"
-              ) {
-                setCurrentHit("");
-              }
-            }}
-          >
-            <Item
-              item={{
-                name: "FixedPlaceComputer",
-                position: [0, 0, 0],
-                scale: [3, 3, 3],
-                fileType: "glb",
-              }}
-            />
-          </RigidBody>
-          <Level1DataLabRoom2 />
+          <MapRoom2/>
         </Room>
       )}
 
@@ -512,7 +288,7 @@ export const Level1DataLabEnvironment = ({
               degreeNumberToRadian(0),
             ]}
             status={
-              allowGreenPad===true && allowRedPad===true ? "open": "close"
+              allowGreenPad === true && allowRedPad === true ? "open" : "close"
             }
             type="switch-room"
             setCurrentRoom={setCurrentRoom}
@@ -558,3 +334,5 @@ export const Level1DataLabEnvironment = ({
     </>
   );
 };
+
+export default SceneObject;

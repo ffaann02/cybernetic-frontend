@@ -5,7 +5,7 @@ import { SkeletonUtils } from "three-stdlib";
 import { Color, MeshStandardMaterial } from "three";
 import { Box } from "@react-three/drei"; // Import Box from drei
 
-export const Level1DataLabRoom1 = () => {
+export const MapRoom1 = () => {
   const map = useGLTF("models/map-test.glb");
 
   const clone = useMemo(() => {

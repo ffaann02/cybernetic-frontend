@@ -5,7 +5,7 @@ import { SkeletonUtils } from "three-stdlib";
 import { Color } from "three";
 import { degreeNumberToRadian } from "../../../utils";
 
-export const Level1DataLabRoom2 = () => {
+export const MapRoom2 = () => {
   const map = useGLTF("models/map-test.glb");
 
   const clone = useMemo(() => {

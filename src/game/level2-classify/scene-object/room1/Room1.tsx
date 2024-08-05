@@ -37,18 +37,23 @@ import SpeakerObject from "./SpeakerObject";
 import FlameBox from "./FlameBox";
 import Spike from "./Spike";
 import GlassBridge from "../../../shared-object/object/GlassBridge";
+import { useLevel2Context } from "../../../../contexts/SceneContext/Level2Context";
 
 const bloomColor = new Color("#ff0000");
 bloomColor.multiplyScalar(1.2);
 
 const Room1 = ({
-  isOpenGlassClassifier,
-  setIsOpenGlassClassifier,
-  isActivateScanner,
-  setIsActivateScanner,
-  resetTrigger,
-  setResetTrigger,
 }) => {
+
+  const {
+    isOpenGlassClassifier,
+    setIsOpenGlassClassifier,
+    isActivateScanner,
+    setIsActivateScanner,
+    resetTrigger,
+    setResetTrigger
+  } = useLevel2Context();
+
   const {
     currentHit,
     setCurrentHit,

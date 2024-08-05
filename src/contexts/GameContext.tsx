@@ -1,4 +1,5 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
+import { Controls } from "../controllers/CharacterController";
 
 interface GameContextProps {
   currentScene: string;
@@ -51,11 +52,12 @@ interface GameContextProps {
   setEnergy: React.Dispatch<React.SetStateAction<number>>;
   isDeath: boolean;
   setIsDeath: React.Dispatch<React.SetStateAction<boolean>>;
+  controlMap: { name: string; keys: string[] }[];
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-1",
+  currentScene: "game-level-3",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -106,11 +108,32 @@ const initialGameContext: GameContextProps = {
   setEnergy: () => {},
   isDeath: false,
   setIsDeath: () => {},
+  isUsingTurret: false,
+  setIsUsingTurret: () => {},
+  isPlayerInBossArea: false,
+  setIsPlayerInBossArea: () => {},
+  bossParameter: {},
+  setBossParameter: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
+  const controlMap = useMemo(
+    () => [
+      { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
+      { name: Controls.backward, keys: ["ArrowDown", "KeyS"] },
+      { name: Controls.left, keys: ["ArrowLeft", "KeyA"] },
+      { name: Controls.right, keys: ["ArrowRight", "KeyD"] },
+      { name: Controls.jump, keys: ["Space"] },
+      { name: Controls.coding, keys: ["KeyE"] },
+      { name: Controls.interact, keys: ["KeyR"] },
+      { name: Controls.ESC, keys: ["Escape"] },
+      { name: Controls.L, keys: ["KeyL"] },
+      { name: Controls.G, keys: ["KeyG"] },
+    ],
+    []
+  );
   const [gameState, setGameState] =
     useState<GameContextProps>(initialGameContext);
   const [currentHit, setCurrentHit] = useState<string>("");
@@ -200,6 +223,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setEnergy,
     isDeath,
     setIsDeath,
+    controlMap
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

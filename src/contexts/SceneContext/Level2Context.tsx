@@ -1,20 +1,39 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 // Define the shape of your context data
 interface Level2ContextData {
   level: number;
   setLevel: (level: number) => void;
+  isOpenTrainComputer: boolean;
+  setIsOpenTrainComputer: (isOpen: boolean) => void;
+  isOpenGlassClassifier: boolean;
+  setIsOpenGlassClassifier: (isOpen: boolean) => void;
+  isActivateScanner: boolean;
+  setIsActivateScanner: (isActivate: boolean) => void;
+  currentComputerGlassTest: number;
+  setCurrentComputerGlassTest: (test: number) => void;
+  isOpenGlassTest: boolean;
+  setIsOpenGlassTest: (isOpen: boolean) => void;
+  resetTrigger: number;
+  setResetTrigger: (trigger: number) => void;
+  dangerPattern: number[];
+  setDangerPattern: (pattern: number[]) => void;
+  ufoActiveList: boolean[];
+  setUfoActiveList: (list: boolean[]) => void;
+  glassParameters: any[];
+  setGlassParameters: (params: any[]) => void;
+  dataCollectNotify: React.MutableRefObject<any>;
 }
 
 // Create the Level1Context
 const Level2Context = createContext<Level2ContextData | undefined>(undefined);
 
 // Create a custom hook to access the Level1Context
-export const useLevel1Context = () => {
+export const useLevel2Context = () => {
   const context = useContext(Level2Context);
   if (!context) {
     throw new Error(
-      "useLevel1Context must be used within a Level1ContextProvider"
+      "useLevel2Context must be used within a Level1ContextProvider"
     );
   }
   return context;
@@ -24,11 +43,40 @@ export const useLevel1Context = () => {
 export const Level2ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const [level, setLevel] = React.useState<number>(1);
+  const [level, setLevel] = useState<number>(1);
+  const [isOpenTrainComputer, setIsOpenTrainComputer] = useState(false);
+  const [isOpenGlassClassifier, setIsOpenGlassClassifier] = useState(false);
+  const [isActivateScanner, setIsActivateScanner] = useState(false);
+  const [currentComputerGlassTest, setCurrentComputerGlassTest] = useState(0);
+  const [isOpenGlassTest, setIsOpenGlassTest] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(0);
+  const [dangerPattern, setDangerPattern] = useState([2,2,2,1,2,2]);
+  const [ufoActiveList, setUfoActiveList] = useState([false, false, false]);
+  const [glassParameters, setGlassParameters] = useState([]);
+  const dataCollectNotify = useRef(null);
 
   const contextValue: Level2ContextData = {
     level,
     setLevel,
+    isOpenTrainComputer,
+    setIsOpenTrainComputer,
+    isOpenGlassClassifier,
+    setIsOpenGlassClassifier,
+    isActivateScanner,
+    setIsActivateScanner,
+    currentComputerGlassTest,
+    setCurrentComputerGlassTest,
+    isOpenGlassTest,
+    setIsOpenGlassTest,
+    resetTrigger,
+    setResetTrigger,
+    dangerPattern,
+    setDangerPattern,
+    ufoActiveList,
+    setUfoActiveList,
+    glassParameters,
+    setGlassParameters,
+    dataCollectNotify,
   };
 
   return (

@@ -16,13 +16,16 @@ import { GameContext } from "../../../../contexts/GameContext";
 import { Controls } from "../../../../controllers/CharacterController";
 import EnemyPatrolController from "../../../../controllers/EnemyPatrolController";
 import { enemyPatrolProps } from "./EnemyDataProps";
+import { useLevel3Context } from "../../../../contexts/SceneContext/Level3Context";
 
 const Room2 = ({
-  isOpenCD,
-  setIsOpenCD,
-  isOpenTrainComputer,
-  setIsOpenTrainComputer,
 }) => {
+  const {
+    isOpenCD,
+    setIsOpenCD,
+    isOpenTrainComputer,
+    setIsOpenTrainComputer,
+  } = useLevel3Context();
   const cdRef = useRef();
   const [rotation, setRotation] = useState(0);
   const { currentHit, setCurrentHit, setIsInteracting, playerRigidBody } =

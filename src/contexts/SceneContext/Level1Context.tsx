@@ -1,5 +1,7 @@
 import { RapierRigidBody } from "@react-three/rapier";
 import React, { createContext, useContext, useRef, useState } from "react";
+import { LaserTargetObjectProps } from "../../game/level1-datalab/scene-object/room2/LaserTargetObject";
+import { LaserTargetObjectData } from "../../game/level1-datalab/scene-object/room2/LaserTargetObjectData";
 
 // Define the shape of your context data
 interface Level1ContextData {
@@ -43,6 +45,16 @@ interface Level1ContextData {
   confirmSelectedItems: any[];
   setConfirmSelectedItems: (items: any[]) => void;
   dataCollectNotify: React.RefObject<null>;
+  allowRedPad: boolean;
+  setAllowRedPad: (allow: boolean) => void;
+  allowGreenPad: boolean;
+  setAllowGreenPad: (allow: boolean) => void;
+  objectData: LaserTargetObjectProps[];
+  setObjectData: (data: LaserTargetObjectProps[]) => void;
+  dropedObject: LaserTargetObjectProps[];
+  setDropedObject: (data: LaserTargetObjectProps[]) => void;
+  currentLaserTarget: string | null;
+  setCurrentLaserTarget: (target: string | null) => void;
 }
 
 // Create the Level1Context
@@ -90,6 +102,13 @@ export const Level1ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
 
   const [confirmSelectedItems, setConfirmSelectedItems] = useState([]);
   const dataCollectNotify = useRef(null);
+  const [allowRedPad, setAllowRedPad] = useState(false);
+  const [allowGreenPad, setAllowGreenPad] = useState(false);
+
+  const [objectData, setObjectData] = useState<LaserTargetObjectProps[]>(LaserTargetObjectData);
+  const [dropedObject, setDropedObject] = useState<LaserTargetObjectProps[]>([]);
+  const [currentLaserTarget, setCurrentLaserTarget] = useState<string | null>(null);
+
 
   const contextValue: Level1ContextData = {
     level,
@@ -132,6 +151,16 @@ export const Level1ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     confirmSelectedItems,
     setConfirmSelectedItems,
     dataCollectNotify,
+    allowRedPad,
+    setAllowRedPad,
+    allowGreenPad,
+    setAllowGreenPad,
+    objectData,
+    setObjectData,
+    dropedObject,
+    setDropedObject,
+    currentLaserTarget,
+    setCurrentLaserTarget,
   };
 
   return (

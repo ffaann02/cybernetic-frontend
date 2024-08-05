@@ -13,6 +13,7 @@ import { GameContext } from "../../../../contexts/GameContext";
 import {
   Bloom,
   EffectComposer,
+  Outline,
   SelectiveBloom,
 } from "@react-three/postprocessing";
 import {
@@ -33,21 +34,14 @@ import EnemyPatrolController from "../../../../controllers/EnemyPatrolController
 import { enemyPatrolProps } from "../EnemyDataProps";
 import SpeakerObject from "./SpeakerObject";
 import FlameBox from "./FlameBox";
+import { useLevel3Context } from "../../../../contexts/SceneContext/Level3Context";
 
 const bloomColor = new Color("#ff0000");
 bloomColor.multiplyScalar(1.2);
 
 const Room1 = ({
-  isOpenAudioInput,
-  setIsOpenAudioInput,
-  isOpenVideoFootage,
-  setIsOpenVideoFootage,
-  isPlayingSound,
-  setIsPlayingSound,
   parentLight,
   speakerMeshRef,
-  kaboom,
-  setKaboom
 }) => {
   const {
     currentHit,
@@ -60,6 +54,18 @@ const Room1 = ({
     isUsingSecurityCamera,
     setIsUsingSecurityCamera,
   } = useContext(GameContext);
+  const {
+    isOpenAudioInput,
+    setIsOpenAudioInput,
+    isOpenVideoFootage,
+    setIsOpenVideoFootage,
+    isPlayingSound,
+    setIsPlayingSound,
+    isOpenCD,
+    setIsOpenCD,
+    kaboom,
+    setKaboom
+  } = useLevel3Context();
 
   const wPressed = useKeyboardControls((state) => state[Controls.forward]);
   const sPressed = useKeyboardControls((state) => state[Controls.backward]);

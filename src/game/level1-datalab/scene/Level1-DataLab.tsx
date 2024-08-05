@@ -13,7 +13,7 @@ import CharacterController, {
 import { Physics, RapierRigidBody } from "@react-three/rapier";
 import { GameContext } from "../../../contexts/GameContext";
 import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
-import { Level1DataLabEnvironment } from "../scene-object/Level1-DataLab";
+import SceneObject from "../scene-object/SceneObject";
 import GuardDataPanelUI from "../scene-object/GuardDataPanelUI";
 import { Toast } from "primereact/toast";
 import { SecurityCamera } from "../scene-object/room/SecurityCamera";
@@ -23,7 +23,6 @@ import ChatwithGoodBot from "../ui/ChatwithGoodBot";
 import CheckListGuideUI from "../ui/CheckListGuideUI";
 import { enemyPartrolProps } from "../scene-object/EnemyDataProps";
 import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
-import controlMap from "../../../controllers/KeyboardControl";
 
 interface HomeProps {}
 
@@ -34,40 +33,14 @@ const Level1DataLab: React.FC<HomeProps> = () => {
     isUsingSecurityCamera,
     isInteracting,
     currentHit,
+    controlMap,
   } = useContext(GameContext);
   const {
-    showDialog,
-    setShowDialog,
     isOpenChest,
-    setIsOpenChest,
     isOpenDataCamera,
-    setIsOpenDataCamera,
     craneUpNotAllow,
-    securityCameraRef,
-    laserRef,
     imageCollectedList,
     setImageCollectedList,
-    textCollectedList,
-    setTextCollectedList,
-    audioCollectedList,
-    setAudioCollectedList,
-    objectCollectedList,
-    setObjectCollectedList,
-    numericalCollectedList,
-    setNumericalCollectedList,
-    maxImageCollected,
-    maxAudioCollected,
-    maxTextCollected,
-    maxObjectCollected,
-    maxNumericalCollected,
-    isSourceFull,
-    setIsSourceFull,
-    isSubmitClicked,
-    setIsSubmitClicked,
-    collectedFullNotify,
-    craneRedBox,
-    confirmSelectedItems,
-    setConfirmSelectedItems,
     dataCollectNotify,
   } = useLevel1Context();
   const [enemyPatrolInScene, setEnemyPatrolInScene] =
@@ -134,16 +107,7 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           dataCollectNotify={dataCollectNotify}
         />
       )}
-      {isInteracting && currentHit === "GoodBot" && (
-        <ChatwithGoodBot
-          confirmSelectedItems={confirmSelectedItems}
-          dataCollectNotify={dataCollectNotify}
-          textCollectedList={textCollectedList}
-          setTextCollectedList={setTextCollectedList}
-          audioCollectedList={audioCollectedList}
-          setAudioCollectedList={setAudioCollectedList}
-        />
-      )}
+      {isInteracting && currentHit === "GoodBot" && <ChatwithGoodBot />}
       <CheckListGuideUI />
 
       <KeyboardControls map={controlMap}>
@@ -162,24 +126,10 @@ const Level1DataLab: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              <Level1DataLabEnvironment
-                showDialog={showDialog}
-                setShowDialog={setShowDialog}
-                craneUpNotAllow={craneUpNotAllow}
-                isOpenChest={isOpenChest}
-                setIsOpenChest={setIsOpenChest}
-                isOpenDataCamera={isOpenDataCamera}
-                setIsOpenDataCamera={setIsOpenDataCamera}
+              <SceneObject
                 enemyPatrolInScene={enemyPatrolInScene}
                 setEnemyPatrolInScene={setEnemyPatrolInScene}
-                setObjectCollectedList={setObjectCollectedList}
-                setNumericalCollectedList={setNumericalCollectedList}
-                dataCollectNotify={dataCollectNotify}
-                isSubmitClicked={isSubmitClicked}
-                setIsSubmitClicked={setIsSubmitClicked}
-                craneRedBox={craneRedBox}
               />
-
               {isUsingSecurityCamera && (
                 <>
                   <SecurityCamera />

@@ -23,6 +23,8 @@ import Level3SoundGEN from "./game/level3-sound-generative/scene/Level3-SoundGEN
 import Level5Final from "./game/level5-final/scene/Level5-Final";
 import SlimeLab from "./game/slime-lab/scene/SlimeLab";
 import { Level1ContextProvider } from "./contexts/SceneContext/Level1Context";
+import { Level2ContextProvider } from "./contexts/SceneContext/Level2Context";
+import { Level3ContextProvider } from "./contexts/SceneContext/Level3Context";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -53,21 +55,29 @@ function App() {
                               title="level-selection"
                               scene={<LevelSelection />}
                             />
-                              <Scene
-                                title="game-level-1"
-                                scene={
-                                  <Level1ContextProvider>
-                                    <Level1DataLab />
-                                  </Level1ContextProvider>
-                                }
-                              />
+                            <Scene
+                              title="game-level-1"
+                              scene={
+                                <Level1ContextProvider>
+                                  <Level1DataLab />
+                                </Level1ContextProvider>
+                              }
+                            />
                             <Scene
                               title="game-level-2"
-                              scene={<Level2Classify />}
+                              scene={
+                                <Level2ContextProvider>
+                                  <Level2Classify />
+                                </Level2ContextProvider>
+                              }
                             />
                             <Scene
                               title="game-level-3"
-                              scene={<Level3SoundGEN />}
+                              scene={
+                                <Level3ContextProvider>
+                                  <Level3SoundGEN />
+                                </Level3ContextProvider>
+                              }
                             />
                             <Scene
                               title="game-level-5"
@@ -84,10 +94,10 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/create-character" element={<CreateCharacter />} />
                 {/* Private Route */}
-                {/* <Route element={<RequireAuth />}>
+                <Route element={<RequireAuth />}>
                   <Route path="/online-lobby" element={<OnlineLobby />} />
                   <Route path="/online-room/:roomid" element={<OnlineRoom />} />
-                </Route> */}
+                </Route>
                 <Route path="*" element={<div>404</div>} />
               </Routes>
             </Router>

@@ -21,7 +21,7 @@ interface ItemProps {
   opacity?: number;
   isOutlined?: boolean;
   status?: string;
-  outlineColor?:string;
+  outlineColor?: string;
   outlineThickness?: number;
   ref?: any;
 }
@@ -64,7 +64,8 @@ export const Item: React.FC<ItemProps> = ({
           const material = new THREE.MeshStandardMaterial({
             color: color, // Default to white if no color is provided
             opacity: opacity !== undefined ? opacity : 1, // Default to fully opaque if no opacity is provided
-            transparent: true
+            transparent: true,
+            toneMapped: false // Add toneMapped property
           });
           (child as any).material = material;
         }
@@ -87,6 +88,7 @@ export const Item: React.FC<ItemProps> = ({
           scale={scale || [1, 1, 1]}
           rotation={rotation || [0, 0, 0]}
           castShadow
+          toneMapped={false} // Add toneMapped property
         >
           {isOutlined && (
             <Outlines

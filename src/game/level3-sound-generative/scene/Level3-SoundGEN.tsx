@@ -18,7 +18,7 @@ import {
   PerspectiveCamera,
   useKeyboardControls,
 } from "@react-three/drei";
-import Level3SoundGenEnvironment from "../scene-object/Level3-SoundGEN";
+import SceneObject from "../scene-object/SceneObject";
 import { SecurityCamera } from "../../level1-datalab/scene-object/room/SecurityCamera";
 import { degreeNumberToRadian } from "../../../utils";
 import CheckListGuideUI from "../ui/CheckListGuideUI";
@@ -30,6 +30,8 @@ import { Howl, Howler } from "howler";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import CDStorageUI from "../ui/CDStorageUI";
 import TrainBrainwashClassifierUI from "../ui/TrainBrainwashClassifierUI";
+import { useLevel5Context } from "../../../contexts/SceneContext/Level5Context";
+import { useLevel3Context } from "../../../contexts/SceneContext/Level3Context";
 
 interface HomeProps {}
 
@@ -59,20 +61,27 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
     []
   );
 
-  const [currentRoom, setCurrentRoom] = useState<number>(2);
+  const {
+    isOpenAudioInput,
+    setIsOpenAudioInput,
+    isOpenVideoFootage,
+    setIsOpenVideoFootage,
+    isPlayingSound,
+    setIsPlayingSound,
+    isOpenCD,
+    setIsOpenCD,
+    isOpenTrainComputer,
+    setIsOpenTrainComputer,
+    volume,
+    setVolume,
+    selectedAudioPath,
+    setSelectedAudioPath,
+    isLooping,
+    setIsLooping,
+  } = useLevel3Context();
+  const [currentRoom, setCurrentRoom] = useState<number>(1);
   const door01_destination = useRef(null);
   const door01_back = useRef(null);
-  const [isOpenAudioInput, setIsOpenAudioInput] = useState(false);
-  const [isOpenVideoFootage, setIsOpenVideoFootage] = useState(false);
-  const [isPlayingSound, setIsPlayingSound] = useState(false);
-  const [playTrigger, setPlayTrigger] = useState(false);
-
-  const [volume, setVolume] = useState(0.5);
-  const [selectedAudioPath, setSelectedAudioPath] = useState("");
-  const [isLooping, setIsLooping] = useState(false);
-
-  const [isOpenCD, setIsOpenCD] = useState(false);
-  const [isOpenTrainComputer, setIsOpenTrainComputer] = useState(false);
 
   const handleAudioEnd = () => {
     console.log("hello end");
@@ -121,14 +130,12 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
         <CDStorageUI isOpenCD={isOpenCD} setIsOpenCD={setIsOpenCD} />
       )}
 
-      {
-        isOpenTrainComputer && (
-          <TrainBrainwashClassifierUI
-            isOpenTrainComputer={isOpenTrainComputer}
-            setIsOpenTrainComputer={setIsOpenTrainComputer}
-          />
-        )
-      }
+      {isOpenTrainComputer && (
+        <TrainBrainwashClassifierUI
+          isOpenTrainComputer={isOpenTrainComputer}
+          setIsOpenTrainComputer={setIsOpenTrainComputer}
+        />
+      )}
 
       <KeyboardControls map={controlMap}>
         <Canvas
@@ -154,21 +161,11 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
               <CharacterController />
-              <Level3SoundGenEnvironment
+              <SceneObject
                 currentRoom={currentRoom}
                 setCurrentRoom={setCurrentRoom}
                 door01_destination={door01_destination}
                 door01_back={door01_back}
-                isOpenAudioInput={isOpenAudioInput}
-                setIsOpenAudioInput={setIsOpenAudioInput}
-                isOpenVideoFootage={isOpenVideoFootage}
-                setIsOpenVideoFootage={setIsOpenVideoFootage}
-                isPlayingSound={isPlayingSound}
-                setIsPlayingSound={setIsPlayingSound}
-                isOpenCD={isOpenCD}
-                setIsOpenCD={setIsOpenCD}
-                isOpenTrainComputer={isOpenTrainComputer}
-                setIsOpenTrainComputer={setIsOpenTrainComputer}
               />
             </Physics>
           </Suspense>

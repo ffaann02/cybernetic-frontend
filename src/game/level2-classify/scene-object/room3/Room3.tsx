@@ -37,25 +37,12 @@ import SpeakerObject from "./SpeakerObject";
 import FlameBox from "./FlameBox";
 import Spike from "./Spike";
 import GlassBridge from "../../../shared-object/object/GlassBridge";
+import { useLevel2Context } from "../../../../contexts/SceneContext/Level2Context";
 
 const bloomColor = new Color("#ff0000");
 bloomColor.multiplyScalar(1.2);
 
 const Room3 = ({
-  isOpenGlassTest,
-  setIsOpenGlassTest,
-  currentComputerGlassTest,
-  setCurrentComputerGlassTest,
-  resetTrigger,
-  setResetTrigger,
-  dangerPattern,
-  setDangerPattern,
-  ufoActiveList,
-  setUfoActiveList,
-  glassParameters,
-  setGlassParameters,
-  isOpenTrainComputer,
-  setIsOpenTrainComputer,
 }) => {
   const {
     currentHit,
@@ -68,6 +55,25 @@ const Room3 = ({
     isUsingSecurityCamera,
     setIsUsingSecurityCamera,
   } = useContext(GameContext);
+  const {
+    isOpenGlassTest,
+    setIsOpenGlassTest,
+    currentComputerGlassTest,
+    setCurrentComputerGlassTest,
+    resetTrigger,
+    setResetTrigger,
+    dangerPattern,
+    setDangerPattern,
+    ufoActiveList,
+    setUfoActiveList,
+    glassParameters,
+    setGlassParameters,
+    isOpenTrainComputer,
+    setIsOpenGlassClassifier,
+    setIsOpenTrainComputer,
+    isActivateScanner,
+    setIsActivateScanner,
+  } = useLevel2Context();
 
   const wPressed = useKeyboardControls((state) => state[Controls.forward]);
   const sPressed = useKeyboardControls((state) => state[Controls.backward]);
