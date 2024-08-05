@@ -23,6 +23,7 @@ import { Controls } from "../../../../controllers/CharacterController";
 import EnemyPatrolController from "../../../../controllers/EnemyPatrolController";
 import { enemyPatrolProps } from "./EnemyDataProps";
 import WaterDrop from "./WaterDrop";
+import { useLevel2Context } from "../../../../contexts/SceneContext/Level2Context";
 
 const GLASS_NUMBER = 10;
 
@@ -79,8 +80,16 @@ const generateGlassParameters = (state) => {
   }
 };
 
-const Room2 = ({ dataCollectNotify, glassParameters, setGlassParameters }) => {
+const Room2 = () => {
+  const {
+    dataCollectNotify,
+    glassParameters,
+    setGlassParameters
+  } = useLevel2Context();
   const [vodkaGlasses, setVodkaGlasses] = useState([]);
+  const [physicsGlassType, setPhysicsGlassType] = useState(
+    Array(GLASS_NUMBER).fill("dynamic")
+  );
   const wPressed = useKeyboardControls((state) => state[Controls.forward]);
   const sPressed = useKeyboardControls((state) => state[Controls.backward]);
   const aPressed = useKeyboardControls((state) => state[Controls.left]);
@@ -88,9 +97,6 @@ const Room2 = ({ dataCollectNotify, glassParameters, setGlassParameters }) => {
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
   const spacePressed = useKeyboardControls((state) => state[Controls.jump]);
   const [lastPressTime, setLastPressTime] = useState(0);
-  const [physicsGlassType, setPhysicsGlassType] = useState(
-    Array(GLASS_NUMBER).fill("dynamic")
-  );
   const {
     currentHit,
     setCurrentHit,

@@ -5,7 +5,7 @@ import { SkeletonUtils } from "three-stdlib";
 import { Color, MeshStandardMaterial } from "three";
 import { Box } from "@react-three/drei"; // Import Box from drei
 
-export const Level1DataLabRoom1 = () => {
+export const MapRoom3 = () => {
   const map = useGLTF("models/map-test.glb");
 
   const clone = useMemo(() => {
@@ -13,7 +13,7 @@ export const Level1DataLabRoom1 = () => {
     clonedScene.traverse((object) => {
       if ((object as any).isMesh) {
         object.receiveShadow = true;
-        object.material.color = new Color('white');
+        object.material.color = new Color("white");
       }
     });
     return clonedScene;
@@ -21,18 +21,23 @@ export const Level1DataLabRoom1 = () => {
 
   return (
     <>
-      <fog attach="fog" args={["white", 0, 100]} />
+      {/* <fog attach="fog" args={["white", 0, 100]} /> */}
       <RigidBody
         colliders="trimesh"
         type="fixed"
         name="floor"
         position={[16, 0.1, 0]}
-        scale={[3, 3, 3]}
+        scale={[4, 4, 4]}
       >
         <primitive object={clone} />
         {/* Add a red box inside the RigidBody */}
         <Box args={[12, 6, 0.5]} position={[-8, 3, 4.9]}>
-          <meshStandardMaterial attach="material" color="red" transparent opacity={0} />
+          <meshStandardMaterial
+            attach="material"
+            color="red"
+            transparent
+            opacity={0}
+          />
         </Box>
       </RigidBody>
     </>

@@ -5,7 +5,7 @@ import { SkeletonUtils } from "three-stdlib";
 import { Color, MeshStandardMaterial } from "three";
 import { Box } from "@react-three/drei"; // Import Box from drei
 
-export const Level2ClassifyRoom3 = () => {
+export const MapRoom2 = () => {
   const map = useGLTF("models/map-test.glb");
 
   const clone = useMemo(() => {
@@ -27,7 +27,7 @@ export const Level2ClassifyRoom3 = () => {
         type="fixed"
         name="floor"
         position={[16, 0.1, 0]}
-        scale={[4, 4, 4]}
+        scale={[4, 6, 4]}
       >
         <primitive object={clone} />
         {/* Add a red box inside the RigidBody */}

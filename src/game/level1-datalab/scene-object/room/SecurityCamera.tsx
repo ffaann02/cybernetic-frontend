@@ -15,7 +15,6 @@
 //     ArrowDown: false,
 //   });
 
-
 //   useEffect(() => {
 //     const handleKeyDown = (event) => {
 //       setKeys((prevKeys) => ({ ...prevKeys, [event.key]: true }));
@@ -57,7 +56,6 @@
 //         rotation.y -= rotationSpeed;
 //         // laserRef.current.addTorque({ x: 0, y: 0, z: 10 }, true);
 //       }
-
 
 //       // Update vertical position (up/down) instead of rotation
 //       if (keys.w || keys.ArrowUp) {
@@ -102,15 +100,17 @@
 //   );
 // };
 
-
 import { Outlines, PerspectiveCamera } from "@react-three/drei";
 import { CuboidCollider, CylinderCollider } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useState, useRef } from "react";
 import { degreeNumberToRadian } from "../../../../utils";
 import * as THREE from "three";
+import { useLevel1Context } from "../../../../contexts/SceneContext/Level1Context";
 
-export const SecurityCamera = ({ cameraRef }) => {
+export const SecurityCamera = () => {
+  const { securityCameraRef: cameraRef } = useLevel1Context();
+
   const [keys, setKeys] = useState({
     w: false,
     a: false,
@@ -170,28 +170,64 @@ export const SecurityCamera = ({ cameraRef }) => {
       // Calculate the new position for the collider
       const laserOffset = new THREE.Vector3(0, 0, -52);
       laserOffset.applyQuaternion(cameraRef.current.quaternion);
-      const colliderPosition = new THREE.Vector3().copy(cameraRef.current.position).add(laserOffset);
+      const colliderPosition = new THREE.Vector3()
+        .copy(cameraRef.current.position)
+        .add(laserOffset);
 
       // Update the collider's position and rotation
       colliderRef.current.setTranslation(colliderPosition, true);
-      colliderRef.current.setRotation(new THREE.Quaternion().setFromEuler(new THREE.Euler(degreeNumberToRadian(0), rotation.y, degreeNumberToRadian(90))), true);
+      colliderRef.current.setRotation(
+        new THREE.Quaternion().setFromEuler(
+          new THREE.Euler(
+            degreeNumberToRadian(0),
+            rotation.y,
+            degreeNumberToRadian(90)
+          )
+        ),
+        true
+      );
     }
   });
 
   return (
     <>
-      <group ref={cameraRef} position={[-3, 22, -21]} rotation={[degreeNumberToRadian(0), degreeNumberToRadian(140), degreeNumberToRadian(0)]}>
-        <CuboidCollider 
-          name="CameraLaser" 
-          ref={colliderRef} 
-          args={[0.5, 0.5, 50]} 
-          rotation={[degreeNumberToRadian(0), degreeNumberToRadian(0), degreeNumberToRadian(0)]} />
-        <mesh position={[0, 0, -52]} rotation={[degreeNumberToRadian(90), degreeNumberToRadian(0), degreeNumberToRadian(0)]}>
+      <group
+        ref={cameraRef}
+        position={[-3, 22, -21]}
+        rotation={[
+          degreeNumberToRadian(0),
+          degreeNumberToRadian(140),
+          degreeNumberToRadian(0),
+        ]}
+      >
+        <CuboidCollider
+          name="CameraLaser"
+          ref={colliderRef}
+          args={[0.5, 0.5, 50]}
+          rotation={[
+            degreeNumberToRadian(0),
+            degreeNumberToRadian(0),
+            degreeNumberToRadian(0),
+          ]}
+        />
+        <mesh
+          position={[0, 0, -52]}
+          rotation={[
+            degreeNumberToRadian(90),
+            degreeNumberToRadian(0),
+            degreeNumberToRadian(0),
+          ]}
+        >
           <cylinderGeometry args={[0.05, 0.05, 100, 32]} />
           <meshBasicMaterial color="#4ff08d" />
-           <Outlines thickness={5} color="white" angle={180} screenspace={true} />
+          <Outlines
+            thickness={5}
+            color="white"
+            angle={180}
+            screenspace={true}
+          />
         </mesh>
-        <PerspectiveCamera makeDefault/>
+        <PerspectiveCamera makeDefault />
       </group>
     </>
   );

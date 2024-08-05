@@ -1,12 +1,12 @@
 import { Box, Environment, useKeyboardControls } from "@react-three/drei";
-import { Level2ClassifyRoom1 } from "../map/Level2-Classify-Room1";
+import { MapRoom1 } from "../map/MapRoom1";
 import { degreeNumberToRadian } from "../../../utils";
 import { useContext, useRef, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import Door from "../../shared-object/object/Door";
-import { Level2ClassifyRoom2 } from "../map/Level2-Classify-Room2";
+import { MapRoom2 } from "../map/MapRoom2";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
-import { Room } from "../../level1-datalab/scene-object/Level1-DataLab";
+import Room from "../../shared-object/Room";
 import Room1 from "./room1/Room1";
 import { Item } from "../../shared-object/object/Item";
 import { useFrame } from "@react-three/fiber";
@@ -15,34 +15,16 @@ import Room2 from "./room2/Room2";
 import Room3 from "./room3/Room3";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize, Resolution } from "postprocessing";
-import { Level2ClassifyRoom3 } from "../map/Level2-Classify-Room3";
+import { MapRoom3 } from "../map/MapRoom3";
+import { useLevel2Context } from "../../../contexts/SceneContext/Level2Context";
 
-const Level2ClassifyEnvironment = ({
+const SceneObject = ({
   currentRoom,
   setCurrentRoom,
   door01_destination,
   door01_back,
-  isOpenGlassClassifier,
-  setIsOpenGlassClassifier,
-  isActivateScanner,
-  setIsActivateScanner,
-  dataCollectNotify,
   door02_destination,
   door02_back,
-  isOpenGlassTest,
-  setIsOpenGlassTest,
-  currentComputerGlassTest,
-  setCurrentComputerGlassTest,
-  resetTrigger,
-  setResetTrigger,
-  dangerPattern,
-  setDangerPattern,
-  ufoActiveList,
-  setUfoActiveList,
-  glassParameters,
-  setGlassParameters,
-  isOpenTrainComputer,
-                setIsOpenTrainComputer,
 }) => {
   const {
     playerRigidBody,
@@ -51,6 +33,27 @@ const Level2ClassifyEnvironment = ({
     setIsInteracting,
     setIsUsingSecurityCamera,
   } = useContext(GameContext);
+  const {
+    isOpenGlassClassifier,
+    setIsOpenGlassClassifier,
+    isActivateScanner,
+    setIsActivateScanner,
+    currentComputerGlassTest,
+    setCurrentComputerGlassTest,
+    isOpenGlassTest,
+    setIsOpenGlassTest,
+    resetTrigger,
+    setResetTrigger,
+    dangerPattern,
+    setDangerPattern,
+    ufoActiveList,
+    setUfoActiveList,
+    glassParameters,
+    setGlassParameters,
+    isOpenTrainComputer,
+    setIsOpenTrainComputer,
+    dataCollectNotify,
+  } = useLevel2Context();
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
 
   const [lastPressTime, setLastPressTime] = useState(0);
@@ -106,15 +109,8 @@ const Level2ClassifyEnvironment = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
           />
-          <Room1
-            isOpenGlassClassifier={isOpenGlassClassifier}
-            setIsOpenGlassClassifier={setIsOpenGlassClassifier}
-            isActivateScanner={isActivateScanner}
-            setIsActivateScanner={setIsActivateScanner}
-            resetTrigger={resetTrigger}
-            setResetTrigger={setResetTrigger}
-          />
-          <Level2ClassifyRoom1 />
+          <Room1 />
+          <MapRoom1 />
         </Room>
       )}
 
@@ -150,12 +146,8 @@ const Level2ClassifyEnvironment = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={3}
           />
-          <Room2
-            dataCollectNotify={dataCollectNotify}
-            glassParameters={glassParameters}
-            setGlassParameters={setGlassParameters}
-          />
-          <Level2ClassifyRoom2 />
+          <Room2 />
+          <MapRoom2 />
         </Room>
       )}
 
@@ -176,23 +168,8 @@ const Level2ClassifyEnvironment = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
           />
-          <Room3
-            isOpenGlassTest={isOpenGlassTest}
-            setIsOpenGlassTest={setIsOpenGlassTest}
-            currentComputerGlassTest={currentComputerGlassTest}
-            setCurrentComputerGlassTest={setCurrentComputerGlassTest}
-            resetTrigger={resetTrigger}
-            setResetTrigger={setResetTrigger}
-            dangerPattern={dangerPattern}
-            setDangerPattern={setDangerPattern}
-            ufoActiveList={ufoActiveList}
-            setUfoActiveList={setUfoActiveList}
-            glassParameters={glassParameters}
-                setGlassParameters={setGlassParameters}
-                isOpenTrainComputer={isOpenTrainComputer}
-                setIsOpenTrainComputer={setIsOpenTrainComputer}
-          />
-          <Level2ClassifyRoom3 />
+          <Room3 />
+          <MapRoom3 />
         </Room>
       )}
 
@@ -223,4 +200,4 @@ const Level2ClassifyEnvironment = ({
     </>
   );
 };
-export default Level2ClassifyEnvironment;
+export default SceneObject;

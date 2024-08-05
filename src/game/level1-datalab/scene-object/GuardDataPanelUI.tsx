@@ -3,32 +3,28 @@ import { MeterGroup } from "primereact/metergroup";
 import { useContext, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { GameContext } from "../../../contexts/GameContext";
-import { label } from "three/examples/jsm/nodes/Nodes.js";
-import { vec3 } from "@react-three/rapier";
+import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
 
 const GuardDataPanelUI = ({
-  showDialog,
-  setShowDialog,
-  // values,
-  // inputValues,
-  preparedImages,
-  selectedIndices,
-  toggleSelection,
-  imageCollectedList,
-  textCollectedList,
-  audioCollectedList,
-  objectCollectedList,
-  numericalCollectedList,
-  maxImageCollected,
-  maxAudioCollected,
-  maxTextCollected,
-  maxObjectCollected,
-  maxNumericalCollected,
-  isSourceFull,
-  setIsSourceFull,
-  collectedFullNotify,
-  setIsSubmitClicked,
 }) => {
+  const {
+    showDialog,
+    setShowDialog,
+    imageCollectedList,
+    textCollectedList,
+    audioCollectedList,
+    objectCollectedList,
+    numericalCollectedList,
+    maxImageCollected,
+    maxAudioCollected,
+    maxTextCollected,
+    maxObjectCollected,
+    maxNumericalCollected,
+    isSourceFull,
+    setIsSourceFull,
+    setIsSubmitClicked,
+
+  } = useLevel1Context();
 
   const { setIsInteracting } = useContext(GameContext);
 
@@ -42,6 +38,7 @@ const GuardDataPanelUI = ({
   const multipleScale = 100 / maxAllCollected
 
   const [isCraneMoving, setIsCraneMoving] = useState(false);
+
 
   const values = [
     {

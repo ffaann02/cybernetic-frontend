@@ -3,15 +3,9 @@ import { useContext, useEffect, useState } from "react";
 import TypeWriter from "./TypeWriter";
 import { Checkbox } from "primereact/checkbox";
 import { GameContext } from "../../../contexts/GameContext";
+import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
 
-const ChatwithGoodBot = ({
-  confirmSelectedItems,
-  dataCollectNotify,
-  textCollectedList,
-  setTextCollectedList,
-  audioCollectedList,
-  setAudioCollectedList,
-}) => {
+const ChatwithGoodBot = () => {
   const [dialogLists, setDialogLists] = useState([
     {
       step: 1,
@@ -19,6 +13,15 @@ const ChatwithGoodBot = ({
     },
   ]);
   const { setCurrentHit, setIsInteracting } = useContext(GameContext);
+  const {
+    confirmSelectedItems,
+    dataCollectNotify,
+    textCollectedList,
+    setTextCollectedList,
+    audioCollectedList,
+    setAudioCollectedList,
+  } = useLevel1Context();
+
   console.log(confirmSelectedItems);
 
   const [buttonInteraction, setButtonInteraction] = useState([
@@ -105,7 +108,7 @@ const ChatwithGoodBot = ({
         ...prevList,
         {
           index: currentStep,
-          text: 'GoodBotAudio_DataLab/' + currentStep,
+          text: "GoodBotAudio_DataLab/" + currentStep,
           source: "RobotNPC",
         },
       ]);

@@ -1,18 +1,16 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { CuboidCollider, RigidBody, vec3 } from "@react-three/rapier";
 import { Item } from "../../../shared-object/object/Item";
 import { degreeNumberToRadian } from "../../../../utils";
-import { Box, Cylinder, useKeyboardControls } from "@react-three/drei";
-import CountdownComputer from "./CountdownComputer";
+import { Box,useKeyboardControls } from "@react-three/drei";
+import CountdownComputer from "../room2/CountdownComputer";
 import FakeGlowMaterial from "../../../../components/FakeGlowMaterial";
 import { useFrame } from "@react-three/fiber";
-import WeightMeterComputer from "./WeightMeterComputer";
 import { GameContext } from "../../../../contexts/GameContext";
 import { GoodBot } from "../../../../GoodBot";
-import { CylinderCollider, CapsuleCollider } from "@react-three/rapier";
 import { Controls } from "../../../../controllers/CharacterController";
-import LaserTargetObject, { LaserTargetObjectProps } from "./LaserTargetObject";
-import { LaserTargetObjectData } from "./LaserTargetObjectData";
+import LaserTargetObject, { LaserTargetObjectProps } from "../room2/LaserTargetObject";
+import { useLevel1Context } from "../../../../contexts/SceneContext/Level1Context";
 
 const Room2 = ({
   totalWeight,
@@ -21,18 +19,20 @@ const Room2 = ({
   setAllowCraneUp,
   setObjectCollectedList,
   setNumericalCollectedList,
-  objectData,
-  setObjectData,
-  dropedObject,
-  setDropedObject,
-  currentLaserTarget,
-  setCurrentLaserTarget,
   dataCollectNotify,
 }) => {
   const [laserColor, setLaserColor] = useState("red"); // Initial color is red
   const [countdownOpacities, setCountdownOpacities] = useState([
     0.9, 0.9, 0.9, 0.9, 0.9,
   ]); // Initial opacities
+  const {
+    objectData,
+    setObjectData,
+    dropedObject,
+    setDropedObject,
+    currentLaserTarget,
+    setCurrentLaserTarget,
+  } = useLevel1Context();
 
   const cameraRef = useRef();
 

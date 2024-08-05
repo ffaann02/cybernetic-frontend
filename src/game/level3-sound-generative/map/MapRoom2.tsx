@@ -1,11 +1,11 @@
-import { Box, useGLTF } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { useMemo } from "react";
 import { SkeletonUtils } from "three-stdlib";
-import { Color } from "three";
-import { degreeNumberToRadian } from "../../../utils";
+import { Color, MeshStandardMaterial } from "three";
+import { Box } from "@react-three/drei"; // Import Box from drei
 
-export const Level1DataLabRoom2 = () => {
+export const MapRoom2 = () => {
   const map = useGLTF("models/map-test.glb");
 
   const clone = useMemo(() => {
@@ -21,16 +21,17 @@ export const Level1DataLabRoom2 = () => {
 
   return (
     <>
+      {/* <fog attach="fog" args={["white", 0, 100]} /> */}
       <RigidBody
         colliders="trimesh"
         type="fixed"
         name="floor"
         position={[16, 0.1, 0]}
-        scale={[5, 4, 5]}
-        // ref={enterDoorRef}a
+        scale={[4, 6, 4]}
       >
         <primitive object={clone} />
-        <Box args={[12, 6, 0.1]} position={[-8, 3, 4.9]}>
+        {/* Add a red box inside the RigidBody */}
+        <Box args={[12, 6, 0.5]} position={[-8, 3, 4.9]}>
           <meshStandardMaterial
             attach="material"
             color="red"

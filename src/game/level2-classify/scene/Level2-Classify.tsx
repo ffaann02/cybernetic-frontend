@@ -18,20 +18,16 @@ import {
   PerspectiveCamera,
   useKeyboardControls,
 } from "@react-three/drei";
-import Level3SoundGenEnvironment from "../scene-object/Level2-Classify";
-import { SecurityCamera } from "../../level1-datalab/scene-object/room/SecurityCamera";
 import { degreeNumberToRadian } from "../../../utils";
-import CheckListGuideUI from "../ui/CheckListGuideUI";
 // import useSound from "use-sound";
 import { Howl, Howler } from "howler";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import CDStorageUI from "../ui/CDStorageUI";
-import Level2ClassifyEnvironment from "../scene-object/Level2-Classify";
-import VideoFootageUI from "../ui/VideoFootageUI";
+import Level2ClassifyEnvironment from "../scene-object/SceneObject";
 import GlassClassifierUI from "../ui/GlassClassifierUI";
 import { Toast } from "primereact/toast";
 import ComputerTestGlassUI from "../ui/ComputerTestGlassUI";
 import TrainGlassClassifierUI from "../ui/TrainGlassClassifierUI";
+import SceneObject from "../scene-object/SceneObject";
+import { useLevel2Context } from "../../../contexts/SceneContext/Level2Context";
 
 interface HomeProps {}
 
@@ -68,45 +64,28 @@ const Level2Classify: React.FC<HomeProps> = () => {
   const door02_destination = useRef(null);
   const door02_back = useRef(null);
 
-  const [isOpenAudioInput, setIsOpenAudioInput] = useState(false);
-  const [isOpenVideoFootage, setIsOpenVideoFootage] = useState(false);
-  const [isPlayingSound, setIsPlayingSound] = useState(false);
-
-  const [isOpenCD, setIsOpenCD] = useState(false);
-  const [isOpenTrainComputer, setIsOpenTrainComputer] = useState(false);
-  const [isOpenGlassClassifier, setIsOpenGlassClassifier] = useState(false);
-  const [isActivateScanner, setIsActivateScanner] = useState(false);
-  const [currentComputerGlassTest, setCurrentComputerGlassTest] = useState(0);
-  const [isOpenGlassTest, setIsOpenGlassTest] = useState(false);
-  const [resetTrigger, setResetTrigger] = useState(0);
-  const [dangerPattern, setDangerPattern] = useState([2,2,2,1,2,2]);
-  const [ufoActiveList, setUfoActiveList] = useState([false, false, false]);
-  const [glassParameters, setGlassParameters] = useState([]);
-
-  const handleAudioEnd = () => {
-    console.log("hello end");
-    setIsPlayingSound(false);
-  };
-
-  const handlePlaySound = (selectedAudioPath, volume, isLooping) => {
-    console.log(selectedAudioPath, volume, isLooping);
-    setSelectedAudioPath(selectedAudioPath);
-    setVolume(volume);
-    setIsLooping(isLooping);
-    setCurrentHit("");
-    setIsInteracting(false);
-    setIsOpenAudioInput(false);
-    setIsPlayingSound(true);
-    // Toggle the playTrigger to ensure useEffect triggers
-    var sound = new Howl({
-      src: [selectedAudioPath],
-      volume: volume,
-      loop: isLooping,
-      onend: handleAudioEnd,
-    });
-
-    sound.play();
-  };
+  
+  const {
+    isOpenGlassClassifier,
+    setIsOpenGlassClassifier,
+    isActivateScanner,
+    setIsActivateScanner,
+    currentComputerGlassTest,
+    setCurrentComputerGlassTest,
+    isOpenGlassTest,
+    setIsOpenGlassTest,
+    resetTrigger,
+    setResetTrigger,
+    dangerPattern,
+    setDangerPattern,
+    ufoActiveList,
+    setUfoActiveList,
+    glassParameters,
+    setGlassParameters,
+    isOpenTrainComputer,
+    setIsOpenTrainComputer,
+    dataCollectNotify,
+  } = useLevel2Context();
 
   const handlePressActivate = () => {
     setResetTrigger((prev) => prev + 1);
@@ -130,8 +109,6 @@ const Level2Classify: React.FC<HomeProps> = () => {
     setCurrentHit("");
     setIsOpenGlassTest(false);
   }
-
-  const dataCollectNotify = useRef(null);
 
   return (
     <>
@@ -186,32 +163,13 @@ const Level2Classify: React.FC<HomeProps> = () => {
               <CharacterController spawnPosition={[
                 -2,6,8
               ]} />
-              <Level2ClassifyEnvironment
+              <SceneObject
                 currentRoom={currentRoom}
                 setCurrentRoom={setCurrentRoom}
                 door01_destination={door01_destination}
                 door01_back={door01_back}
-                isOpenGlassClassifier={isOpenGlassClassifier}
-                setIsOpenGlassClassifier={setIsOpenGlassClassifier}
-                isActivateScanner={isActivateScanner}
-                setIsActivateScanner={setIsActivateScanner}
-                dataCollectNotify={dataCollectNotify}
                 door02_destination={door02_destination}
                 door02_back={door02_back}
-                isOpenGlassTest={isOpenGlassTest}
-                setIsOpenGlassTest={setIsOpenGlassTest}
-                currentComputerGlassTest={currentComputerGlassTest}
-                setCurrentComputerGlassTest={setCurrentComputerGlassTest}
-                resetTrigger={resetTrigger}
-                setResetTrigger={setResetTrigger}
-                dangerPattern={dangerPattern}
-                setDangerPattern={setDangerPattern}
-                ufoActiveList={ufoActiveList}
-                setUfoActiveList={setUfoActiveList}
-                glassParameters={glassParameters}
-                setGlassParameters={setGlassParameters}
-                isOpenTrainComputer={isOpenTrainComputer}
-                setIsOpenTrainComputer={setIsOpenTrainComputer}
               />
             </Physics>
           </Suspense>

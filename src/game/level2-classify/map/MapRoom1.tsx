@@ -2,10 +2,9 @@ import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { useMemo } from "react";
 import { SkeletonUtils } from "three-stdlib";
-import { Color, MeshStandardMaterial } from "three";
 import { Box } from "@react-three/drei"; // Import Box from drei
 
-export const Level3SoundGenRoom2 = () => {
+export const MapRoom1 = () => {
   const map = useGLTF("models/map-test.glb");
 
   const clone = useMemo(() => {
@@ -13,7 +12,7 @@ export const Level3SoundGenRoom2 = () => {
     clonedScene.traverse((object) => {
       if ((object as any).isMesh) {
         object.receiveShadow = true;
-        object.material.color = new Color("white");
+        // object.material.color = new Color('white');
       }
     });
     return clonedScene;
@@ -27,17 +26,12 @@ export const Level3SoundGenRoom2 = () => {
         type="fixed"
         name="floor"
         position={[16, 0.1, 0]}
-        scale={[4, 6, 4]}
+        scale={[4, 5, 4]}
       >
-        <primitive object={clone} />
+        <primitive object={clone}/>
         {/* Add a red box inside the RigidBody */}
         <Box args={[12, 6, 0.5]} position={[-8, 3, 4.9]}>
-          <meshStandardMaterial
-            attach="material"
-            color="red"
-            transparent
-            opacity={0}
-          />
+          <meshStandardMaterial attach="material" color="red" transparent opacity={0} />
         </Box>
       </RigidBody>
     </>

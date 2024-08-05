@@ -12,6 +12,7 @@ import jumpSprite from "/images/jump.png";
 import deathSprite from "/images/Death.png";
 import { AnimationState } from "../hooks/useCharacterAnimation";
 import { GameContext } from "../contexts/GameContext";
+import FakeGlowMaterial from "../components/FakeGlowMaterial";
 
 const Character2D = ({
   direction,
