@@ -21,7 +21,7 @@ export const Level5FinalRoom1Map = () => {
 
   return (
     <>
-      <fog attach="fog" args={["red", 0, 120]} />
+      <fog attach="fog" args={["#d30303", 0, 120]} />
       <RigidBody
         colliders="trimesh"
         type="fixed"

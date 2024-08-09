@@ -10,24 +10,25 @@ import { degreeNumberToRadian } from '../../../utils';
 import { GameContext } from '../../../contexts/GameContext';
 import { RigidBody } from '@react-three/rapier';
 import Level5Room2Environment from './room2/Level5Room2Environment';
+import { useLevel5Context } from '../../../contexts/SceneContext/Level5Context';
 
 export const Room = memo(({ children }) => {
     return <>{children}</>;
 });
 
-export const Level5FinalEnvironment = ({
-    bossActionDuration,
-    setBossChargingCountDown,
-    setBossActionState,
-    bossHealth,
-    setBossHealth,
-    BossAttackPatternPredictModel,
-    setPredictionStat,
-    setIsDisplayTrainingModal,
-    setTrainningResponse,
-}) => {
+export const Level5FinalEnvironment = ({}) => {
 
     const { playerRigidBody } = useContext(GameContext);
+    const {
+        bossActionDuration,
+        setBossChargingCountDown,
+        setBossActionState,
+        bossHealth,
+        setBossHealth,
+        BossAttackPatternPredictModel,
+        setPredictionStat,
+    } = useLevel5Context();
+
     const [currentRoom, setCurrentRoom] = useState(1);
 
     const door01_destination = useRef<any>(null);
@@ -67,15 +68,7 @@ export const Level5FinalEnvironment = ({
                         setCurrentRoom={setCurrentRoom}
                         nextRoom={2}
                     />
-                    <Level5Room1Environment
-                        bossActionDuration={bossActionDuration}
-                        setBossChargingCountDown={setBossChargingCountDown}
-                        setBossActionState={setBossActionState}
-                        bossHealth={bossHealth}
-                        setBossHealth={setBossHealth}
-                        BossAttackPatternPredictModel={BossAttackPatternPredictModel}
-                        setPredictionStat={setPredictionStat}
-                    />
+                    <Level5Room1Environment />
                 </Room>)}
 
             <RigidBody

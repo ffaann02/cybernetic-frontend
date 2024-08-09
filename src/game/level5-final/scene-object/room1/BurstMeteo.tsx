@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { MeteoDataInterface } from '../../../../controllers/BossController';
 import FakeGlowMaterial from '../../../../components/FakeGlowMaterial';
@@ -6,7 +6,7 @@ import FakeGlowMaterial from '../../../../components/FakeGlowMaterial';
 interface Props {
     bossState: string;
     meteoData: MeteoDataInterface[];
-    handleCollisionEnter: (id: number) => ({ other }) => void;
+    handleCollisionEnter: (id: number, position: any) => ({ other }) => void;
 }
 
 const BurstMeteo: React.FC<Props> = ({
@@ -27,15 +27,14 @@ const BurstMeteo: React.FC<Props> = ({
                     scale={[4, 4, 4]}
                     mass={100}
                     gravityScale={10}
-                    onCollisionEnter={handleCollisionEnter(meteo.id)}
+                    onCollisionEnter={handleCollisionEnter(meteo.id, meteo.position)}
                 >
                     <mesh>
                         <cylinderGeometry args={[0.4, 0.4, 10]} />
-                        {/* <meshStandardMaterial color="red" transparent opacity={meteo.opacity} /> */}
                         <FakeGlowMaterial
                             glowColor='red'
                             falloff={2}
-                            glowInternalRadius={4}
+                            glowInternalRadius={1}
                             opacity={meteo.opacity} />
                     </mesh>
                 </RigidBody>

@@ -1,29 +1,41 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 import BossController from '../../../../controllers/BossController'
 import { Level5FinalRoom1Map } from '../../map/Level5-Final-Room1-Map'
 import { CuboidCollider, RigidBody, vec3 } from '@react-three/rapier'
 import { degreeNumberToRadian } from '../../../../utils'
 import { Item } from '../../../shared-object/object/Item'
 import { GameContext } from '../../../../contexts/GameContext'
-import { useKeyboardControls } from '@react-three/drei'
+import { shaderMaterial, useKeyboardControls } from '@react-three/drei'
 import { Controls } from '../../../../controllers/CharacterController'
-import { useFrame } from '@react-three/fiber'
+import { extend, useFrame } from '@react-three/fiber'
 import TurretGunControl from './TurretGunControl'
 import DoorToBossFight from './DoorToBossFight'
+import FakeGlowMaterial from '../../../../components/FakeGlowMaterial'
+import * as THREE from 'three'
+import { DissolveMaterial } from '../../../../components/DissolveMaterial';
+import { useLevel5Context } from '../../../../contexts/SceneContext/Level5Context'
 
-type Props = {}
+const Level5Room1Environment = ({}) => {
 
-const Level5Room1Environment = ({
-    bossActionDuration,
-    setBossChargingCountDown,
-    setBossActionState,
-    bossHealth,
-    setBossHealth,
-    BossAttackPatternPredictModel,
-    setPredictionStat,
-}) => {
+    const { 
+        playerRigidBody, 
+        currentHit, 
+        setCurrentHit, 
+        isUsingTurret, 
+        setIsUsingTurret, 
+        isPlayerInBossArea, 
+        setIsPlayerInBossArea, 
+        setIsInteracting } = useContext(GameContext);
+    const {
+        bossActionDuration,
+        setBossChargingCountDown,
+        setBossActionState,
+        bossHealth,
+        setBossHealth,
+        BossAttackPatternPredictModel,
+        setPredictionStat,
+    } = useLevel5Context();
 
-    const { playerRigidBody, currentHit, setCurrentHit, isUsingTurret, setIsUsingTurret, isPlayerInBossArea, setIsPlayerInBossArea, setIsInteracting } = useContext(GameContext);
     const ePressed = useKeyboardControls((state) => state[Controls.coding]);
     const [lastPressTime, setLastPressTime] = useState(0);
 
@@ -92,6 +104,8 @@ const Level5Room1Environment = ({
     const rightTurretGunPosition = { x: -8, y: 0.4, z: -10 };
     const TurretGunRectLightOffset = 2;
 
+    const boxMaterial = new THREE.MeshStandardMaterial({ color: "white" });
+
     return (
         <>
             <Level5FinalRoom1Map />
@@ -111,7 +125,7 @@ const Level5Room1Environment = ({
                             interval: 1000,
                         }}
                         BossAttackPatternPredictModel={BossAttackPatternPredictModel}
-                        setPredictionStat={setPredictionStat}/>
+                        setPredictionStat={setPredictionStat} />
                     <DoorToBossFight
                         leftDoorToBossFightRef={leftDoorToBossFightRef}
                         rightDoorToBossFightRef={rightDoorToBossFightRef}
@@ -294,7 +308,16 @@ const Level5Room1Environment = ({
                     outlineThickness={3}
                 />
             </RigidBody>
-
+            <mesh position={[-28, 6, 24]} scale={[4,4,4]}>
+                <boxGeometry />
+                <DissolveMaterial
+                    baseMaterial={boxMaterial}
+                    visible={true}
+                    // onFadeOut={true}
+                    color="#ff2600"
+                    duration={1}
+                />
+            </mesh>
         </>
     )
 }

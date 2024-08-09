@@ -69,6 +69,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
 
     const isCollisionProcessed = useRef<boolean>(false);
     const [enemyScale, setEnemyScale] = useState<number>(1);
+    const [enemyOpacity, setEnemyOpacity] = useState<number>(2);
 
     // Initialization of isStopped state
     const [isStopped, setIsStopped] = useState(false);
@@ -91,7 +92,6 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
 
     useEffect(() => {
         if (isChasing && flashlightRef.current && isHidden === false) {
-            flashlightRef.current.intensity = flashlightRef.current.intensity + 100;
             const timer = setInterval(() => {
                 setChaseTimer(prev => prev - 1);
             }, 1000);
@@ -139,7 +139,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                 rigidBody.current.setLinvel({ x: 0, y: 0, z: 0 });
                 setIsStopped(true);
 
-                flashlightRef.current.visible = false;
+                flashlightRef.current.intensity = 0;
                 setTimeout(() => {
                     // Move to the next waypoint after the delay
                     if (patrolType === 'turnback') {
@@ -164,7 +164,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     }
                     setIsStopped(false);
                     if (flashlightRef.current) {
-                        flashlightRef.current.visible = true;
+                        flashlightRef.current.intensity = 100;
                     }
                 }, idleTime * 1000);
             }
@@ -193,7 +193,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
 
             // Calculate the forward direction of the enemy (assuming facing along the Z-axis)
 
-            const forward = new THREE.Vector3(0, 0, enemyScale); // Adjust based on your enemy's rotation
+            const forward = new THREE.Vector3(0, 0, 1); // Adjust based on your enemy's rotation
             forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.atan2(directionVec.x, directionVec.z));
 
             // Calculate the angle between the enemy's forward direction and the vector to the player
@@ -211,15 +211,6 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
             }
         }
     };
-
-    // const updateFlashlight = (position: THREE.Vector3, range: number) => {
-    //     if (flashlightRef.current) {
-    //         flashlightRef.current.position.set(position.x, position.y + 1, position.z);
-    //         flashlightRef.current.angle = detectionAngle; // Set the cone angle
-    //         flashlightRef.current.distance = range * enemyScale; // Set the cone distance
-    //         flashlightRef.current.penumbra = 0.5; // Example penumbra
-    //     }
-    // };
 
     const updateFlashlight = (position: THREE.Vector3, range: number) => {
         if (flashlightRef.current) {
@@ -356,7 +347,23 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
         return newWaypoints;
     }
 
-    const evolve = () => {
+    const AffectBeforeEvolve = (time: number) => {
+        return new Promise((resolve) => {
+            let elapsedTime = 0; // Elapsed time in seconds
+            const interval = setInterval(() => {
+                elapsedTime += 0.1; // Increment elapsed time by 0.1 seconds
+                const opacity = 0.7 + 1.8 * Math.sin(elapsedTime * 8); // Sine wave calculation for smooth oscillation
+                setEnemyOpacity(opacity);
+                if (elapsedTime >= time) {
+                    setEnemyOpacity(2);
+                    return resolve(clearInterval(interval))
+                }
+            }, 100); // Update every 0.1 seconds
+        })
+    }
+
+    const evolve = async() => {
+        await AffectBeforeEvolve(2);
         switch (element) {
             case 'fire':
                 // Fire element: Increase size
@@ -431,7 +438,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     console.log("Prediction is correct");
                 }
                 else {
-                    evolve();
+                    await evolve();
                     console.log("Prediction is incorrect");
                 }
             } catch (error) {
@@ -487,16 +494,18 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     animation={animationState}
                     direction={direction}
                     color={color}
-                    scale={enemyScale} />
+                    scale={enemyScale}
+                    opacityOptional={enemyOpacity} />
             </RigidBody>
             {flashLightTargetRef && showLight &&
                 <spotLight
                     ref={flashlightRef}
-                    intensity={100}
+                    intensity={0}
                     decay={0.4}
+                    distance={detection_range}
                     color="white"
                     target={flashLightTargetRef.current?.children[0]}
-                    visible={false}
+                    visible={true}
                 />
             }
             {/* Spot light target */}

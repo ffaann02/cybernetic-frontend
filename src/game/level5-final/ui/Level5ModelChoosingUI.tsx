@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { GameContext } from '../../../contexts/GameContext'
+import { useLevel5Context } from '../../../contexts/SceneContext/Level5Context';
 
 type Props = {}
 
@@ -21,14 +22,16 @@ const DropdownComponent = ({ label, value, options, onChange }) => (
   </div>
 );
 
-const Level5ModelChoosingUI = ({
-  predictionModelChoices,
-  BossAttackPatternPredictModel,
-  setBossAttackPatternPredictModel,
-  predictionStat,
-}) => {
+const Level5ModelChoosingUI = ({}) => {
 
   const { currentHit, isInteracting, setIsInteracting } = useContext(GameContext);
+  const {
+    predictionModelChoices,
+    BossAttackPatternPredictModel,
+    setBossAttackPatternPredictModel,
+    predictionStat,
+  } = useLevel5Context();
+
   const [currentPredictionStat, setCurrentPredictionStat] = useState();
   const [tempBossAttackPatternPredictModel, setTempBossAttackPatternPredictModel] = useState(BossAttackPatternPredictModel);
 
