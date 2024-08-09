@@ -25,6 +25,8 @@ import SlimeLab from "./game/slime-lab/scene/SlimeLab";
 import { Level1ContextProvider } from "./contexts/SceneContext/Level1Context";
 import { Level2ContextProvider } from "./contexts/SceneContext/Level2Context";
 import { Level3ContextProvider } from "./contexts/SceneContext/Level3Context";
+import OnlineGame1 from "./game/online-game1/scene/OnlineGame1";
+import { TutorialContextProvider } from "./contexts/SceneContext/TutorialContext";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -50,7 +52,14 @@ function App() {
                               title="enemy-environment"
                               scene={<EnemyEnvironment />}
                             />
-                            <Scene title="tutorial" scene={<Tutorial />} />
+                            <Scene
+                              title="tutorial"
+                              scene={
+                                <TutorialContextProvider>
+                                  <Tutorial />
+                                </TutorialContextProvider>
+                              }
+                            />
                             <Scene
                               title="level-selection"
                               scene={<LevelSelection />}
@@ -90,6 +99,14 @@ function App() {
                     }
                   />
                 </Route>
+                <Route
+                  path="/online-game1/:roomId"
+                  element={
+                    <div className="h-screen">
+                      <Scene title="welcome" scene={<OnlineGame1 />} />
+                    </div>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/create-character" element={<CreateCharacter />} />

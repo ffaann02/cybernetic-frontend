@@ -1,4 +1,4 @@
-const Bottom_LeftArm = () => {
+const BottomLeftArm = () => {
   return (
     <div>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 207.28 92.37">
@@ -59,4 +59,4 @@ const Bottom_LeftArm = () => {
     </div>
   );
 };
-export default Bottom_LeftArm;
+export default BottomLeftArm;

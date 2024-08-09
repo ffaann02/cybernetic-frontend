@@ -4,6 +4,7 @@ import { saveAs } from "file-saver";
 import Idle1 from "./SpriteFrame/Idle/Idle1";
 import Idle2 from "./SpriteFrame/Idle/Idle2";
 import Idle3 from "./SpriteFrame/Idle/Idle3";
+import Idle4 from "./SpriteFrame/Idle/Idle4";
 import Running1 from "./SpriteFrame/Running/Running1";
 import Running2 from "./SpriteFrame/Running/Running2";
 import Running3 from "./SpriteFrame/Running/Running3";
@@ -14,238 +15,177 @@ import Jump1 from "./SpriteFrame/Jump/Jump1";
 import Jump2 from "./SpriteFrame/Jump/Jump2";
 import Jump3 from "./SpriteFrame/Jump/Jump3";
 import { useFirebaseStorage } from "../../../hooks/useFirebaseStorage";
-import testfromTif from "../../../components/create-character/MainCharacter.png"
+import LiftIdle1 from "./SpriteFrame/Lift-Idle/LiftIdle1";
+import LiftIdle2 from "./SpriteFrame/Lift-Idle/LiftIdle2";
+import LiftIdle3 from "./SpriteFrame/Lift-Idle/LiftIdle3";
+import LiftRunning1 from "./SpriteFrame/Lift-Running/LiftRunning1";
+import LiftRunning2 from "./SpriteFrame/Lift-Running/LiftRunning2";
+import LiftRunning3 from "./SpriteFrame/Lift-Running/LiftRunning3";
+import LiftRunning4 from "./SpriteFrame/Lift-Running/LiftRunning4";
+import LiftRunning5 from "./SpriteFrame/Lift-Running/LiftRunning5";
+import LiftRunning6 from "./SpriteFrame/Lift-Running/LiftRunning6";
 
-const CharacterPreview = () => {
+const CharacterPreview = ({
+  idle_frame1,
+  idle_frame2,
+  idle_frame3,
+  idle_frame4,
+  run_frame_1,
+  run_frame_2,
+  run_frame_3,
+  run_frame_4,
+  run_frame_5,
+  run_frame_6,
+  jump_frame_1,
+  jump_frame_2,
+  jump_frame_3,
+  lift_run_frame_1,
+  lift_run_frame_2,
+  lift_run_frame_3,
+  lift_run_frame_4,
+  lift_run_frame_5,
+  lift_run_frame_6,
+  lift_idle_frame_1,
+  lift_idle_frame_2,
+  lift_idle_frame_3,
+  isExportAnimation,
+  IdleExportToPng,
+  LiftIdleExportToPng,
+  RunningExportToPng,
+  LiftRunningExportToPng,
+  JumpExportToPng,
+}) => {
   const [currentFrame, setCurrentFrame] = useState<number>(0);
-  const frame1 = useRef<HTMLDivElement>(null);
-  const frame2 = useRef<HTMLDivElement>(null);
-  const frame3 = useRef<HTMLDivElement>(null);
 
-  const run_frame_1 = useRef<HTMLDivElement>(null);
-  const run_frame_2 = useRef<HTMLDivElement>(null);
-  const run_frame_3 = useRef<HTMLDivElement>(null);
-  const run_frame_4 = useRef<HTMLDivElement>(null);
-  const run_frame_5 = useRef<HTMLDivElement>(null);
-  const run_frame_6 = useRef<HTMLDivElement>(null);
-  const jump_frame_1 = useRef<HTMLDivElement>(null);
-  const jump_frame_2 = useRef<HTMLDivElement>(null);
-  const jump_frame_3 = useRef<HTMLDivElement>(null);
-
-  const frames = [
-    <Jump1 />,
-    <Jump2 />,
-    <Jump3 />,
+  const [animation, setAnimation] = useState<string>("idle");
+  const animationList = [
+    { name: "idle", title: "Idle" },
+    { name: "running", title: "Running" },
+    { name: "picking", title: "Picking Run" },
+    { name: "picking_idle", title: "Picking Idle" },
+    { name: "death", title: "Death" },
+  ];
+  const [animationSpeed, setAnimationSpeed] = useState<number>(100);
+  const animationSpeedList = [
+    { name: 100, title: "Fast" },
+    { name: 200, title: "Normal" },
+    { name: 500, title: "Slow" },
   ];
 
+  const idleFrames = [<Idle1 />, <Idle2 />, <Idle3 />, <Idle4 />];
+
+  const runningFrames = [
+    <Running1 />,
+    <Running2 />,
+    <Running3 />,
+    <Running4 />,
+    <Running5 />,
+    <Running6 />,
+  ];
+
+  const idleLiftFrames = [<LiftIdle1 />, <LiftIdle2 />, <LiftIdle3 />];
+
+  const runningLiftFrames = [
+    <LiftRunning1 />,
+    <LiftRunning2 />,
+    <LiftRunning3 />,
+    <LiftRunning4 />,
+    <LiftRunning5 />,
+    <LiftRunning6 />,
+  ];
+
+  const getFrames = () => {
+    switch (animation) {
+      case "idle":
+        return idleFrames;
+      case "running":
+        return runningFrames;
+      case "picking_idle":
+        return idleLiftFrames;
+      case "picking":
+        return runningLiftFrames;
+      default:
+        return [];
+    }
+  };
+
+  const frames = getFrames();
+
   const { uploadImage } = useFirebaseStorage();
-
-  const IdleExportToPng = async () => {
-    const captureImage = async (
-      frameRef: React.RefObject<HTMLDivElement>,
-      index: number
-    ): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        if (!frameRef.current) {
-          reject(new Error(`Frame ${index + 1} ref is not available.`));
-          return;
-        }
-
-        toPng(frameRef.current, { backgroundColor: "rgba(0,0,0,0)" })
-          .then((dataUrl: string) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = (err) => reject(err);
-            img.src = dataUrl;
-          })
-          .catch((err: Error) => reject(err));
-      });
-    };
-
-    try {
-      // Capture all three frames
-      const [img1, img2, img3] = await Promise.all([
-        captureImage(frame1, 0),
-        captureImage(frame2, 1),
-        captureImage(frame3, 2),
-      ]);
-
-      // Once all images are loaded, create the sprite sheet
-      const canvas = document.createElement("canvas");
-      canvas.width = img1.width * 3;
-      canvas.height = img1.height;
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        ctx.drawImage(img1, 0, 0);
-        ctx.drawImage(img2, img1.width, 0);
-        ctx.drawImage(img3, img1.width * 2, 0);
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            saveAs(blob, "character-sprite.png");
-          }
-        }, "image/png");
-      }
-    } catch (err) {
-      console.error("Error exporting PNG:", err);
-    }
-  };
-
-  const RunningExportToPng = async () => {
-    const captureImage = async (
-      frameRef: React.RefObject<HTMLDivElement>,
-      index: number
-    ): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        if (!frameRef.current) {
-          reject(new Error(`Frame ${index + 1} ref is not available.`));
-          return;
-        }
-
-        toPng(frameRef.current, { backgroundColor: "rgba(0,0,0,0)" })
-          .then((dataUrl: string) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = (err) => reject(err);
-            img.src = dataUrl;
-          })
-          .catch((err: Error) => reject(err));
-      });
-    };
-
-    try {
-      // Capture all three frames
-      const [img1, img2, img3, img4, img5, img6] = await Promise.all([
-        captureImage(run_frame_1, 0),
-        captureImage(run_frame_2, 1),
-        captureImage(run_frame_3, 2),
-        captureImage(run_frame_4, 3),
-        captureImage(run_frame_5, 4),
-        captureImage(run_frame_6, 5),
-      ]);
-
-      // Once all images are loaded, create the sprite sheet
-      const canvas = document.createElement("canvas");
-      canvas.width = img1.width * 6;
-      canvas.height = img1.height;
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        ctx.drawImage(img1, 0, 0);
-        ctx.drawImage(img2, img1.width, 0);
-        ctx.drawImage(img3, img1.width * 2, 0);
-        ctx.drawImage(img4, img1.width * 3, 0);
-        ctx.drawImage(img5, img1.width * 4, 0);
-        ctx.drawImage(img6, img1.width * 5, 0);
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            saveAs(blob, "running.png");
-          }
-        }, "image/png");
-      }
-    } catch (err) {
-      console.error("Error exporting PNG:", err);
-    }
-  };
-
-  const JumpExportToPng = async () => {
-    const captureImage = async (
-      frameRef: React.RefObject<HTMLDivElement>,
-      index: number
-    ): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        if (!frameRef.current) {
-          reject(new Error(`Frame ${index + 1} ref is not available.`));
-          return;
-        }
-
-        toPng(frameRef.current, { backgroundColor: "rgba(0,0,0,0)" })
-          .then((dataUrl: string) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = (err) => reject(err);
-            img.src = dataUrl;
-          })
-          .catch((err: Error) => reject(err));
-      });
-    };
-
-    try {
-      // Capture all three frames
-      const [img1, img2, img3] = await Promise.all([
-        captureImage(jump_frame_1, 0),
-        captureImage(jump_frame_2, 1),
-        captureImage(jump_frame_3, 2),
-      ]);
-
-      // Once all images are loaded, create the sprite sheet
-      const canvas = document.createElement("canvas");
-      canvas.width = img1.width * 3;
-      canvas.height = img1.height;
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        ctx.drawImage(img1, 0, 0);
-        ctx.drawImage(img2, img1.width, 0);
-        ctx.drawImage(img3, img1.width * 2, 0);
-
-        canvas.toBlob(async(blob) => {
-          if (blob) {
-            console.log(blob)
-            saveAs(blob, "jump.png");
-            await uploadImage(blob, 'jump.png', 'character/u111362252');
-          }
-        }, "image/png");
-      }
-    } catch (err) {
-      console.error("Error exporting PNG:", err);
-    }
-  };
-
-  // const uploadImage = async (blob: Blob) => {
-  //   const formData = new FormData();
-  //   formData.append('image', blob, 'jump.png');
-  //   try{
-  //     const response = await axiosInstance.post('/test/firebase/upload', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     });
-  //     console.log(response);
-  //   } catch (err) {
-  //     console.error('Error uploading image:', err);
-  //   }
-  // };
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFrame((prevFrame) => (prevFrame + 1) % frames.length);
-    }, 100);
+    }, animationSpeed);
     return () => clearInterval(interval);
-  }, []);
+  }, [animationSpeed, frames.length]);
 
   return (
     <>
       <div className="flex flex-col rounded-lg">
+        <div className="pl-4 pr-2 mt-3 flex justify-between">
+          <h1 className="text-2xl text-white my-auto">Animation: </h1>
+          <div className="flex gap-4 ml-3">
+            <select
+              onChange={(e) => setAnimation(e.target.value)}
+              className="px-3 pl-2 py-1 border  rounded-xl bg-white/15 text-white/40 hover:bg-white/30 hover:text-white/60"
+              value={animation}
+            >
+              {animationList.map((anim) => (
+                <option
+                  key={anim.name}
+                  value={anim.name}
+                  className={`${
+                    animation === anim.name
+                      ? "bg-cyan-400 text-slate-600"
+                      : "bg-white/15 text-white/40 hover:bg-white/30 hover:text-white/60"
+                  }`}
+                >
+                  {anim.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="pl-4 pr-2 mt-3 flex justify-between">
+          <h1 className="text-2xl text-white my-auto">Speed: </h1>
+          <div className="flex gap-4 ml-3">
+            <select
+              onChange={(e) => setAnimationSpeed(Number(e.target.value))}
+              className="px-3 py-1 rounded-xl border bg-white/15 text-white/40 hover:bg-white/30 hover:text-white/60"
+              value={animationSpeed}
+            >
+              {animationSpeedList.map((speed) => (
+                <option key={speed.name} value={speed.name}>
+                  {speed.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div
-          className="w-[384px] h-[384px] my-auto relative bg-transparent"
+          className="w-[384px] h-[384px] mt-32 mb-auto relative bg-transparent overflow-y-auto"
           id="frame"
         >
-          <img src={testfromTif} className="h-full mx-auto"/>
-          {/* <div className="w-full h-full relative bg-transparent">
-            <div className="w-full h-full relative" ref={frame1}> */}
-              {/* <Idle1 /> */}
-            {/* </div> */}
-{/* 
-            <div className="w-full h-full relative" ref={frame2}>
+          <div className="w-full h-full relative bg-transparent">
+            {!isExportAnimation && (
+              <div className="w-full h-full relative bg-transparent">
+                {frames[currentFrame]}
+              </div>
+            )}
+            <div className="w-full h-full relative" ref={idle_frame1}>
+              <Idle1 />
+            </div>
+            <div className="w-full h-full relative" ref={idle_frame2}>
               <Idle2 />
             </div>
-            <div className="w-full h-full relative" ref={frame3}>
+            <div className="w-full h-full relative" ref={idle_frame3}>
               <Idle3 />
-            </div> */}
-            {/* <div className="w-full h-full relative" ref={run_frame_1}>
+            </div>
+            <div className="w-full h-full relative" ref={idle_frame4}>
+              <Idle4 />
+            </div>
+            <div className="w-full h-full relative" ref={run_frame_1}>
               <Running1 />
             </div>
             <div className="w-full h-full relative" ref={run_frame_2}>
@@ -262,8 +202,36 @@ const CharacterPreview = () => {
             </div>
             <div className="w-full h-full relative" ref={run_frame_6}>
               <Running6 />
-            </div> */}
-            {/* <div className="w-full h-full relative" ref={jump_frame_1}>
+            </div>
+            <div className="w-full h-full relative" ref={lift_idle_frame_1}>
+              <LiftIdle1 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_idle_frame_2}>
+              <LiftIdle2 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_idle_frame_3}>
+              <LiftIdle3 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_run_frame_1}>
+              <LiftRunning1 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_run_frame_2}>
+              <LiftRunning2 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_run_frame_3}>
+              <LiftRunning3 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_run_frame_4}>
+              <LiftRunning4 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_run_frame_5}>
+              <LiftRunning5 />
+            </div>
+            <div className="w-full h-full relative" ref={lift_run_frame_6}>
+              <LiftRunning6 />
+            </div>
+          </div>
+          {/* <div className="w-full h-full relative" ref={jump_frame_1}>
               <Jump1/>
             </div>
             <div className="w-full h-full relative" ref={jump_frame_2}>
@@ -272,14 +240,8 @@ const CharacterPreview = () => {
             <div className="w-full h-full relative" ref={jump_frame_3}>
               <Jump3 />
             </div> */}
-            {/* <div className="w-full h-full relative bg-transparent">
-              {frames[currentFrame]}
-            </div> */}
-          </div>
         </div>
-        {/* <button onClick={IdleExportToPng}>Idle Export to PNG</button>
-        <button onClick={RunningExportToPng}>Running Export to PNG</button>
-        <button onClick={JumpExportToPng}>Jump Export to PNG</button> */}
+      </div>
       {/* </div> */}
     </>
   );

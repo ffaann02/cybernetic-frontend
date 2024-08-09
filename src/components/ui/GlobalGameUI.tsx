@@ -4,6 +4,9 @@ import PlayerMainUI from "./player-main-ui/PlayerMainUI";
 import TrainAiComputer from "./computer/train-ai-computer/TrainAiComputer";
 import { MdOutlineReplay } from "react-icons/md";
 import { IoIosHome } from "react-icons/io";
+import { useLocation } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import { CiStar } from "react-icons/ci";
 
 const AskForInputKeyDown = ({ title }: { title: string }) => {
   return (
@@ -24,6 +27,7 @@ const AskForInputKeyDownSecondary = ({ title }: { title: string }) => {
 const GlobalGameUI = () => {
   const [showDeathContainer, setShowDeathContainer] = useState(false);
   const [showPlayAgain, setShowPlayAgain] = useState(false);
+  const location = useLocation();
 
   const {
     currentHit,
@@ -35,6 +39,7 @@ const GlobalGameUI = () => {
     isDeath,
     currentScene,
     setScene,
+    showStar
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -52,6 +57,9 @@ const GlobalGameUI = () => {
 
   return (
     <>
+      {showStar && <div className="absolute z-50 flex items-center justify-center h-screen w-screen animate-heartBeat">
+        <CiStar className="absolute text-[10rem] text-yellow-400/50 animate-ping" />
+      </div>}
       {showDeathContainer && <div id="death-container"></div>}
       {showPlayAgain && (
         <div
@@ -79,7 +87,7 @@ const GlobalGameUI = () => {
             font-semibold justify-between rounded-xl flex tracking-wider hover:bg-cyan-500/80 hover:scale-105 transition-all easer-linear"
             onClick={() => {
               // location.reload();
-              setScene(currentScene,"home");
+              setScene(currentScene, "home");
               setShowPlayAgain(false);
             }}
           >
@@ -96,7 +104,7 @@ const GlobalGameUI = () => {
         ></div>
       )}
       {/* <PlayerMainUI /> */}
-      <PlayerMainUI />
+      {location.pathname === "/" && <PlayerMainUI />}
       {currentHit?.includes("computer") &&
         (isCoding ? (
           <AskForInputKeyDown title="Press E to Leave Computer" />
@@ -116,6 +124,10 @@ const GlobalGameUI = () => {
         <AskForInputKeyDown title="Press E to Interact with Guard" />
       )}
       {isCoding && <TrainAiComputer />}
+
+      {currentHit === "LiftObjectTutorial" && (
+        <AskForInputKeyDown title="Press E to Lift Up The Crane" />
+      )}
       {currentHit === "Level1-Crane-Computer" && (
         <AskForInputKeyDown title="Press E to Lift Up The Crane" />
       )}
@@ -209,7 +221,6 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Close CD" />
           </>
         ))}
-
       {currentHit === "GlassComputerLevel2" &&
         (!isUsingSecurityCamera ? (
           <AskForInputKeyDown title="Press E to Access Computer" />
@@ -218,7 +229,6 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Scanning Danger Glass" />
           </>
         ))}
-
       {currentHit === "ComputerTrainAILevel3" ||
         (currentHit === "ComputerGlassTrainLevel2" &&
           (!isInteracting ? (
@@ -236,7 +246,6 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Turret Gun" />
           </>
         ))}
-
       {currentHit === "BossHologramComputer" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Access Boss Hologram" />
@@ -245,7 +254,6 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Boss Hologram" />
           </>
         ))}
-
       {currentHit?.includes("Glass") &&
         currentHit !== "ComputerTestGlass" &&
         currentHit !== "GlassComputerLevel2" &&
@@ -261,7 +269,6 @@ const GlobalGameUI = () => {
         ) : (
           <AskForInputKeyDown title="Press E to Drop A Glass" />
         ))}
-
       {currentHit === "ComputerTestGlass" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Access Computer" />
