@@ -12,6 +12,7 @@ const DebugToolsBar = () => {
     currentCamera,
     cameraList,
     setGameState,
+    playerRigidBody,
   } = useContext(GameContext);
 
   const handleDebugChange = (e: any) => {
@@ -37,6 +38,11 @@ const DebugToolsBar = () => {
     if (setGameState) {
       setGameState((prevState) => ({ ...prevState, speed: newSpeed }));
     }
+  };
+
+  const handlePlayerPosition = () => {
+    const position = playerRigidBody?.current?.translation();
+    console.log("Player Position: ", position);
   };
 
   return (
@@ -85,6 +91,10 @@ const DebugToolsBar = () => {
             value={speed}
             onValueChange={handleSpeedChange}
           />
+          <label className="my-auto">Player Position</label>
+          <button className="bg-white/60 py-2 rounded-md" onClick={handlePlayerPosition}>
+            <span className="">Log Current Position</span>
+          </button>
         </div>
       </div>
     </div>

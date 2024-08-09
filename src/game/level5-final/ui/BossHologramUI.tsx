@@ -7,6 +7,7 @@ import Level5TrainUI from './HologramComputer/Level5TrainUI';
 import useAxios from '../../../hooks/useAxios';
 import axiosInstanceAiService from '../../../api/aiService';
 import ReponseModal from '../../../components/ui/ReponseModal';
+import { useLevel5Context } from '../../../contexts/SceneContext/Level5Context';
 
 type Props = {}
 
@@ -28,20 +29,21 @@ const DropdownComponent = ({ label, value, options, onChange }) => (
     </div>
 );
 
-const BossHologramUI = ({
-    collectedBossData,
-    setCollectedBossData,
-    BossAttackPatternPredictModel,
-    setBossAttackPatternPredictModel,
-    predictionModelChoices,
-    isDisplayTrainingModal,
-    setIsDisplayTrainingModal,
-    trainningResponse,
-    setTrainningResponse,
-}) => {
+const BossHologramUI = ({}) => {
 
     const { axiosFetch } = useAxios();
     const { currentHit, isInteracting } = useContext(GameContext);
+    const {
+        collectedBossData,
+        setCollectedBossData,
+        BossAttackPatternPredictModel,
+        setBossAttackPatternPredictModel,
+        predictionModelChoices,
+        isDisplayTrainingModal,
+        setIsDisplayTrainingModal,
+        trainningResponse,
+        setTrainningResponse,
+    } = useLevel5Context();
     const [currentTopic, setCurrentTopic] = useState<string>('Information');
 
     const energySourcesParameter = [...new Set(bossAttackPatternsArray.map(pattern => pattern.energySource))].sort();

@@ -118,10 +118,10 @@ export const enemyConfigs: { [key: string]: EnemyConfig } = {
                 frameRate: 6,
             },
             running: {
-                tilesAmountHorizontally: 5,
+                tilesAmountHorizontally: 4,
                 tilesAmountVertically: 1,
-                tilesAmount: 5,
-                frameRate: 5,
+                tilesAmount: 4,
+                frameRate: 4,
             },
             attack: {
                 tilesAmountHorizontally: 5,

@@ -15,50 +15,6 @@ type Props = {}
 const Level5Final: React.FC<Props> = () => {
 
     const { debug, currentCamera } = useContext(GameContext);
-    const [bossActionState, setBossActionState] = useState('idle');
-    const [bossChargingCountDown, setBossChargingCountDown] = useState(0);
-    const [bossHealth, setBossHealth] = useState(100);
-    const bossActionDuration = {
-        idle: 1,
-        charging: [2, 3, 4, 5],
-        burst: 3,
-    }
-    const [collectedBossData, setCollectedBossData] = useState<any>([]);
-    const predictionModelChoices = [
-        { name: "v1", value: "level-5-boss-predict-model-v1" },
-        { name: "v2", value: "level-5-boss-predict-model-v2" },
-        { name: "v3", value: "level-5-boss-predict-model-v3" },
-    ];
-    const [BossAttackPatternPredictModel, setBossAttackPatternPredictModel] = useState<{ name: string, value: string }>({
-        name: "v1",
-        value: "level-5-boss-predict-model-v1",
-    });
-    const [predictionStat, setPredictionStat] = useState<any>([
-        {
-            name: "v1",
-            predict: {
-                correct: 0,
-                wrong: 0,
-            }
-        },
-        {
-            name: "v2",
-            predict: {
-                correct: 0,
-                wrong: 0,
-            }
-        },
-        {
-            name: "v3",
-            predict: {
-                correct: 0,
-                wrong: 0,
-            }
-        }
-    ]);
-
-    const [isDisplayTrainingModal, setIsDisplayTrainingModal] = useState(false);
-    const [trainningResponse, setTrainningResponse] = useState(null);
 
     const controlMap = useMemo(
         () => [
@@ -78,26 +34,10 @@ const Level5Final: React.FC<Props> = () => {
 
     return (
         <>
-            <BossDisplayUI
-                bossChargingCountDown={bossChargingCountDown}
-                bossActionState={bossActionState}
-                bossHealth={bossHealth} />
+            <BossDisplayUI />
             <TurretGunUI />
-            <BossHologramUI
-                collectedBossData={collectedBossData}
-                setCollectedBossData={setCollectedBossData}
-                BossAttackPatternPredictModel={BossAttackPatternPredictModel}
-                setBossAttackPatternPredictModel={setBossAttackPatternPredictModel}
-                predictionModelChoices={predictionModelChoices} 
-                isDisplayTrainingModal={isDisplayTrainingModal}
-                setIsDisplayTrainingModal={setIsDisplayTrainingModal}
-                trainningResponse={trainningResponse}
-                setTrainningResponse={setTrainningResponse}/>
-            <Level5ModelChoosingUI
-                predictionModelChoices={predictionModelChoices}
-                BossAttackPatternPredictModel={BossAttackPatternPredictModel}
-                setBossAttackPatternPredictModel={setBossAttackPatternPredictModel}
-                predictionStat={predictionStat} />
+            <BossHologramUI />
+            <Level5ModelChoosingUI />
             <KeyboardControls map={controlMap}>
                 <Canvas
                     dpr={[1, 2]}
@@ -117,17 +57,7 @@ const Level5Final: React.FC<Props> = () => {
                         <Physics debug={debug} gravity={[0, -9.81, 0]}>
                             <CharacterController spawnPosition={[-28, 2, 20]} />
                             {/* <CharacterController /> */}
-                            <Level5FinalEnvironment
-                                bossActionDuration={bossActionDuration}
-                                setBossChargingCountDown={setBossChargingCountDown}
-                                setBossActionState={setBossActionState}
-                                bossHealth={bossHealth}
-                                setBossHealth={setBossHealth}
-                                BossAttackPatternPredictModel={BossAttackPatternPredictModel}
-                                setPredictionStat={setPredictionStat}
-                                setIsDisplayTrainingModal={setIsDisplayTrainingModal}
-                                setTrainningResponse={setTrainningResponse}
-                            />
+                            <Level5FinalEnvironment />
                         </Physics>
                     </Suspense>
                 </Canvas>
