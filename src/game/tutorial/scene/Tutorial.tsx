@@ -12,14 +12,18 @@ import CharacterController, {
 import { Physics } from "@react-three/rapier";
 import { GameContext } from "../../../contexts/GameContext";
 import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
-import { TutorialEnvironment } from "../scene-object/Tutorial";
+import { SceneObject } from "../scene-object/SceneObject";
 import AssistantBotController from "../../../controllers/AssistantBotController";
 import RobotIdle from "../../../assets/assistant-bot/gif/Idle.gif";
-import { Fieldset } from "primereact/fieldset";
-import { Button } from "primereact/button";
-import { Message } from "primereact/message";
+import TutorialMovementChecklistUI from "../ui/TutorialMovementChecklistUI";
+import { useTutorialContext } from "../../../contexts/SceneContext/TutorialContext";
+import MovementGuideUI from "../ui/MovementGuideUI";
+import MovementTutorialUI from "../ui/MovementTutorialUI";
+import EPressedTutorialUI from "../ui/ePressedTutorialUI";
+import { Toast } from "primereact/toast";
+import EPressedChecklistUI from "../ui/ePressedChecklistUI";
 
-interface HomeProps { }
+interface HomeProps {}
 
 const Tutorial: React.FC<HomeProps> = () => {
   const { debug, currentCamera } = useContext(GameContext);
@@ -39,106 +43,24 @@ const Tutorial: React.FC<HomeProps> = () => {
     []
   );
 
-  const [navigation, setNavigation] = useState<string[]>([
-    "checkpoint_0",
-    "checkpoint_1",
-    "checkpoint_2",
-    "checkpoint_3",
-  ]);
-
-  const [hitCheckpoints, setHitCheckpoints] = useState<number>(0);
-
-  const [tutorialChat, setTutorialChat] = useState<string[]>([
-    "Hello, I am X-Alpha, your personal assistant. Welcome to Operation Cybernetic. You may be wondering what happened to you? Where are you? And what is Operation Cybernetic? Would you like me to tell you?",
-    `Good Job! Next, Let's try to press "I" to open Inventory. You can see the items you have collected in the inventory. Press "I" again to close the inventory.`,
-  ]);
-
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [currentSuccess, setCurrentSuccess] = useState<number>(0);
-  const [isChatOpen, setIsChatOpen] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (hitCheckpoints >= 4) {
-      setCurrentSuccess(1);
-      setCurrentStep(1);
-      setIsChatOpen(true);
-    }
-  }, [hitCheckpoints]);
-
-  const [trackPressI, setTrackPressI] = useState<number>(0);
-
-  useEffect(() => {
-    if (trackPressI >= 2 && currentStep === 1) {
-      setCurrentSuccess(2);
-      setCurrentStep(2);
-      setIsChatOpen(true);
-    }
-  }, [trackPressI]);
+  const {
+    hitCheckpoints,
+    setHitCheckpoints,
+    tutorialStep,
+    setTutorialStep,
+    isOk,
+    setIsOk,
+    toastRef,
+  } = useTutorialContext();
 
   return (
     <>
-      {currentStep === 0 && (
-        <div className="absolute right-6 top-6 z-[100] flex flex-col gap-y-2 transition-all duration-200 ease-linear">
-          <Message
-            severity={hitCheckpoints >= 4 ? "success" : "info"}
-            text="Pick the 4 
-        checkpoints to complete the movement tutorial."
-          />
-        </div>
-      )}
-      <div
-        className={`${isChatOpen ? "block" : "hidden"
-          } bg-black/70 h-full w-full fixed bottom-0 z-[1000] flex justify-center items-center`}
-      >
-        <div className="flex max-w-5xl">
-          <img src={RobotIdle} className="" />
-          <div>
-            <Fieldset
-              legend="X-Alpha"
-              className="-ml-2 px-2 mt-4 min-w-80 bg-blue-800/40 rounded-xl border-4 border-white shadow-lg shadow-white"
-            >
-              <p className="m-0 text-xl font-semibold text-white">
-                {tutorialChat[currentSuccess]}
-              </p>
-              <div className="mt-4 gap-x-4 flex">
-                {currentStep !== 0 && currentSuccess !== 0 && (
-                  <Button
-                    label="OK, I understand."
-                    icon="pi pi-check"
-                    className="text-lg"
-                    onClick={() => {
-                      setIsChatOpen(false);
-                    }}
-                  />
-                )}
-                {currentStep === 0 && currentSuccess === 0 && (
-                  <>
-                    <Button
-                      label="Yes, please tell me.
-                "
-                      icon="pi pi-check"
-                      className="text-lg"
-                      onClick={() => {
-                        setCurrentSuccess((prev) => prev + 1);
-                        // Log currentSuccess value after update
-                      }}
-                    />{" "}
-                    <Button
-                      label="No, I am good"
-                      icon="pi pi-times"
-                      className="text-lg"
-                      severity="danger"
-                      onClick={() => {
-                        setIsChatOpen(false);
-                      }}
-                    />
-                  </>
-                )}
-              </div>
-            </Fieldset>
-          </div>
-        </div>
-      </div>
+      <Toast ref={toastRef} position="top-right" />
+      {!isOk && tutorialStep === 0 && <MovementTutorialUI />}
+      {isOk && tutorialStep === 0 && hitCheckpoints < 4 && <MovementGuideUI />}
+      {!isOk && tutorialStep === 1 && <EPressedTutorialUI />}
+      {isOk && tutorialStep === 0 && <TutorialMovementChecklistUI />}
+      {isOk && tutorialStep === 1 && <EPressedChecklistUI />}
       <KeyboardControls map={controlMap}>
         <Canvas
           dpr={[1, 2]}
@@ -146,7 +68,7 @@ const Tutorial: React.FC<HomeProps> = () => {
           shadows
           className="z-0"
         >
-          <fog attach="fog" args={["skyblue", 15, 30]} />
+          {/* <fog attach="fog" args={["skyblue", 15, 30]} /> */}
           <color attach="background" args={["black"]} />
           {currentCamera === 2 && (
             <PerspectiveCamera makeDefault position={[0, 6, 10]} />
@@ -154,7 +76,11 @@ const Tutorial: React.FC<HomeProps> = () => {
           <ambientLight intensity={1} />
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
-              <CharacterController />
+              <CharacterController spawnPosition={[-30, 4, 0]} />
+              <SceneObject
+                hitCheckpoints={hitCheckpoints}
+                setHitCheckpoints={setHitCheckpoints}
+              />
             </Physics>
           </Suspense>
         </Canvas>

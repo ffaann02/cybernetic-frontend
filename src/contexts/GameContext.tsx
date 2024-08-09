@@ -53,10 +53,13 @@ interface GameContextProps {
   isDeath: boolean;
   setIsDeath: React.Dispatch<React.SetStateAction<boolean>>;
   controlMap: { name: string; keys: string[] }[];
+  showStar: boolean;
+  setShowStar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
+  currentScene: "tutorial",
   currentScene: "game-level-6",
   previousScene: "level-selection",
   speed: 7.5,
@@ -74,6 +77,7 @@ const initialGameContext: GameContextProps = {
     "game-level-5",
     "game-level-6",
     "slime-lab",
+    "online-game1",
   ],
   currentCamera: 1,
   cameraList: [1, 2, 3],
@@ -115,6 +119,9 @@ const initialGameContext: GameContextProps = {
   setIsPlayerInBossArea: () => {},
   bossParameter: {},
   setBossParameter: () => {},
+  controlMap: [],
+  showStar: false,
+  setShowStar: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -159,7 +166,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const playerRigidBody = useRef<any>(null);
   const [energy, setEnergy] = useState(10);
   const [isDeath, setIsDeath] = useState(false);
-
+  const [showStar, setShowStar] = useState(false);
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
       ...prevState,
@@ -224,7 +231,9 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setEnergy,
     isDeath,
     setIsDeath,
-    controlMap
+    controlMap,
+    showStar,
+    setShowStar,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

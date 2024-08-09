@@ -15,6 +15,7 @@ import {
   useCharacterAnimation,
 } from "../hooks/useCharacterAnimation";
 import useAudio from "../hooks/useAudio";
+import io from "socket.io-client";
 
 export enum Controls {
   forward = "forward",
@@ -32,16 +33,27 @@ export enum Controls {
 
 interface CharacterControllerProps {
   spawnPosition?: [number, number, number];
+  isSelf?: boolean;
+  userId?: string;
+  roomId?: string;
+  isOnline?: boolean;
+  onlinePosition?: any;
 }
 
 const CharacterController: React.FC<CharacterControllerProps> = ({
   spawnPosition,
+  isSelf = true,
+  userId,
+  roomId,
+  isOnline = false,
+  onlinePosition
 }) => {
   const controls = useRef<any>(null);
   const firstPerson = useRef<any>(null);
   const character = useRef<any>(null);
   const isOnFloor = useRef(true);
   const jumpCooldown = useRef(false);
+  // console.log(isSelf);
 
   const {
     speed,
@@ -64,14 +76,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     energy,
     setEnergy,
     isDeath,
-    setIsDeath
+    setIsDeath,
   } = useContext(GameContext);
 
   const [direction, setDirection] = useState<"left" | "right">("right");
-  
-  useEffect(()=>{
-
-  })
 
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump]);
   const forwardPressed = useKeyboardControls(
@@ -119,7 +127,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isCoding &&
       !isInteracting &&
       !isUsingSecurityCamera &&
-      !isUsingTurret && !isDeath
+      !isUsingTurret &&
+      !isDeath
     ) {
       impulse.z -= speed * delta * onAirFraction;
     }
@@ -128,7 +137,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isCoding &&
       !isInteracting &&
       !isUsingSecurityCamera &&
-      !isUsingTurret && !isDeath
+      !isUsingTurret &&
+      !isDeath
     ) {
       impulse.z += speed * delta * onAirFraction;
       // console.log(vec3(playerRigidBody.current.translation()).z);
@@ -138,7 +148,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isCoding &&
       !isInteracting &&
       !isUsingSecurityCamera &&
-      !isUsingTurret && !isDeath
+      !isUsingTurret &&
+      !isDeath
     ) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
@@ -149,7 +160,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isCoding &&
       !isInteracting &&
       !isUsingSecurityCamera &&
-      !isUsingTurret && !isDeath
+      !isUsingTurret &&
+      !isDeath
     ) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
@@ -165,7 +177,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       isOnFloor.current &&
       !isUsingSearch &&
       !isUsingSecurityCamera &&
-      !isUsingTurret && !isDeath
+      !isUsingTurret &&
+      !isDeath
     ) {
       jumpCooldown.current = true;
       jumpSound();
@@ -186,31 +199,68 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
     }
 
-    if (codingPressed && !codingCooldown && currentHit === "assistant-bot") {
-      setCodingCooldown(true);
-      setIsInteracting((prev) => !prev);
-      setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
-    }
+    // if (codingPressed && !codingCooldown && currentHit === "assistant-bot") {
+    //   setCodingCooldown(true);
+    //   setIsInteracting((prev) => !prev);
+    //   setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
+    // }
     if (escPressed) {
       setIsCoding(false);
       setIsInteracting(false);
     }
 
     let newPos; // Declare newPos outside the if block
+    let onlinePos;
 
     if (playerRigidBody.current) {
+      const currentPosition = vec3(playerRigidBody.current.translation());
       newPos = new THREE.Vector3(
         playerRigidBody.current.translation().x + impulse.x,
         playerRigidBody.current.translation().y,
         playerRigidBody.current.translation().z + impulse.z
       );
+
+      // console.log(newPos);
+      // console.log(currentPosition);
+      const distance = Math.sqrt(
+        Math.pow(newPos.x - currentPosition.x, 2) +
+          Math.pow(newPos.y - currentPosition.y, 2) +
+          Math.pow(newPos.z - currentPosition.z, 2)
+      );
+      // console.log(`Distance: ${distance}`);
+
+      // const distance = newPos.distanceTo(currentPosition);
+      // console.log(`Distance: ${distance}`);
+      if (roomId && roomId !== "" && distance > 0.15 && isSelf) {
+        const serverEndpoint = "http://localhost:3001";
+        const socket = io(serverEndpoint, {
+          withCredentials: true,
+          transports: ["websocket", "polling"],
+        });
+        const positionArray = newPos.toArray();
+        const userData = {
+          userId: userId,
+          position: positionArray,
+          direction: direction,
+          animation: "Jumping",
+        };
+        
+        socket.emit("update_player", { roomId, userData });
+        if (newPos && playerRigidBody.current && isOnline) {
+          // console.log(onlinePos);
+          playerRigidBody.current.setTranslation(newPos, true);
+        } 
+      }
+      else if(!isSelf){
+        playerRigidBody.current.setTranslation(onlinePos);
+      }
+      if (newPos && playerRigidBody.current && !isOnline) {
+        // console.log(onlinePos);
+        playerRigidBody.current.setTranslation(newPos, true);
+      } 
     } else {
       // Handle the case where rigidBody.current is null
       console.error("rigidBody.current is null");
-    }
-
-    if (newPos) {
-      playerRigidBody.current.setTranslation(newPos, true);
     }
 
     updateAnimationState(
@@ -228,11 +278,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     let adjustZoom = { x: 0, y: 0, z: 0 };
     if (isCoding || isInteracting) {
       adjustZoom = { x: 1, y: -4, z: -4 };
-    } 
-    if (isDeath){
-      adjustZoom = { x: -1, y: -6, z: -6 };
     }
-    else {
+    if (isDeath) {
+      adjustZoom = { x: -1, y: -6, z: -6 };
+    } else {
       adjustZoom = { x: 0, y: 0, z: 0 };
     }
 
