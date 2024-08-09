@@ -56,4 +56,33 @@ export const enemyPartrolProps = [
             image_url: "/images/slime_default.png"
         }
     },
+    {
+        name: "Golem",
+        waypoints: [
+            [-35, 1.2, 10],
+            [-22, 1.2, 10],
+            [-22, 1.2, 0],
+        ],
+        angle: 45,
+        idleTime: 2,
+        chaseTimeLimit: 5,
+        patrolType: "loop",
+        showPath: false,
+        data: {
+            data_type: "enemy",
+            name: "Robotic Slime - enemy",
+            element: "fire",
+            size: "tiny",
+            color: "",
+            speed: 8,
+            mass: 50,
+            armor: 8,
+            attack: "chase",
+            energy: 150,
+            pattern: "",
+            weakness: "water",
+            detection_range: 5,
+            image_url: "/images/slime_default.png"
+        }
+    },
 ]

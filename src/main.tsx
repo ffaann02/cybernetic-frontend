@@ -7,6 +7,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
+import { Leva } from "leva";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <PrimeReactProvider>

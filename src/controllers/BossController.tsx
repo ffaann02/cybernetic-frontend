@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import Boss2D from '../animation/Boss2D';
 import { BossAnimationState, useBossAnimation } from '../hooks/useBossAnimation';
@@ -8,6 +8,10 @@ import { GameContext } from '../contexts/GameContext';
 import { bossAttackPatternsArray } from '../game/level5-final/scene-object/BossAttackPattern';
 import useAxios from '../hooks/useAxios';
 import axiosInstanceAiService from '../api/aiService';
+import AblazeFloor from '../game/level5-final/scene-object/room1/AblazeFloor';
+import AblazeParticle from '../game/level5-final/scene-object/room1/AblazeParticle';
+import { MathUtils, Vector3 } from 'three';
+import { useFrame } from '@react-three/fiber';
 
 interface BossControllerProps {
     idleDuration?: number;
@@ -28,12 +32,13 @@ export interface MeteoDataInterface {
     position: { x: number; y: number; z: number };
     isReachedFloor: boolean;
     opacity: number;
+    ablazeOpacity: number;
 }
 
 const BossController: React.FC<BossControllerProps> = ({
     idleDuration = 5,
     burstDuration = 5,
-    chargingDuration = [2,3,4,5],
+    chargingDuration = [2, 3, 4, 5],
     setBossChargingCountDown,
     setBossActionState,
     bulletName,
@@ -55,6 +60,7 @@ const BossController: React.FC<BossControllerProps> = ({
     const [warningOpacity, setWarningOpacity] = useState(1);
 
     const [meteoData, setMeteoData] = useState<MeteoDataInterface[]>([]);
+    const [particleHit, setParticleHit] = useState([]);
 
     const rows = 6;
     const cols = 10;
@@ -79,9 +85,9 @@ const BossController: React.FC<BossControllerProps> = ({
     };
 
     const getPredictPatternByParameter = async (
-        energySource: string, 
-        soundBreathing: string, 
-        chargingTime: number, 
+        energySource: string,
+        soundBreathing: string,
+        chargingTime: number,
         lastActiveTurret: string,
         bossHealth: number
     ) => {
@@ -112,11 +118,11 @@ const BossController: React.FC<BossControllerProps> = ({
             if (error.response) {
                 console.log('Error Response Data:', error.response.data);
                 console.log('Error Response Status:', error.response.status);
-            } 
+            }
         }
     }
 
-    const getRandomPattern = async() => {
+    const getRandomPattern = async () => {
         const { energySource, soundBreathing, chargingTime, lastActiveTurret } = getRandomParameters();
         const predictedResult = await getPredictPatternByParameter(energySource, soundBreathing, chargingTime, lastActiveTurret, bossHealth);
         const predictedPattern = bossAttackPatternsArray.find(pattern => pattern.name === predictedResult.pattern);
@@ -167,7 +173,7 @@ const BossController: React.FC<BossControllerProps> = ({
         return { actualPattern: closestMatch, predictPattern: predictedPattern };
     };
 
-    const MapPatternToPosition = async() => {
+    const MapPatternToPosition = async () => {
         const { actualPattern, predictPattern } = await getRandomPattern();
         setBossParameter((prev) => ({
             ...prev,
@@ -176,7 +182,7 @@ const BossController: React.FC<BossControllerProps> = ({
             chargingTime: actualPattern.chargingTime,
         }));
         console.log(`Actual Pattern: ${actualPattern.name}, Predicted Pattern: ${predictPattern.name}`);
-        if(actualPattern.name === predictPattern.name) {
+        if (actualPattern.name === predictPattern.name) {
             setPredictionStat((prev) => {
                 return prev.map((item) => {
                     if (item.name === BossAttackPatternPredictModel.name) {
@@ -193,7 +199,7 @@ const BossController: React.FC<BossControllerProps> = ({
                 });
             })
         }
-        else{
+        else {
             setPredictionStat((prev) => {
                 return prev.map((item) => {
                     if (item.name === BossAttackPatternPredictModel.name) {
@@ -221,7 +227,13 @@ const BossController: React.FC<BossControllerProps> = ({
                 const z = j * (3 + gap) - 30;
                 // debug.push({ position: { x, y, z }, color });
                 if (color === "red") {
-                    meteos.push({ id: meteos.length + 1, position: { x, y: randomMeteoPosY(), z }, isReachedFloor: false, opacity: 1 });
+                    meteos.push({
+                        id: meteos.length + 1,
+                        position: { x, y: randomMeteoPosY(), z },
+                        isReachedFloor: false,
+                        opacity: 1,
+                        ablazeOpacity: 1
+                    });
                 }
             }
         }
@@ -270,10 +282,11 @@ const BossController: React.FC<BossControllerProps> = ({
     const idleControl = () => {
         setAnimationState(BossAnimationState.Idle);
         setDebugPlatePosition([]);
+        setParticleHit([]);
         setMeteoData([]);
     }
 
-    const chargeAndBurstControl = async(onBurstComplete: () => void) => {
+    const chargeAndBurstControl = async (onBurstComplete: () => void) => {
         const { actualPattern } = await MapPatternToPosition();
         let countdown = actualPattern.chargingTime;
         const delayInterval = setInterval(() => {
@@ -319,23 +332,33 @@ const BossController: React.FC<BossControllerProps> = ({
         }));
     }, [bossHealth])
 
-    const handleCollisionEnter = (id: number) => ({ other }) => {
+    const handleCollisionEnter = (id: number, position: any) => ({ other }) => {
         const colliderName = other.colliderObject.name;
         const { name } = other.rigidBodyObject;
         if (colliderName === "floor" || colliderName.includes("TurretGun")) {
+            setParticleHit(prevHit => {
+                if (!prevHit.find(hit => hit.id === id)) {
+                    return [...prevHit, { id: id, position: position }];
+                }
+                else {
+                    return prevHit;
+                }
+            })
             if (meteoData.length > 0) {
                 const fadeInterval = setInterval(() => {
                     setMeteoData(prevData => {
                         return prevData.map(data => {
                             if (data.id === id) {
                                 const newOpacity = Math.max(data.opacity - 0.01, 0);
+                                const newAblazeOpacity = Math.min(data.opacity - 0.005, 1);
                                 if (newOpacity <= 0) {
                                     clearInterval(fadeInterval);
                                 }
                                 return {
                                     ...data,
                                     isReachedFloor: true,
-                                    opacity: newOpacity
+                                    opacity: newOpacity,
+                                    ablazeOpacity: newAblazeOpacity
                                 }
                             }
                             else {
@@ -359,6 +382,14 @@ const BossController: React.FC<BossControllerProps> = ({
         }
     }
 
+    const onParticleEnded = (particleId) => {
+        setParticleHit(prevHit => prevHit.filter(hit => hit.id !== particleId));
+    }
+
+    // useEffect(() => {
+    //     console.log("meteoData: ", meteoData.length);
+    // }, [meteoData]);
+
     return (
         <group>
             <RigidBody
@@ -380,6 +411,18 @@ const BossController: React.FC<BossControllerProps> = ({
                 warningOpacity={warningOpacity}
                 setWarningOpacity={setWarningOpacity}
             />
+            <AblazeFloor
+                bossState={bossState}
+                meteoPosition={meteoData}
+            />
+            {particleHit.length > 0 && particleHit.map((hit, index) => (
+                <AblazeParticle
+                    key={index}
+                    particleId={hit.id}
+                    position={hit.position}
+                    onEnded={onParticleEnded}
+                />
+            ))}
         </group>
     );
 }

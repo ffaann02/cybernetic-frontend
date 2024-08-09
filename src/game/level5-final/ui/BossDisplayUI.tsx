@@ -1,15 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 import { ProgressBar } from 'primereact/progressbar';
 import { GameContext } from '../../../contexts/GameContext';
+import { useLevel5Context } from '../../../contexts/SceneContext/Level5Context';
 
 
-const BossDisplayUI = ({
-    bossChargingCountDown,
-    bossActionState,
-    bossHealth,
-}) => {
+const BossDisplayUI = ({}) => {
 
     const { isPlayerInBossArea } = useContext(GameContext);
+    const {
+        bossActionState,
+        bossChargingCountDown,
+        bossHealth,
+    } = useLevel5Context();
 
     // useEffect(() => {
     //     console.log(bossChargingCountDown)

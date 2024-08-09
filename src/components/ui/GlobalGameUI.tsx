@@ -63,9 +63,8 @@ const GlobalGameUI = () => {
       {showDeathContainer && <div id="death-container"></div>}
       {showPlayAgain && (
         <div
-          className={`absolute ${
-            showPlayAgain ? "opacity-100" : "opacity-0"
-          } inset-0 flex items-center justify-center z-[100000] 
+          className={`absolute ${showPlayAgain ? "opacity-100" : "opacity-0"
+            } inset-0 flex items-center justify-center z-[100000] 
           flex-col w-full h-full bg-red-400/50`}
         >
           <div className="w-52 -rotate-45 mb-10">
@@ -98,9 +97,8 @@ const GlobalGameUI = () => {
       )}
       {isFadingBetweenRoom && (
         <div
-          className={`absolute z-[12000] bg-black w-full h-full ${
-            isFadingBetweenRoom ? "fadeIn" : "fadeOut"
-          }`}
+          className={`absolute z-[12000] bg-black w-full h-full ${isFadingBetweenRoom ? "fadeIn" : "fadeOut"
+            }`}
         ></div>
       )}
       {/* <PlayerMainUI /> */}
@@ -305,6 +303,14 @@ const GlobalGameUI = () => {
         ) : (
           <>
             <AskForInputKeyDown title="Press E to Leave Computer Training" />
+          </>
+        ))}
+      {currentHit === "ComputerMazeSolver" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer Maze Solver" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Computer Maze Solver" />
           </>
         ))}
     </>

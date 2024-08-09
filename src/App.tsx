@@ -27,6 +27,9 @@ import { Level2ContextProvider } from "./contexts/SceneContext/Level2Context";
 import { Level3ContextProvider } from "./contexts/SceneContext/Level3Context";
 import OnlineGame1 from "./game/online-game1/scene/OnlineGame1";
 import { TutorialContextProvider } from "./contexts/SceneContext/TutorialContext";
+import { Level5ContextProvider } from "./contexts/SceneContext/Level5Context";
+import Level6Reinforcement from "./game/level6-reinforcement/scene/Level6Reinforcement";
+import { Level6ContextProvider } from "./contexts/SceneContext/Level6Context";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -90,7 +93,19 @@ function App() {
                             />
                             <Scene
                               title="game-level-5"
-                              scene={<Level5Final />}
+                              scene={
+                                <Level5ContextProvider>
+                                  <Level5Final />
+                                </Level5ContextProvider>
+                              }
+                            />
+                            <Scene
+                              title="game-level-6"
+                              scene={
+                                <Level6ContextProvider>
+                                  <Level6Reinforcement />
+                                </Level6ContextProvider>
+                              }
                             />
                             <Scene title="slime-lab" scene={<SlimeLab />} />
                           </SceneRouter>
