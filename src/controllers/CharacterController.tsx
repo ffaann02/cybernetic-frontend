@@ -276,9 +276,15 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
 
   const cameraFollow = () => {
     let adjustZoom = { x: 0, y: 0, z: 0 };
+    // let adjustZoom = { x: 2, y: -7, z: -5 };
     if (isCoding || isInteracting) {
       adjustZoom = { x: 1, y: -4, z: -4 };
     }
+
+    else {
+       adjustZoom = { x: 0, y: 0, z: 0 };
+     }
+
     if (isDeath) {
       adjustZoom = { x: -1, y: -6, z: -6 };
     } else {
@@ -401,7 +407,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
           <CapsuleCollider
             args={[
               1, // radius
-              1, // height
+               1, // height
             ]}
             position={[0, 4, 0]}
           />

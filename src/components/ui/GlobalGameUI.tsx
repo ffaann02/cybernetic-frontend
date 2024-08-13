@@ -25,8 +25,10 @@ const AskForInputKeyDownSecondary = ({ title }: { title: string }) => {
 };
 
 const GlobalGameUI = () => {
+
   const [showDeathContainer, setShowDeathContainer] = useState(false);
   const [showPlayAgain, setShowPlayAgain] = useState(false);
+  const [showEnemySplash, setShowEnemySplash] = useState(false);
   const location = useLocation();
 
   const {
@@ -39,6 +41,10 @@ const GlobalGameUI = () => {
     isDeath,
     currentScene,
     setScene,
+    isEnemyHit,
+    enemyHitName,
+    setIsEnemyHit,
+    setEnemyHitName,
     showStar
   } = useContext(GameContext);
 
@@ -55,12 +61,52 @@ const GlobalGameUI = () => {
     }
   }, [isDeath]);
 
+  useEffect(() => {
+    if (isEnemyHit) {
+      console.log("Enemy Hit");
+      console.log(enemyHitName);
+      setShowEnemySplash(true);
+      const timer = setTimeout(() => {
+        console.log("Enemy Hit Splash Removed");
+        setShowEnemySplash(false);
+        setIsEnemyHit(false);
+        setEnemyHitName("");
+      }, 1000); // 2 seconds
+
+      // Cleanup the timer if the component unmounts or isEnemyHit changes
+      return () => clearTimeout(timer);
+    }
+  }, [isEnemyHit, enemyHitName]);
+
   return (
     <>
       {showStar && <div className="absolute z-50 flex items-center justify-center h-screen w-screen animate-heartBeat">
         <CiStar className="absolute text-[10rem] text-yellow-400/50 animate-ping" />
       </div>}
       {showDeathContainer && <div id="death-container"></div>}
+      {showEnemySplash === true &&
+        <>
+          {enemyHitName === "Slime" &&
+            <div className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-green-600/60">
+              <div className=" opacity-60 animate-heartBeat">
+                <img src={`/images/effect/slimesplash.png`} alt="enemy" className="w-[80vh] h-[80vh] animate-jello" />
+              </div>
+            </div>
+          }
+          {enemyHitName === "Spider" &&
+            <div className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-white/60">
+              <div className=" opacity-60 animate-heartBeat">
+                <img src={`/images/effect/spidersplash.png`} alt="enemy" className="w-[80vh] h-[80vh] animate-jello" />
+              </div>
+            </div>
+          }
+          {enemyHitName === "Golem" &&
+            <div className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-red-600/40"
+              style={{ backdropFilter: "blur(4px)" }}>
+            </div>
+          }
+        </>
+      }
       {showPlayAgain && (
         <div
           className={`absolute ${showPlayAgain ? "opacity-100" : "opacity-0"

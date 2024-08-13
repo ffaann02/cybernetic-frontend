@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { CuboidCollider, RigidBody, vec3 } from "@react-three/rapier";
 import { Item } from "../../../shared-object/object/Item";
 import { degreeNumberToRadian } from "../../../../utils";
-import { Box,useKeyboardControls } from "@react-three/drei";
+import { Box, useKeyboardControls } from "@react-three/drei";
 import CountdownComputer from "../room2/CountdownComputer";
 import FakeGlowMaterial from "../../../../components/FakeGlowMaterial";
 import { useFrame } from "@react-three/fiber";
@@ -265,16 +265,22 @@ const Room2 = ({
         }
       }
       else if (spacePressed) {
-        console.log("drop: ", currentLaserTarget);
-        setDropedObject((prev) => {
-          const dropedObject = objectData.find((object) => object.item.name === currentLaserTarget);
-          if (dropedObject) {
-            return [...prev, dropedObject];
-          }
-          return prev;
-        })
-        setObjectData(objectData.filter((object) => object.item.name !== currentLaserTarget));
-        setCurrentHit("Computer-camera-01");
+        const currentTime = new Date().getTime();
+        if (currentTime - lastPressTime > 500) {
+          setLastPressTime(currentTime);
+          const findObjectToDrop = objectData.find((object) => object.item.name === currentLaserTarget);
+          setDropedObject((prev) => {
+            if (findObjectToDrop) {
+              console.log("findObjectToDrop: ", findObjectToDrop);
+              return [...prev, findObjectToDrop];
+            }
+            else{
+              return prev;
+            }
+          })
+          setObjectData(objectData.filter((object) => object.item.name !== currentLaserTarget));
+          setCurrentHit("Computer-camera-01");
+        }
       }
     }
 
@@ -553,7 +559,7 @@ const Room2 = ({
         type="fixed"
         lockRotations
         lockTranslations
-        position={[-35.5, 0.1, -13]}
+        position={[-42.5, 0.1, -16]}
         rotation={[
           degreeNumberToRadian(0),
           degreeNumberToRadian(-20),

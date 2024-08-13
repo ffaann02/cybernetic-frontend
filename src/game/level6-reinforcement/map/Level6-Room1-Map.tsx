@@ -26,7 +26,7 @@ export const Level6Room1Map = () => {
         type="fixed"
         name="floor"
         position={[35, 0.1, 0]}
-        scale={[9, 5, 9]}
+        scale={[8, 5, 7]}
       >
         <primitive object={clone} />
         {/* Add a red box inside the RigidBody */}

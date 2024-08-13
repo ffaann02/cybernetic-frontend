@@ -41,11 +41,11 @@ interface EnemyPatrolControllerProps {
     showLight?: boolean;
 }
 
-const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene,isPlayingSound, speakerRef,showLight=true }) => {
+const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene, isPlayingSound, speakerRef, showLight = true }) => {
 
     const { axiosFetch } = useAxios();
 
-    const { playerRigidBody, isHidden } = useContext(GameContext);
+    const { playerRigidBody, isHidden, setIsEnemyHit, setEnemyHitName, setEnergy } = useContext(GameContext);
     const { element, speed, color, detection_range, weakness } = data;
 
     const { animationState, setAnimationState } = useEnemyAnimation();
@@ -74,18 +74,20 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
     // Initialization of isStopped state
     const [isStopped, setIsStopped] = useState(false);
 
+    const lastHitPlayerTime = useRef(Date.now());
+
     useFrame(() => {
         if (foundPlayer.current === false && !isPlayingSound) {
             moveBetweenWaypoints();
         }
         else {
             setAnimationState(EnemyAnimationState.Running);
-            if(isPlayingSound && speakerRef.current){
+            if (isPlayingSound && speakerRef.current) {
                 // speakerRef.current.play();
                 moveToSpeaker();
             }
-            else{
-                moveToPlayer(); 
+            else {
+                moveToPlayer();
             }
         }
     });
@@ -272,7 +274,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                 foundPlayer.current = false;
                 setIsChasing(false);
                 setChaseTimer(chaseTimeLimit); // Reset timer
-                if(flashlightRef.current){
+                if (flashlightRef.current) {
                     flashlightRef.current.intensity = 100;
                     flashlightRef.current.color.set('white');
                 }
@@ -362,7 +364,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
         })
     }
 
-    const evolve = async() => {
+    const evolve = async () => {
         await AffectBeforeEvolve(2);
         switch (element) {
             case 'fire':
@@ -370,7 +372,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                 setEnemyScale((prev) => prev + 0.5);
                 break;
             case 'water':
-                // Water element: Duplicate itself with new waypoints
+                // Water element: Duplicate itself with new waypointsds
                 const newWaypoints = newWayPoint();
                 setEnemyPatrolInScene((prev) => {
                     const prop = {
@@ -382,7 +384,6 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                         patrolType: patrolType,
                         showPath: showPath,
                         data: data,
-                        setEnemyPatrolInScene: setEnemyPatrolInScene
                     }
                     const newEnemyDataInScene = [...prev];
                     newEnemyDataInScene.push(prop);
@@ -406,7 +407,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                 break;
         }
     }
-    
+
 
     const mineProcessing = async () => {
         if (isCollisionProcessed.current === false) {
@@ -460,7 +461,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
         ) {
             mineProcessing();
         }
-        if(other.rigidBodyObject && other.rigidBodyObject.name==="Kaboom-Level3"){
+        if (other.rigidBodyObject && other.rigidBodyObject.name === "Kaboom-Level3") {
             console.log("Kaboom!");
         }
     }
@@ -481,12 +482,23 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     ) {
                         mineProcessing();
                     }
-                    if(other.rigidBodyObject &&
-                        other.rigidBodyObject.name==="Kaboom-Level3"){
+                    if (other.rigidBodyObject &&
+                        other.rigidBodyObject.name === "Kaboom-Level3") {
                         console.log("Kaboom!");
-                        setEnemyPatrolInScene((prevEnemies)=>(
-                            prevEnemies.filter((enemy)=>(enemy.id!==id))
+                        setEnemyPatrolInScene((prevEnemies) => (
+                            prevEnemies.filter((enemy) => (enemy.id !== id))
                         ))
+                    }
+                    if (other.rigidBodyObject &&
+                        other.rigidBodyObject.name === "player" && isChasing && !isHidden) {
+                        const currentTime = Date.now()
+                        const elapsedTime = currentTime - lastHitPlayerTime.current
+                        if(elapsedTime > 1000) {
+                            lastHitPlayerTime.current = currentTime;
+                            setIsEnemyHit(true);
+                            setEnemyHitName(name);
+                            setEnergy((prev) => prev - 3);
+                        }
                     }
                 }}>
                 <Enemy2D

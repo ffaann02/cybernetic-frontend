@@ -115,11 +115,32 @@ const Enemy2D = ({
         }
     };
 
+    // const configDirection = () => {
+    //     let directionConfig: [number, number, number] = [1, 1, 1];
+    //     if (name !== "Golem" && direction === "left") {
+    //         directionConfig = [-1, 1, 1];
+    //         return directionConfig;
+    //     }
+    //     else if (name === "Golem" && direction === "left") {
+    //         directionConfig = [1, 1, 1];
+    //         return directionConfig;
+    //     }
+    // }
+
     return (
         <group>
             <mesh
                 position={config.mesh.position}
-                scale={[direction === "left" ? -1 : 1, 1, 1]}>
+                scale={[
+                    ((direction === "left" && name !== "Golem")
+                        ? -1
+                        : (direction === "left" && name == "Golem" || direction === "right" && name !== "Golem")
+                            ? 1
+                            : -1
+                    ),
+                    1,
+                    1
+                ]}>
                 <planeGeometry args={[(config.size.width * scale), (config.size.height * scale), 1]} />
                 <meshStandardMaterial
                     map={animators[animation]?.texture}

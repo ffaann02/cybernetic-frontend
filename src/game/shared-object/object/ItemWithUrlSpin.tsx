@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGLTF } from "@react-three/drei";
+import { Outlines, useGLTF } from "@react-three/drei";
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from "react";
 import { SkeletonUtils } from "three-stdlib";
@@ -18,7 +18,10 @@ interface ItemProps {
   sceneName: string;
 }
 
-const ItemWithUrlSpin: React.FC<ItemProps> = ({ item, sceneName }) => {
+const ItemWithUrlSpin: React.FC<ItemProps> = ({
+  item,
+  sceneName,
+}) => {
 
   const { name, fileType, position, rotation, scale, spinSpeed, spinAxis } = item;
 
@@ -47,6 +50,10 @@ const ItemWithUrlSpin: React.FC<ItemProps> = ({ item, sceneName }) => {
     if (ref.current && spinAxis === 'y' && spinSpeed) {
       ref.current.rotation.y = clock.getElapsedTime() * spinSpeed;
     }
+    else if (ref.current && spinAxis === 'xy' && spinSpeed) {
+      ref.current.rotation.x = clock.getElapsedTime() * spinSpeed;
+      ref.current.rotation.y = clock.getElapsedTime() * spinSpeed;
+    }
   }
 
 
@@ -55,13 +62,13 @@ const ItemWithUrlSpin: React.FC<ItemProps> = ({ item, sceneName }) => {
   });
 
   return (
-    <primitive
-      ref={ref}
-      object={clone}
-      position={position}
-      rotation={[0, ((rotation || 0) * Math.PI) / 2, 0]}
-      scale={scale || [1, 1, 1]}
-    />
+      <primitive
+        ref={ref}
+        object={clone}
+        position={position}
+        rotation={[0, ((rotation || 0) * Math.PI) / 2, 0]}
+        scale={scale || [1, 1, 1]}
+      />
   );
 }
 

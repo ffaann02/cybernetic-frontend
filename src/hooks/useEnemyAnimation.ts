@@ -4,6 +4,7 @@ import { useState } from "react";
 export enum EnemyAnimationState {
     Idle = "idle",
     Running = "running",
+    Attack = "attack",
 }
 
 export const useEnemyAnimation = () => {
