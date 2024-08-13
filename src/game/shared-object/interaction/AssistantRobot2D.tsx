@@ -2,13 +2,13 @@ import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { useState } from "react";
 import { PlainAnimator } from "three-plain-animator";
-import IdleSprite from "../../../assets/assistant-bot/IdleAnim.png";
+import idleSprite from "../../../assets/assistant-bot/IdleAnim.png";
 import happySprite from "../../../assets/assistant-bot/HappyAnim.png";
 import angrySprite from "../../../assets/assistant-bot/AngryAnim.png";
 import chargeSprite from "../../../assets/assistant-bot/Charge.png";
 
 const Assistant2D = ({
-//   direction,
+  direction = "right",
   animation,
 }: {
   //   direction: "left" | "right";
@@ -44,7 +44,12 @@ const Assistant2D = ({
   });
 
   return (
-    <mesh key="assistant_bot" position={[1, 3.5, 3.8]} scale={[-1.5, 1.5, 1]}>
+    <mesh
+      key="assistant_bot"
+      position={[1, 3.5, 3.8]}
+      scale={[direction === "left" ? -1.5 : 1.5, 1.5, 1]}
+    >
+      {" "}
       {/* Use PlaneGeometry for a flat surface */}
       <planeGeometry args={[4, 5]} />
       <meshStandardMaterial

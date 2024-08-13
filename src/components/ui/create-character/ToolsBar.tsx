@@ -120,26 +120,6 @@ const tools: Tool[] = [
       // Add more choices as needed
     ],
   },
-  {
-    index: 6,
-    name: "กระเป๋า",
-    icon: BsBackpack2Fill,
-    choices: [
-      {
-        id: 1,
-        name: "กระเป๋า 1",
-        image:
-          "https://emojiisland.com/cdn/shop/products/Neutral_Face_Emoji_large.png?v=1571606037",
-      },
-      {
-        id: 2,
-        name: "กระเป๋า 2",
-        image:
-          "https://emojiisland.com/cdn/shop/products/Neutral_Face_Emoji_large.png?v=1571606037",
-      },
-      // Add more choices as needed
-    ],
-  },
 ];
 
 const ToolsBar: React.FC = () => {
@@ -176,7 +156,7 @@ const ToolsBar: React.FC = () => {
   ];
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full">
       <div className="w-full flex gap-x-4 overflow-x-scroll scrollbar-hide">
         {tools.map((tool) => (
           <button
@@ -232,11 +212,3 @@ const ToolsBar: React.FC = () => {
 };
 
 export default ToolsBar;
-
-{
-  /* <img
-              src={choice.image}
-              alt={choice.name}
-              className="object-cover"
-            /> */
-}

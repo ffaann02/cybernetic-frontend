@@ -2,9 +2,9 @@ import Body from "../../../../create-character/Body";
 import CharacterHead from "../../../../create-character/Head";
 import LeftFoot from "../../../../create-character/BottomLeftLeg";
 import LeftHand from "../../../../create-character/BottomLeftArm";
-import LeftTopArm from "../../../../create-character/cut/LeftTopArm";
+import LeftTopArm from "../../../../create-character/LeftTopArm";
 import LeftTopLeg from "../../../../create-character/TopLeftLeg";
-import RightFoot from "../../../../create-character/cut/RightFoot";
+import RightFoot from "../../../../create-character/RightFoot";
 import RightHand from "../../../../create-character/BottomRightArm";
 import RightTopArm from "../../../../create-character/TopRightArm";
 import RightTopLeg from "../../../../create-character/TopRightLeg";
@@ -12,39 +12,39 @@ import RightTopLeg from "../../../../create-character/TopRightLeg";
 const Running2 = () => {
   return (
     <>
-      <div className="absolute top-[2.5rem] left-[54%] transform -translate-x-1/2 rotate-[7deg] bg-transparent">
+      <div className="absolute z-[50] top-[2.1rem] left-1/2 transform -translate-x-[45%] w-[8rem] bg-transparent rotate-[5deg]">
         <CharacterHead />
       </div>
       {/* BODY */}
-      <div className="absolute top-[8.5rem] left-1/2 transform -translate-x-1/2 rotate-[7deg] z-[4] bg-transparent">
+      <div className="absolute top-[8.6rem] left-1/2 transform -translate-x-1/2 w-[5rem] z-[11] bg-transparent rotate-[6deg]">
         <Body />
       </div>
       {/* LEFT ARM */}
-      <div className="absolute top-[40%] right-[30%] transform -translate-x-1/2 w-14 rotate-[150deg] z-[3] bg-transparent">
+      <div className="absolute top-[42%] right-[24.5%] transform -translate-x-[70%] w-[3.25rem] rotate-[90deg] z-[10] bg-transparent">
         <LeftTopArm />
       </div>
-      <div className="absolute top-[42.5%] left-[48%] transform -translate-x-1/2 w-[5rem] rotate-[20deg] scale-y-[-1] z-[3] bg-transparent">
+      <div className="absolute top-[54%] right-[22.5%] transform -translate-x-[60%] w-[4.5rem] -scale-y-100 rotate-[120deg] z-10 bg-transparent">
         <LeftHand />
       </div>
       {/* RIGHT ARM */}
-      <div className="absolute top-[39%] left-[43.5%] transform -translate-x-1/2 w-14 rotate-[-110deg] z-10 bg-transparent">
+      <div className="absolute top-[40.5%] left-[40%] transform -translate-x-1/2 w-[3.25rem] rotate-[60deg] z-[12] bg-transparent">
         <RightTopArm />
       </div>
-      <div className="absolute top-[46.5%] left-[52%] transform -translate-x-1/2 w-[5rem] rotate-[-160deg] z-10 bg-transparent">
+      <div className="absolute top-[48%] left-[48%] transform -translate-x-1/2 w-[4.5rem] scale-y-100 rotate-[200deg] z-[12] bg-transparent">
         <RightHand />
       </div>
       {/* LEFT LEG */}
-      <div className="absolute top-[59%] right-[42%] transform -translate-x-1/2 w-6 z-[5] rotate-[10deg] bg-transparent">
+      <div className="absolute top-[65%] right-[37.5%] transform -translate-x-1/2 w-[2rem] z-[3] bg-transparent rotate-[10deg]">
         <LeftTopLeg />
       </div>
-      <div className="absolute top-[70%] right-[42%] transform -translate-x-1/2 w-8 z-[5] rotate-[15deg] bg-transparent">
+      <div className="absolute top-[74%] right-[36%] transform -translate-x-1/2 w-[2.5rem] z-[2] bg-transparent rotate-[10deg]">
         <LeftFoot />
       </div>
       {/* RIGHT LEG */}
-      <div className="absolute top-[58.5%] left-[44%] transform -translate-x-1/2 w-6 z-[5] rotate-[5deg] bg-transparent">
+      <div className="absolute top-[62%] left-[44%] transform -translate-x-1/2 w-[2rem] z-[6] bg-transparent rotate-[5deg]">
         <RightTopLeg />
       </div>
-      <div className="absolute top-[64.5%] left-[36.5%] transform -translate-x-1/2 w-8 z-[5] rotate-[80deg] bg-transparent">
+      <div className="absolute top-[71%] left-[36%] transform -translate-x-1/2 w-[2.5rem] z-[5] bg-transparent rotate-[80deg]">
         <RightFoot />
       </div>
     </>

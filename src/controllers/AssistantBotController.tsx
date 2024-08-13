@@ -3,7 +3,9 @@ import Assistant2D from "../game/shared-object/interaction/AssistantRobot2D";
 import { useContext, useState } from "react";
 import { GameContext } from "../contexts/GameContext";
 
-const AssistantBotController = () => {
+const AssistantBotController = ({
+  spawnPosition = [0, 0, -9]
+}) => {
   const [animation, setAnimation] = useState<string>("idle");
   const { isInteracting, setIsInteracting ,currentHit,setCurrentHit} = useContext(GameContext);
 
@@ -12,7 +14,7 @@ const AssistantBotController = () => {
       <RigidBody
         name="assistant-bot"
         type="dynamic"
-        position={[0, 0, -9]}
+        position={spawnPosition}
         gravity={true}
         linearDamping={10}
         mass={50}

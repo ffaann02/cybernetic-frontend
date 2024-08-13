@@ -58,6 +58,8 @@ interface GameContextProps {
   enemyHitName?: string;
   setEnemyHitName?: React.Dispatch<React.SetStateAction<string>>;
   searchDataNotify?: React.RefObject<any>;
+  showStar: boolean;
+  setShowStar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialGameContext: GameContextProps = {
@@ -79,6 +81,7 @@ const initialGameContext: GameContextProps = {
     "game-level-5",
     "game-level-6",
     "slime-lab",
+    "online-game1",
   ],
   currentCamera: 1,
   cameraList: [1, 2, 3],
@@ -124,6 +127,9 @@ const initialGameContext: GameContextProps = {
   setIsEnemyHit: () => {},
   enemyHitName: "",
   setEnemyHitName: () => {},
+  controlMap: [],
+  showStar: false,
+  setShowStar: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -171,7 +177,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isEnemyHit, setIsEnemyHit] = useState<boolean>(false);
   const [enemyHitName, setEnemyHitName] = useState<string>("");
   const searchDataNotify = useRef(null);
-
+  const [showStar, setShowStar] = useState(false);
+  
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
       ...prevState,
@@ -241,6 +248,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setIsEnemyHit,
     enemyHitName,
     setEnemyHitName,
+    showStar,
+    setShowStar,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

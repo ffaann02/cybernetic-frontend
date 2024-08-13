@@ -163,7 +163,7 @@ const PlayerMainUI = () => {
 
   return (
     <div
-      className={`absolute bottom-0 w-full ${isDeath ? "opacity-0" : "opacity-100"} z-[9998] px-0 py-10 ${currentScene?.includes("game") ? "block":"hidden"} ${
+      className={`absolute bottom-0 w-full ${isDeath ? "opacity-0" : "opacity-100"} z-[9998] px-0 py-10 ${currentScene?.includes("game") || currentScene==="tutorial" ? "block":"hidden"} ${
         isUsingSearch ? "h-full" : "h-fit"
       }`}
       id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}
