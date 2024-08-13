@@ -121,21 +121,21 @@ export const enemyConfigs: { [key: string]: EnemyConfig } = {
                 tilesAmountHorizontally: 4,
                 tilesAmountVertically: 1,
                 tilesAmount: 4,
-                frameRate: 4,
+                frameRate: 6,
             },
             attack: {
-                tilesAmountHorizontally: 5,
+                tilesAmountHorizontally: 9,
                 tilesAmountVertically: 1,
-                tilesAmount: 5,
-                frameRate: 5,
+                tilesAmount: 9,
+                frameRate: 9,
             },
         },
         mesh: {
             position: [0, 2, 0],
         },
         collider: {
-            args: [0.2, 1],
-            position: [0, 1.4, 0],
+            args: [0.7, 2.2],
+            position: [0, 1.8, 0],
         }
     }
 };

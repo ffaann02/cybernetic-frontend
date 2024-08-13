@@ -5,6 +5,8 @@ import Boss2D from '../../../../animation/Boss2D'
 import { useBossAnimation } from '../../../../hooks/useBossAnimation'
 import { useFrame } from '@react-three/fiber'
 import { Item } from '../../../shared-object/object/Item'
+import { Cylinder, Sphere } from '@react-three/drei'
+import FakeGlowMaterial from '../../../../components/FakeGlowMaterial'
 
 
 const BossHologram = ({
@@ -75,13 +77,13 @@ const BossHologram = ({
                 rotation={[degreeNumberToRadian(0), degreeNumberToRadian(0), degreeNumberToRadian(0)]}>
                 <Boss2D scale={1} animation={animationState} opacity={bossOpacity} isHologram={true} />
             </RigidBody>
-            <rectAreaLight
+            {/* <rectAreaLight
                 intensity={8}
                 width={8}
                 height={5}
                 color="#00ffff"
                 rotation={[degreeNumberToRadian(0), degreeNumberToRadian(0), degreeNumberToRadian(0)]}
-                position={[2, 3, 10]} />
+                position={[2, 3, 10]} /> */}
         </>
     )
 }

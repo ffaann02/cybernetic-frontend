@@ -1,7 +1,7 @@
 import React, { Suspense, useContext, useEffect, useMemo, useState } from 'react'
 import { GameContext } from '../../../contexts/GameContext';
 import CharacterController, { Controls } from '../../../controllers/CharacterController';
-import { KeyboardControls, PerspectiveCamera } from '@react-three/drei';
+import { KeyboardControls, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 import { Level5FinalEnvironment } from '../scene-object/Level5-FinalEnvironment';
@@ -9,6 +9,7 @@ import BossDisplayUI from '../ui/BossDisplayUI';
 import TurretGunUI from '../ui/TurretGunUI';
 import BossHologramUI from '../ui/BossHologramUI';
 import Level5ModelChoosingUI from '../ui/Level5ModelChoosingUI';
+import { degreeNumberToRadian } from '../../../utils';
 
 type Props = {}
 
@@ -45,18 +46,32 @@ const Level5Final: React.FC<Props> = () => {
                     shadows
                     className="z-0"
                 >
-                    {/* <fog attach="fog" args={["skyblue", 15, 30]} /> */}
                     <color attach="background" args={["black"]} />
-                    {currentCamera === 2 && (
+                    {/* {currentCamera === 2 && (
                         <PerspectiveCamera makeDefault position={[0, 4, 10]} />
-                    )}
-                    {/* <PerspectiveCamera makeDefault position={[0, 2, 10]} /> */}
+                    )} */}
                     <ambientLight intensity={0.5} color={"lightblue"} />
 
+                    {/* <group rotation={[
+                        degreeNumberToRadian(0),
+                        degreeNumberToRadian(-10),
+                        degreeNumberToRadian(0),
+                    ]}>
+                        <PerspectiveCamera makeDefault position={[-30, 23, 65]}
+                            rotation={[
+                                degreeNumberToRadian(-20),
+                                degreeNumberToRadian(0),
+                                degreeNumberToRadian(0),
+                            ]} />
+                    </group> */}
+
                     <Suspense fallback={null}>
-                        <Physics debug={debug} gravity={[0, -9.81, 0]}>
+                        <Physics debug={debug} gravity={[0, -15, 0]}>
+                            {/* Spawn Room 1 */}
                             <CharacterController spawnPosition={[-28, 2, 20]} />
-                            {/* <CharacterController /> */}
+
+                            {/* Room 2 */}
+                            {/* <CharacterController spawnPosition={[0, 60, 10]} /> */}
                             <Level5FinalEnvironment />
                         </Physics>
                     </Suspense>

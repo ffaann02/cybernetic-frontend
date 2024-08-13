@@ -29,7 +29,7 @@ export const Level5FinalEnvironment = ({}) => {
         setPredictionStat,
     } = useLevel5Context();
 
-    const [currentRoom, setCurrentRoom] = useState(1);
+    const [currentRoom, setCurrentRoom] = useState(2);
 
     const door01_destination = useRef<any>(null);
     const door02_destination = useRef<any>(null);

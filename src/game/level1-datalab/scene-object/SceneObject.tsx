@@ -10,7 +10,7 @@ import { GameContext } from "../../../contexts/GameContext";
 import { degreeNumberToRadian } from "../../../utils";
 import { Mine } from "../../shared-object/object/Mine";
 import { MapRoom1 } from "../map/MapRoom1";
-import {MapRoom2 } from "../map/MapRoom2";
+import { MapRoom2 } from "../map/MapRoom2";
 import Door from "../../shared-object/object/Door";
 import Guard from "./Guard";
 import { Controls } from "../../../controllers/CharacterController";
@@ -24,7 +24,7 @@ import * as THREE from "three";
 import { LaserTargetObjectProps } from "./room2/LaserTargetObject";
 import { LaserTargetObjectData } from "./room2/LaserTargetObjectData";
 import { useLevel1Context } from "../../../contexts/SceneContext/Level1Context";
-import Room  from "../../shared-object/Room";
+import Room from "../../shared-object/Room";
 import NPC from "./room1/NPC";
 import Object from "./room1/Object";
 
@@ -83,9 +83,12 @@ const SceneObject = ({
     playerRigidBody,
     setIsInteracting,
     setIsUsingSecurityCamera,
+    isUsingSearch,
   } = useContext(GameContext);
 
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
+  const gPressed = useKeyboardControls((state) => state[Controls.G]);
+  const escPressed = useKeyboardControls((state) => state[Controls.ESC]);
   const door01_self = useRef<any>(null);
   const door01_destination = useRef<any>(null);
 
@@ -191,6 +194,40 @@ const SceneObject = ({
         setIsSubmitClicked(false);
       }
     }
+    if ((gPressed || escPressed) && isUsingSearch) {
+      const currentTime = new Date().getTime();
+      if (currentTime - lastPressTime > 200) {
+        let imageLink = "";
+        if (gPressed){
+          imageLink = "/images/slime_default.png";
+        }
+        else{
+          imageLink = "/images/SpiderHead.png"
+        }
+        setLastPressTime(currentTime);
+        dataCollectNotify.current.show({
+          unstyled: true,
+          closable: false,
+          life: 2000,
+          content: (props) => (
+              <div className="flex relative z-[100000] rounded-lg px-2.5 py-2 gap-x-2">
+                <img
+                  src={imageLink}
+                  className="w-16 h-16 bg-white rounded-xl"
+                />
+                <div className="">
+                  <p className="text-2xl font-semibold text-white">
+                    Data Collected!
+                  </p>
+                  <p className="text-lg font-semibold text-white">
+                    {gPressed ? "Slime" : "Spider"} data collected.
+                  </p>
+                </div>
+              </div>
+          ),
+        });
+      }
+    }
   });
 
   const [doorStatuses, setDoorStatuses] = useState([
@@ -219,7 +256,7 @@ const SceneObject = ({
 
       {currentRoom === 1 && (
         <Room>
-          <NPC/>
+          <NPC />
           <Object items={items} />
           <MapRoom1 />
         </Room>
@@ -228,7 +265,7 @@ const SceneObject = ({
       {/* <Room2 /> */}
       {currentRoom === 2 && (
         <Room>
-          {enemyPartrolProps.map((enemyPartrolProp, index) => (
+          {enemyPatrolInScene.map((enemyPartrolProp, index) => (
             <EnemyPatrolController
               key={index}
               id={index}
@@ -252,7 +289,7 @@ const SceneObject = ({
             setNumericalCollectedList={setNumericalCollectedList}
             dataCollectNotify={dataCollectNotify}
           />
-          <MapRoom2/>
+          <MapRoom2 />
         </Room>
       )}
 

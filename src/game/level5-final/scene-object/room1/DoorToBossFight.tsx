@@ -3,6 +3,8 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { GameContext } from '../../../../contexts/GameContext'
 import { useFrame } from '@react-three/fiber'
 import FakeGlowMaterial from '../../../../components/FakeGlowMaterial'
+import { Item } from '../../../shared-object/object/Item'
+import { degreeNumberToRadian } from '../../../../utils'
 
 const DoorToBossFight = ({
   leftDoorToBossFightRef,
@@ -19,8 +21,10 @@ const DoorToBossFight = ({
 }) => {
 
   const { setCurrentHit } = useContext(GameContext);
-  const [leftDoorPosition, setLeftDoorPosition] = useState([-50, 14, 8]);
-  const [rightDoorPosition, setRightDoorPosition] = useState([-5, 14, 8]);
+  const [leftDoorPosition, setLeftDoorPosition] = useState([-27.5, 28, 7.5]);
+  const [rightDoorPosition, setRightDoorPosition] = useState([-27.5, 0, 7.5]);
+  // const [leftDoorPosition, setLeftDoorPosition] = useState([-50, 28, 7.5]);
+  // const [rightDoorPosition, setRightDoorPosition] = useState([-10, 0, 7.5]);
 
   const handleDoorToBossFightonCollisionEnter = ({ other }) => {
     const { name } = other.rigidBodyObject;
@@ -43,42 +47,42 @@ const DoorToBossFight = ({
       const currentLeftDoorPosition = vec3(leftDoorToBossFightRef.current.translation());
       const currentRightDoorPosition = vec3(rightDoorToBossFightRef.current.translation());
       if (isDoorClosed && isDoorOpening) {
-        if (currentLeftDoorPosition.x > -85) {
+        if (currentLeftDoorPosition.x > -60) {
           leftDoorToBossFightRef.current.setTranslation({
             x: currentLeftDoorPosition.x - doorMoveSpeed,
             y: currentLeftDoorPosition.y,
             z: currentLeftDoorPosition.z
           });
         }
-        if (currentRightDoorPosition.x < 30) {
+        if (currentRightDoorPosition.x < 5) {
           rightDoorToBossFightRef.current.setTranslation({
             x: currentRightDoorPosition.x + doorMoveSpeed,
             y: currentRightDoorPosition.y,
             z: currentRightDoorPosition.z
           });
         }
-        if (currentLeftDoorPosition.x <= -85 && currentRightDoorPosition.x >= 30) {
+        if (currentLeftDoorPosition.x <= -60 && currentRightDoorPosition.x >= 5) {
           setIsDoorOpening(false);
           setIsDoorOpenned(true);
           setIsDoorClosing(true);
         }
       }
       else if (isDoorOpenned && isDoorClosing) {
-        if (currentLeftDoorPosition.x < -50) {
+        if (currentLeftDoorPosition.x < -27.5) {
           leftDoorToBossFightRef.current.setTranslation({
             x: currentLeftDoorPosition.x + doorMoveSpeed,
             y: currentLeftDoorPosition.y,
             z: currentLeftDoorPosition.z
           });
         }
-        if (currentRightDoorPosition.x > -5) {
+        if (currentRightDoorPosition.x > -27.5) {
           rightDoorToBossFightRef.current.setTranslation({
             x: currentRightDoorPosition.x - doorMoveSpeed,
             y: currentRightDoorPosition.y,
             z: currentRightDoorPosition.z
           });
         }
-        if (currentLeftDoorPosition.x >= -50 && currentRightDoorPosition.x <= -5) {
+        if (currentLeftDoorPosition.x >= -27.5 && currentRightDoorPosition.x <= -27.5) {
           setIsDoorClosing(false);
           setIsDoorClosed(true);
         }
@@ -96,13 +100,29 @@ const DoorToBossFight = ({
           lockTranslations
           lockRotations
           position={leftDoorPosition}
-          scale={[45, 30, 1]}
+          rotation={[degreeNumberToRadian(-90), degreeNumberToRadian(0), degreeNumberToRadian(90)]}
+          scale={[10, 28, 10]}
           onCollisionEnter={handleDoorToBossFightonCollisionEnter}
           onCollisionExit={handleDoorToBossFightonCollisionExit}>
-          <mesh castShadow>
+          {/* <mesh castShadow>
             <boxGeometry args={[1, 1, 1]} />
             <FakeGlowMaterial glowColor="#00fff2" opacity={doorOpacity} />
-          </mesh>
+          </mesh> */}
+          <Item
+            item={
+              {
+                name: "MetalDoor",
+                position: [0, 0, 0],
+                rotation: [0, 0, 0],
+                scale: [1, 1, 1],
+                fileType: "glb",
+              }
+            }
+            isOutlined={true}
+            outlineColor={"#ff1e00"}
+            outlineThickness={3}
+            visible={doorOpacity > 0} 
+          />
         </RigidBody>
       )}
 
@@ -114,14 +134,29 @@ const DoorToBossFight = ({
           lockTranslations
           lockRotations
           position={rightDoorPosition}
-          scale={[45, 30, 1]}
+          rotation={[degreeNumberToRadian(-90), degreeNumberToRadian(180), degreeNumberToRadian(90)]}
+          scale={[10, 28, 10]}
           onCollisionEnter={handleDoorToBossFightonCollisionEnter}
           onCollisionExit={handleDoorToBossFightonCollisionExit}>
-          <mesh>
+          {/* <mesh>
             <boxGeometry args={[1, 1, 1]} />
-            {/* <meshBasicMaterial color="#00fff2" transparent opacity={0.7} /> */}
             <FakeGlowMaterial glowColor="#00fff2" opacity={doorOpacity} />
-          </mesh>
+          </mesh> */}
+          <Item
+            item={
+              {
+                name: "MetalDoor",
+                position: [0, 0, 0],
+                rotation: [0, 0, 0],
+                scale: [1, 1, 1],
+                fileType: "glb",
+              }
+            }
+            isOutlined={true}
+            outlineColor={"#ff1e00"}
+            outlineThickness={3}
+            visible={doorOpacity > 0} 
+          />
         </RigidBody>
       )}
 
