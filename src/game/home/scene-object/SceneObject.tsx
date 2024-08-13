@@ -81,12 +81,12 @@ export const SceneObject = () => {
       {items.map((item, index) => (
         <ItemWithUrl key={index} item={item} sceneName="home" />
       ))}
-      {idleItems.map((item, index) => (
+      {/* {idleItems.map((item, index) => (
         <ItemWithUrlIdle key={index} item={item} sceneName="home" />
       ))}
       {itemSpin.map((item, index) => (
         <ItemWithUrlSpin key={index} item={item} sceneName="home" />
-      ))}
+      ))} */}
     </>
   );
 };

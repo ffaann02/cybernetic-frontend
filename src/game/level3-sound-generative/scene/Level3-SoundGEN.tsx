@@ -181,6 +181,7 @@ const Level3SoundGEN: React.FC<HomeProps> = () => {
               ]}
             />
           )}
+          {/* <OrbitControls /> */}
         </Canvas>
       </KeyboardControls>
     </>

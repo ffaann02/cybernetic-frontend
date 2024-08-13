@@ -289,9 +289,9 @@ const Register = () => {
               <div className="flex justify-center w-full gap-x-1">
                 <img
                   src="https://cdn4.iconfinder.com/data/icons/logos-brands-7/512/google_logo-google_icongoogle-512.png"
-                  className="w-6 h-6"
+                  className="w-2"
                 />
-                <a className="my-auto text-xs">Sign in with Google</a>
+                <a className="my-auto text-lg ml-2">Sign in with Google</a>
               </div>
             </Button>
             <div className="text-blue-400 mt-4">
@@ -311,7 +311,7 @@ const Register = () => {
         </div>
         <div className="col-span-8 w-full h-full relative">
           <img
-            src="https://cdn.discordapp.com/attachments/764116499840368640/1262078282635935844/Untitled-2.png?ex=6695497e&is=6693f7fe&hm=0df836cd084986e1efe9cd0fc2e96d7b39ea4657274b19a7ddf7ddcd7d0eaf4c&"
+            src="https://cdn.discordapp.com/attachments/998975486317305956/1272128707481305119/Untitled-2.png?ex=66b9d9ae&is=66b8882e&hm=bff472333690dc5b17cc172da0acdf26195d66c5d7a340ce8713e39823d4bf5a&"
             className="absolute inset-0 object-cover w-full h-full rounded-r-xl"
           />
         </div>

@@ -30,6 +30,9 @@ import { TutorialContextProvider } from "./contexts/SceneContext/TutorialContext
 import { Level5ContextProvider } from "./contexts/SceneContext/Level5Context";
 import Level6Reinforcement from "./game/level6-reinforcement/scene/Level6Reinforcement";
 import { Level6ContextProvider } from "./contexts/SceneContext/Level6Context";
+import LevelSelectionNew from "./non-gameplay-scene/LevelSelectionNew";
+import { Level4ContextProvider } from "./contexts/SceneContext/Level4Context";
+import Level4OCR from "./game/level4-ocr/scene/Level4OCR";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -65,7 +68,7 @@ function App() {
                             />
                             <Scene
                               title="level-selection"
-                              scene={<LevelSelection />}
+                              scene={<LevelSelectionNew />}
                             />
                             <Scene
                               title="game-level-1"
@@ -89,6 +92,14 @@ function App() {
                                 <Level3ContextProvider>
                                   <Level3SoundGEN />
                                 </Level3ContextProvider>
+                              }
+                            />
+                            <Scene
+                              title="game-level-4"
+                              scene={
+                                <Level4ContextProvider>
+                                  <Level4OCR/>
+                                </Level4ContextProvider>
                               }
                             />
                             <Scene

@@ -4,6 +4,8 @@ import React, { createContext, useContext } from "react";
 interface Level4ContextData {
   level: number;
   setLevel: (level: number) => void;
+  isOpenOcrPassword: boolean; 
+  setIsOpenOcrPassword: (isOpenOcrPassword: boolean) => void;
 }
 
 // Create the Level4Context
@@ -25,10 +27,13 @@ export const Level4ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
   const [level, setLevel] = React.useState<number>(1);
+  const [isOpenOcrPassword, setIsOpenOcrPassword] = React.useState<boolean>(false);
 
   const contextValue: Level4ContextData = {
     level,
     setLevel,
+    isOpenOcrPassword,
+    setIsOpenOcrPassword,
   };
 
   return (

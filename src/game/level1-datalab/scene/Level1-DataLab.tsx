@@ -12,7 +12,7 @@ import CharacterController, {
 } from "../../../controllers/CharacterController";
 import { Physics, RapierRigidBody } from "@react-three/rapier";
 import { GameContext } from "../../../contexts/GameContext";
-import { KeyboardControls, PerspectiveCamera } from "@react-three/drei";
+import { KeyboardControls, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import SceneObject from "../scene-object/SceneObject";
 import GuardDataPanelUI from "../scene-object/GuardDataPanelUI";
 import { Toast } from "primereact/toast";
@@ -137,6 +137,7 @@ const Level1DataLab: React.FC<HomeProps> = () => {
               )}
             </Physics>
           </Suspense>
+          {/* <OrbitControls /> */}
         </Canvas>
       </KeyboardControls>
     </>

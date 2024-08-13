@@ -16,6 +16,7 @@ import {
 } from "../hooks/useCharacterAnimation";
 import useAudio from "../hooks/useAudio";
 import io from "socket.io-client";
+import Character2Donline from "../animation/Character2Donline";
 
 export enum Controls {
   forward = "forward",
@@ -40,6 +41,8 @@ interface CharacterControllerProps {
   onlinePosition?: any;
   playerRigidBody: any;
   players?: any;
+  startGame?: boolean;
+  variant?: "blue" | "orange";
 }
 
 const CharacterControllerOnline: React.FC<CharacterControllerProps> = ({
@@ -51,6 +54,8 @@ const CharacterControllerOnline: React.FC<CharacterControllerProps> = ({
   onlinePosition,
   playerRigidBody,
   players,
+  startGame,
+  variant = "blue",
 }) => {
   const controls = useRef<any>(null);
   const firstPerson = useRef<any>(null);
@@ -263,7 +268,7 @@ const CharacterControllerOnline: React.FC<CharacterControllerProps> = ({
           updatedPos[1],
           updatedPos[2]
         );
-        
+
         playerRigidBody.current.setTranslation(updatedPosVec, true);
         // console.log(updatedPos);
         // console.log("other");
@@ -362,10 +367,12 @@ const CharacterControllerOnline: React.FC<CharacterControllerProps> = ({
   };
 
   useFrame((_, delta) => {
-    if (isSelf) {
+    if (isSelf && startGame) {
       cameraFollow();
     }
-    handleMovement(delta);
+    if (startGame) {
+      handleMovement(delta);
+    }
     handleUseItem();
   });
 
@@ -409,7 +416,11 @@ const CharacterControllerOnline: React.FC<CharacterControllerProps> = ({
         }}
       >
         <group ref={character}>
-          <Character2D direction={direction} animation={animationState} />
+          <Character2Donline
+            direction={direction}
+            animation={animationState}
+            variant={variant}
+          />
           <CapsuleCollider
             args={[
               1, // radius

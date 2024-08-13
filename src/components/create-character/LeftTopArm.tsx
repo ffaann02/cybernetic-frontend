@@ -1,7 +1,9 @@
-const LeftTopArm = () => {
+import OrangeLeftTopArm from "../../assets/orange-variant/Left_Shoulder.svg";
+
+const LeftTopArm = ({choice = 2}) => {
     return (
       <div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 141.1 97.6">
+        {choice===1 && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 141.1 97.6">
           <defs>{/* <style>.cls-1{fill:#414042;}</style> */}</defs>
           <g id="Layer_2" data-name="Layer 2">
             <g id="Layer_3" data-name="Layer 3">
@@ -13,7 +15,10 @@ const LeftTopArm = () => {
               />
             </g>
           </g>
-        </svg>
+        </svg>}
+        {
+          choice===2 && <img src={OrangeLeftTopArm} alt="Left Top Arm" className="" />
+        }
       </div>
     );
   };

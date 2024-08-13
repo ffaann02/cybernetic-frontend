@@ -99,6 +99,7 @@ const Level2Classify: React.FC<HomeProps> = () => {
     }, 1000); // 1 second delay
   };
 
+
   const handleActivate = () => {
     setResetTrigger((prev) => prev + 1);
     const newDangerPattern = dangerPattern.reverse();
@@ -110,6 +111,7 @@ const Level2Classify: React.FC<HomeProps> = () => {
     setIsOpenGlassTest(false);
   }
 
+  // handleActivate();
   return (
     <>
       {/* <CheckListGuideUI /> */}
@@ -185,6 +187,7 @@ const Level2Classify: React.FC<HomeProps> = () => {
               ]}
             />
           )}
+          <OrbitControls/>
         </Canvas>
       </KeyboardControls>
     </>
