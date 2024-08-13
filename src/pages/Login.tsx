@@ -154,7 +154,7 @@ const Login = () => {
           className="grid flex-grow grid-cols-12 border-t-2 border-t-cyan-400 rounded-xl
       bg-white/80 shadow-xl shadow-slate-200"
         >
-          <div className="col-span-4 px-8 py-8 flex flex-col gap-y-4">
+          <div className="col-span-4 px-4 py-8 flex flex-col gap-y-4">
             <h1 className="text-2xl text-neutral-500 font-bold">Welcome to Cybernetic</h1>
             <div className="p-inputgroup">
               <span className="p-inputgroup-addon">
@@ -238,7 +238,7 @@ const Login = () => {
                 >
                   <img
                     src="https://cdn4.iconfinder.com/data/icons/logos-brands-7/512/google_logo-google_icongoogle-512.png"
-                    className="w-6 h-6"
+                    className="w-2"
                   />
                   <a className="my-auto">Sign in with Google</a>
                 </div>

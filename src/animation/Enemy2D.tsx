@@ -7,11 +7,11 @@ import { enemyConfigs, EnemyConfig } from './EnemyConfig';
 import { EnemyAnimationState } from '../hooks/useEnemyAnimation';
 
 const Enemy2D = ({
-    name,
-    animation,
-    direction,
-    color,
-    scale,
+    name = "Slime",
+    animation = EnemyAnimationState.Idle,
+    direction = "left",
+    color = "white",
+    scale = 1,
     opacityOptional,
 }: {
     name: string;

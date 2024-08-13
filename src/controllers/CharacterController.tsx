@@ -276,15 +276,6 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
 
   const cameraFollow = () => {
     let adjustZoom = { x: 0, y: 0, z: 0 };
-    // let adjustZoom = { x: 2, y: -7, z: -5 };
-    if (isCoding || isInteracting) {
-      adjustZoom = { x: 1, y: -4, z: -4 };
-    }
-
-    else {
-       adjustZoom = { x: 0, y: 0, z: 0 };
-     }
-
     if (isDeath) {
       adjustZoom = { x: -1, y: -6, z: -6 };
     } else {
@@ -293,6 +284,9 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
 
     if (isCarryingObject) {
       adjustZoom = { x: -1, y: -1, z: -3 };
+    }
+    if (isCoding || isInteracting) {
+      adjustZoom = { x: 1, y: -4, z: -4 };
     }
 
     if (controls.current && playerRigidBody.current) {

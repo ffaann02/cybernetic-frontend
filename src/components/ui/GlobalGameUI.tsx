@@ -41,11 +41,11 @@ const GlobalGameUI = () => {
     isDeath,
     currentScene,
     setScene,
+    showStar,
     isEnemyHit,
     enemyHitName,
     setIsEnemyHit,
     setEnemyHitName,
-    showStar
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -80,9 +80,11 @@ const GlobalGameUI = () => {
 
   return (
     <>
-      {showStar && <div className="absolute z-50 flex items-center justify-center h-screen w-screen animate-heartBeat">
-        <CiStar className="absolute text-[10rem] text-yellow-400/50 animate-ping" />
-      </div>}
+      {showStar && (
+        <div className="absolute z-50 flex items-center justify-center h-screen w-screen animate-heartBeat">
+          <CiStar className="absolute text-[10rem] text-yellow-400/50 animate-ping" />
+        </div>
+      )}
       {showDeathContainer && <div id="death-container"></div>}
       {showEnemySplash === true &&
         <>
@@ -109,8 +111,9 @@ const GlobalGameUI = () => {
       }
       {showPlayAgain && (
         <div
-          className={`absolute ${showPlayAgain ? "opacity-100" : "opacity-0"
-            } inset-0 flex items-center justify-center z-[100000] 
+          className={`absolute ${
+            showPlayAgain ? "opacity-100" : "opacity-0"
+          } inset-0 flex items-center justify-center z-[100000] 
           flex-col w-full h-full bg-red-400/50`}
         >
           <div className="w-52 -rotate-45 mb-10">
@@ -143,8 +146,9 @@ const GlobalGameUI = () => {
       )}
       {isFadingBetweenRoom && (
         <div
-          className={`absolute z-[12000] bg-black w-full h-full ${isFadingBetweenRoom ? "fadeIn" : "fadeOut"
-            }`}
+          className={`absolute z-[12000] bg-black w-full h-full ${
+            isFadingBetweenRoom ? "fadeIn" : "fadeOut"
+          }`}
         ></div>
       )}
       {/* <PlayerMainUI /> */}
@@ -168,7 +172,6 @@ const GlobalGameUI = () => {
         <AskForInputKeyDown title="Press E to Interact with Guard" />
       )}
       {isCoding && <TrainAiComputer />}
-
       {currentHit === "LiftObjectTutorial" && (
         <AskForInputKeyDown title="Press E to Lift Up The Crane" />
       )}
@@ -249,6 +252,14 @@ const GlobalGameUI = () => {
             <AskForInputKeyDown title="Press E to Leave Audio Stereo" />
           </>
         ))}
+      {currentHit === "Level4-OCR-Computer" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Computer" />
+          </>
+        ))}
       {currentHit === "ComputerVideo-Level3" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Enter Computer" />
@@ -263,6 +274,19 @@ const GlobalGameUI = () => {
         ) : (
           <>
             <AskForInputKeyDown title="Press E to Close CD" />
+          </>
+        ))}
+      {currentHit === "Crane-Computer-Level-3" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Access Controller" />
+        ) : (
+          <>
+            <AskForInputKeyDown title="Press E to Leave Controller" />
+            <div className="absolute z-[100] bottom-[8.25rem] left-1/2 transform -translate-x-1/2">
+              <h1 className="text-white text-xl">
+                Press Space Bar to Activate Fire
+              </h1>
+            </div>
           </>
         ))}
       {currentHit === "GlassComputerLevel2" &&

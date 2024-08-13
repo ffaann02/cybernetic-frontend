@@ -1,6 +1,9 @@
-const Bottom_RightLeg = () => {
-    return (
-      <div>
+import OrangeBottomRightLeg from "../../assets/orange-variant/Left_Bottom_leg.svg";
+
+const Bottom_RightLeg = ({ choice = 2 }) => {
+  return (
+    <div>
+      {choice === 1 && (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114.96 258.66">
           <defs>
             {/* <style>.cls-1{fill:#414042;}.cls-2{fill:#f1f2f2;}.cls-3{fill:#27aae1;}</style> */}
@@ -37,8 +40,10 @@ const Bottom_RightLeg = () => {
             </g>
           </g>
         </svg>
-      </div>
-    );
-  };
-  export default Bottom_RightLeg;
-  
+      )}
+
+      {choice === 2 && <img src={OrangeBottomRightLeg} alt="Left Top Arm" />}
+    </div>
+  );
+};
+export default Bottom_RightLeg;

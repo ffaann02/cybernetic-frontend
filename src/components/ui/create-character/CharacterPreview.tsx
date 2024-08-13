@@ -164,7 +164,7 @@ const CharacterPreview = ({
           </div>
         </div>
         <div
-          className="w-[384px] h-[384px] mt-32 mb-auto relative bg-transparent overflow-y-auto"
+          className="w-[384px] h-[384px] mt-24 mb-auto relative bg-transparent overflow-y-auto"
           id="frame"
         >
           <div className="w-full h-full relative bg-transparent">
@@ -173,63 +173,100 @@ const CharacterPreview = ({
                 {frames[currentFrame]}
               </div>
             )}
+            <div className="h-20"></div>
             <div className="w-full h-full relative" ref={idle_frame1}>
               <Idle1 />
             </div>
+            <div className="h-20"></div>
             <div className="w-full h-full relative" ref={idle_frame2}>
               <Idle2 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={idle_frame3}>
               <Idle3 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={idle_frame4}>
               <Idle4 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={run_frame_1}>
               <Running1 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={run_frame_2}>
               <Running2 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={run_frame_3}>
               <Running3 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={run_frame_4}>
               <Running4 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={run_frame_5}>
               <Running5 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={run_frame_6}>
               <Running6 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_idle_frame_1}>
               <LiftIdle1 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_idle_frame_2}>
               <LiftIdle2 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_idle_frame_3}>
               <LiftIdle3 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_run_frame_1}>
               <LiftRunning1 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_run_frame_2}>
               <LiftRunning2 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_run_frame_3}>
               <LiftRunning3 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_run_frame_4}>
               <LiftRunning4 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_run_frame_5}>
               <LiftRunning5 />
             </div>
+            <div className="h-20"></div>
+
             <div className="w-full h-full relative" ref={lift_run_frame_6}>
               <LiftRunning6 />
             </div>
+            <div className="h-20"></div>
           </div>
           {/* <div className="w-full h-full relative" ref={jump_frame_1}>
               <Jump1/>

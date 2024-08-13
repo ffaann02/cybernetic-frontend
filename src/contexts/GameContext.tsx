@@ -78,6 +78,7 @@ const initialGameContext: GameContextProps = {
     "game-level-1",
     "game-level-2",
     "game-level-3",
+    "game-level-4",
     "game-level-5",
     "game-level-6",
     "slime-lab",

@@ -144,6 +144,15 @@ const items = [
     spinSpeed: 0,
     spinAxis: "y",
   },
+  // {
+  //   name: "AngryRoboDancer",
+  //   fileType: "glb",
+  //   position: [-4, 6.2, 5.2],
+  //   rotation: 0,
+  //   scale: [0.25, 0.25, 0.25],
+  //   spinSpeed: 0,
+  //   spinAxis: "y",
+  // },
   {
     name: "Highway",
     fileType: "glb",
