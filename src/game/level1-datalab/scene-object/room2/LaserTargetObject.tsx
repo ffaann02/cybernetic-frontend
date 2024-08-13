@@ -68,20 +68,20 @@ const LaserTargetObject = ({ objectData, setCurrentLaserTarget, dropedObject, se
         if (other.rigidBodyObject) {
             const { name } = other.rigidBodyObject;
             if (name === "player") {
-                console.log("Pick up object");
-                setDropedObject((prev) => {
-                    const newDropedObject = prev.filter((object) => object.item.name !== targetName);
-                    return newDropedObject;
-                });
-                setObjectCollectedList((prevList) => {
-                    const duplicate = prevList.find((data) => data.name === targetName);
-                    if (duplicate) {
-
-                        return prevList;
-                    }
-                    else {
-                        if (currentTime - lastPressTime > 200) {
-                            setLastPressTime(currentTime);
+                const currentTime = new Date().getTime();
+                if (currentTime - lastPressTime > 1000) {
+                    setLastPressTime(currentTime);
+                    console.log("Pick up object");
+                    setDropedObject((prev) => {
+                        const newDropedObject = prev.filter((object) => object.item.name !== targetName);
+                        return newDropedObject;
+                    });
+                    setObjectCollectedList((prevList) => {
+                        const duplicate = prevList.find((data) => data.name === targetName);
+                        if (duplicate) {
+                            return prevList;
+                        }
+                        else {
                             dataCollectNotify.current.show({
                                 unstyled: true,
                                 closable: false,
@@ -102,13 +102,12 @@ const LaserTargetObject = ({ objectData, setCurrentLaserTarget, dropedObject, se
                                         </div>
                                     </div>
                                 ),
-                            })
+                            });
+                            const data = { name: targetName };
+                            return [...prevList, data];
                         }
-                        const data = { name: targetName };
-                        return [...prevList, data];
-                    }
-                });
-                const currentTime = new Date().getTime();
+                    });
+                }
             }
 
         }

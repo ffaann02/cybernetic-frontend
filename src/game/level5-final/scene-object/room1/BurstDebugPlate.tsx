@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import { degreeNumberToRadian } from '../../../../utils';
 import { Outlines } from "@react-three/drei";
+import { useLevel5Context } from '../../../../contexts/SceneContext/Level5Context';
 
-const Plate = ({ color, position, warningOpacity, setWarningOpacity }) => {
+const Plate = ({ color, position, warningOpacity, setWarningOpacity, collectedBossData }) => {
 
     return (
         <>
@@ -27,6 +28,54 @@ const Plate = ({ color, position, warningOpacity, setWarningOpacity }) => {
                     </mesh>
                 </RigidBody>
                 : null}
+
+            {/* No collected data no prediction */}
+            {/* {(collectedBossData && collectedBossData.length <= 0)
+                ?
+                <>
+                    <RigidBody
+                        type="fixed"
+                        colliders={false}
+                        position={position}
+                        scale={[1, 1, 1]}
+                        lockRotations
+                        lockTranslations
+                        rotation={[
+                            degreeNumberToRadian(90),
+                            degreeNumberToRadian(0),
+                            degreeNumberToRadian(0),
+                        ]}
+                    >
+                        <mesh>
+                            <ringGeometry args={[2, 1.5, 32]} />
+                            <meshStandardMaterial color={"#ff5f5f"} transparent={true} opacity={warningOpacity} />
+                        </mesh>
+                    </RigidBody>
+                </>
+                :
+                <>
+                    {color === "red" ?
+                        <RigidBody
+                            type="fixed"
+                            colliders={false}
+                            position={position}
+                            scale={[1, 1, 1]}
+                            lockRotations
+                            lockTranslations
+                            rotation={[
+                                degreeNumberToRadian(90),
+                                degreeNumberToRadian(0),
+                                degreeNumberToRadian(0),
+                            ]}
+                        >
+                            <mesh>
+                                <ringGeometry args={[2, 1.5, 32]} />
+                                <meshStandardMaterial color={"#ff5f5f"} transparent={true} opacity={warningOpacity} />
+                            </mesh>
+                        </RigidBody>
+                        : null}
+                </>
+            } */}
         </>
     );
 };
@@ -36,6 +85,8 @@ interface BurstDebugPlateProps {
 }
 
 const BurstDebugPlate: React.FC<BurstDebugPlateProps> = ({ debugPlatePosition, warningOpacity, setWarningOpacity }) => {
+
+    const { collectedBossData } = useLevel5Context();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -54,7 +105,8 @@ const BurstDebugPlate: React.FC<BurstDebugPlateProps> = ({ debugPlatePosition, w
                         color={plate.color}
                         position={[plate.position.x, plate.position.y, plate.position.z]}
                         warningOpacity={warningOpacity}
-                        setWarningOpacity={setWarningOpacity} />
+                        setWarningOpacity={setWarningOpacity}
+                        collectedBossData={collectedBossData} />
                 )
                 : null}
         </group>

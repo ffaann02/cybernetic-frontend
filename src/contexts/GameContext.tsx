@@ -53,14 +53,18 @@ interface GameContextProps {
   isDeath: boolean;
   setIsDeath: React.Dispatch<React.SetStateAction<boolean>>;
   controlMap: { name: string; keys: string[] }[];
+  isEnemyHit?: boolean;
+  setIsEnemyHit?: React.Dispatch<React.SetStateAction<boolean>>;
+  enemyHitName?: string;
+  setEnemyHitName?: React.Dispatch<React.SetStateAction<string>>;
+  searchDataNotify?: React.RefObject<any>;
   showStar: boolean;
   setShowStar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "level-selection",
-  // currentScene: "game-level-6",
+  currentScene: "game-level-1",
   previousScene: "level-selection",
   speed: 7.5,
   debug: false,
@@ -120,6 +124,10 @@ const initialGameContext: GameContextProps = {
   setIsPlayerInBossArea: () => {},
   bossParameter: {},
   setBossParameter: () => {},
+  isEnemyHit: false,
+  setIsEnemyHit: () => {},
+  enemyHitName: "",
+  setEnemyHitName: () => {},
   controlMap: [],
   showStar: false,
   setShowStar: () => {},
@@ -167,7 +175,11 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const playerRigidBody = useRef<any>(null);
   const [energy, setEnergy] = useState(10);
   const [isDeath, setIsDeath] = useState(false);
+  const [isEnemyHit, setIsEnemyHit] = useState<boolean>(false);
+  const [enemyHitName, setEnemyHitName] = useState<string>("");
+  const searchDataNotify = useRef(null);
   const [showStar, setShowStar] = useState(false);
+  
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
       ...prevState,
@@ -233,6 +245,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     isDeath,
     setIsDeath,
     controlMap,
+    isEnemyHit,
+    setIsEnemyHit,
+    enemyHitName,
+    setEnemyHitName,
     showStar,
     setShowStar,
   };

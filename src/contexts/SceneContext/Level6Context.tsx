@@ -24,6 +24,12 @@ interface Level6ContextData {
     setTrainingCurrentEpisode: (trainingCurrentEpisode: number) => void;
     trainingReward: number[];
     setTrainingReward: (trainingReward: number[]) => void;
+    solvingTime: number;
+    setSolvingTime: (solvingTime: number) => void;
+    mazeWallReDissolve: boolean;
+    setMazeWallReDissolve: (mazeWallReDissolve: boolean) => void;
+    plotImageBase64: string;
+    setPlotImageBase64: (plotImageBase64: string) => void;
 }
 
 // Create the Level6Context
@@ -60,6 +66,9 @@ export const Level6ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     const [isDisplayTrainingModal, setIsDisplayTrainingModal] = React.useState<boolean>(false);
     const [trainingCurrentEpisode, setTrainingCurrentEpisode] = React.useState<number>(0);
     const [trainingReward, setTrainingReward] = React.useState<number[]>([]);
+    const [solvingTime, setSolvingTime] = React.useState<number>(0);
+    const [mazeWallReDissolve, setMazeWallReDissolve] = React.useState<boolean>(true);
+    const [plotImageBase64, setPlotImageBase64] = React.useState<string>('');
 
     const contextValue: Level6ContextData = {
         level,
@@ -84,6 +93,12 @@ export const Level6ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
         setTrainingCurrentEpisode,
         trainingReward,
         setTrainingReward,
+        solvingTime,
+        setSolvingTime,
+        mazeWallReDissolve,
+        setMazeWallReDissolve,
+        plotImageBase64,
+        setPlotImageBase64,
     };
 
     return (

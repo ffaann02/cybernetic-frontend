@@ -29,7 +29,7 @@ const DropdownComponent = ({ label, value, options, onChange }) => (
     </div>
 );
 
-const BossHologramUI = ({}) => {
+const BossHologramUI = ({ }) => {
 
     const { axiosFetch } = useAxios();
     const { currentHit, isInteracting } = useContext(GameContext);
@@ -366,37 +366,47 @@ const BossHologramUI = ({}) => {
                                         </>
                                     )}
 
-                                    {(currentTopic === 'Collected' && collectedBossData && collectedBossData.length > 0) &&
+                                    {(currentTopic === 'Collected' && collectedBossData) &&
                                         <>
-                                            <h2 className='text-xl mb-4'>Collected Data</h2>
-                                            <div className='mt-2'>
-                                                {collectedBossData.map((data, index) => (
-                                                    <div key={index} className='grid grid-cols-6 border border-gray-400 rounded-md my-4'>
-                                                        <div className='col-span-2'>
-                                                            <h3 className='text-xl mt-4 ml-4'>Attack Pattern:<strong className='ml-2'>{data.pattern}</strong></h3>
-                                                            <ul className='ml-6 my-4 list-disc list-inside text-lg'>
-                                                                <li>Energy Source: <strong>{data.energySource}</strong></li>
-                                                                <li>Breathing Sound: <strong>{data.soundBreathing}</strong></li>
-                                                                <li>Charging Time: <strong>{data.chargingTime}</strong></li>
-                                                                <li>Last Active Turret: <strong>{data.lastActiveTurret}</strong></li>
-                                                                <li>Boss Health: <strong>{data.bossHealth}</strong></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div className='col-span-4 p-2 mt-2 mr-2'>
-                                                            <div className='w-full h-full flex justify-end'>
-                                                                <div className='grid grid-cols-10 grid-rows-6 gap-1'>
-                                                                    {data.distribution.flat().map((isBurst, index) => (
-                                                                        <div
-                                                                            key={index}
-                                                                            className={`border border-gray-400 aspect-square ${isBurst ? 'bg-red-400' : 'bg-gray-300/90'}`}
-                                                                        ></div>
-                                                                    ))}
+                                            {collectedBossData.length > 0
+                                                ?
+                                                <>
+                                                    <h2 className='text-xl mb-4'>Collected Data</h2>
+                                                    <div className='mt-2'>
+                                                        {collectedBossData.map((data, index) => (
+                                                            <div key={index} className='grid grid-cols-6 border border-gray-400 rounded-md my-4'>
+                                                                <div className='col-span-2'>
+                                                                    <h3 className='text-xl mt-4 ml-4'>Attack Pattern:<strong className='ml-2'>{data.pattern}</strong></h3>
+                                                                    <ul className='ml-6 my-4 list-disc list-inside text-lg'>
+                                                                        <li>Energy Source: <strong>{data.energySource}</strong></li>
+                                                                        <li>Breathing Sound: <strong>{data.soundBreathing}</strong></li>
+                                                                        <li>Charging Time: <strong>{data.chargingTime}</strong></li>
+                                                                        <li>Last Active Turret: <strong>{data.lastActiveTurret}</strong></li>
+                                                                        <li>Boss Health: <strong>{data.bossHealth}</strong></li>
+                                                                    </ul>
+                                                                </div>
+                                                                <div className='col-span-4 p-2 mt-2 mr-2'>
+                                                                    <div className='w-full h-full flex justify-end'>
+                                                                        <div className='grid grid-cols-10 grid-rows-6 gap-1'>
+                                                                            {data.distribution.flat().map((isBurst, index) => (
+                                                                                <div
+                                                                                    key={index}
+                                                                                    className={`border border-gray-400 aspect-square ${isBurst ? 'bg-red-400' : 'bg-gray-300/90'}`}
+                                                                                ></div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
+                                                </>
+                                                :
+                                                <>
+                                                    <h2 className='text-xl'>No data collected.</h2>
+                                                    <p className='text-yellow-400'>Guide: You have to find attck pattern of boss by tune boss behavior parameter.</p>
+                                                </>
+                                            }
                                         </>
                                     }
                                     {currentTopic === 'Train' &&

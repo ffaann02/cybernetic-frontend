@@ -401,7 +401,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
           <CapsuleCollider
             args={[
               1, // radius
-              1, // height
+               1, // height
             ]}
             position={[0, 4, 0]}
           />

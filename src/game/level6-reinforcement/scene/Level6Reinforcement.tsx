@@ -1,7 +1,7 @@
 import React, { Suspense, useContext, useEffect, useMemo, useState } from 'react'
 import { GameContext } from '../../../contexts/GameContext';
 import CharacterController, { Controls } from '../../../controllers/CharacterController';
-import { KeyboardControls, PerspectiveCamera } from '@react-three/drei';
+import { KeyboardControls, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 import { Level6Environment } from '../scene-object/Level6-Environment';
@@ -12,6 +12,7 @@ import ComputerMazeSolverUI from '../ui/ComputerMazeSolverUI';
 import CameraMazeSolverUI from '../ui/CameraMazeSolverUI';
 import { useAuth } from '../../../hooks/useAuth';
 import MazeTrainingModal from '../ui/MazeTrainingModal';
+import { Bloom, EffectComposer, Scanline } from '@react-three/postprocessing';
 
 type Props = {}
 
@@ -30,6 +31,8 @@ const Level6Reinforcement: React.FC<Props> = () => {
         setIsDisplayTrainingModal,
         setTrainingCurrentEpisode,
         setTrainingReward,
+        setMazeWallReDissolve,
+        setPlotImageBase64,
     } = useLevel6Context();
     const { axiosFetch } = useAxios();
 
@@ -58,6 +61,8 @@ const Level6Reinforcement: React.FC<Props> = () => {
     const generateMaze = async () => {
         try {
             console.log("Init Maze")
+            // Trigger fade out
+            setMazeWallReDissolve(false);
             const response = await axiosFetch({
                 axiosInstance: axiosInstanceAiService,
                 method: "post",
@@ -72,6 +77,7 @@ const Level6Reinforcement: React.FC<Props> = () => {
                 done: done
             }
             setMazeStateDetail(mazeState)
+            setMazeWallReDissolve(true);
             console.log(mazeState)
         } catch (error) {
             console.log(error)
@@ -145,17 +151,25 @@ const Level6Reinforcement: React.FC<Props> = () => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            setTrainingProgress(data.progress);
-            setTrainingCurrentEpisode(data.episode);
-            if(data.episode % 100 === 0) {
-                console.log(`Episode: ${data.episode}, Progress: ${data.progress}%, Total Reward: ${data.total_reward}`);
-                setTrainingReward((prev) => [...prev, data.total_reward]);
+            if (data.image) {
+                // Decode the base64 image and display it
+                const image = 'data:image/png;base64,' + data.image;
+                setPlotImageBase64(image);
             }
-            if (data.progress === 100) {
-                console.log('Training complete');
-                setIsTraining(false);
+            else {
+                setTrainingProgress(data.progress);
+                setTrainingCurrentEpisode(data.episode);
+                if (data.episode % 100 === 0) {
+                    console.log(`Episode: ${data.episode}, Progress: ${data.progress}%, Total Reward: ${data.total_reward}`);
+                    setTrainingReward((prev) => [...prev, data.total_reward]);
+                }
+                if (data.progress === 100) {
+                    console.log('Training complete');
+                    setIsTraining(false);
+                }
             }
         };
+
 
         socket.onclose = () => {
             console.log('WebSocket connection closed');
@@ -181,17 +195,19 @@ const Level6Reinforcement: React.FC<Props> = () => {
                     {currentCamera === 2 && (
                         <PerspectiveCamera makeDefault position={[0, 4, 10]} />
                     )}
-                    {/* <PerspectiveCamera makeDefault position={[0, 2, 10]} /> */}
+                    {/* <OrbitControls /> */}
                     <ambientLight intensity={0.5} color={"lightblue"} />
 
                     <Suspense fallback={null}>
-                        <Physics debug={debug} gravity={[0, -9.81, 0]}>
-                            <CharacterController spawnPosition={[-28, 2, 35]} />
-                            {/* <CharacterController /> */}
-                            <Level6Environment
-                                generateMaze={generateMaze}
-                                stepMaze={stepMaze}
-                            />
+                        <Physics debug={debug} gravity={[0, -15, 0]}>
+                            <CharacterController spawnPosition={[-23, 6, 24]} />
+                            <EffectComposer>
+                                <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
+                                <Level6Environment
+                                    generateMaze={generateMaze}
+                                    stepMaze={stepMaze}
+                                />
+                            </EffectComposer>
                         </Physics>
                     </Suspense>
                 </Canvas>

@@ -24,6 +24,7 @@ interface ItemProps {
   outlineColor?: string;
   outlineThickness?: number;
   ref?: any;
+  visible?: boolean;
 }
 
 export const Item: React.FC<ItemProps> = ({
@@ -35,7 +36,8 @@ export const Item: React.FC<ItemProps> = ({
   status,
   outlineColor,
   outlineThickness = 0.1,
-  ref
+  ref,
+  visible = true
 }) => {
   const { name, position, rotation, scale, fileType, textures, color } = item;
   const { currentHit } = useContext(GameContext);
@@ -78,28 +80,34 @@ export const Item: React.FC<ItemProps> = ({
 
   return (
     <>
-      {meshes.map((mesh: any, index: number) => (
-        <mesh
-          ref={ref}
-          key={index}
-          geometry={(mesh as any).geometry}
-          material={(mesh as any).material}
-          position={position}
-          scale={scale || [1, 1, 1]}
-          rotation={rotation || [0, 0, 0]}
-          castShadow
-          toneMapped={false} // Add toneMapped property
-        >
-          {isOutlined && (
-            <Outlines
-              thickness={outlineThickness || 1}
-              color={outlineColor || "white"}
-              angle={180}
-              screenspace={true}
-            />
-          )}
-        </mesh>
-      ))}
+      {visible &&
+        <>
+          {
+            meshes.map((mesh: any, index: number) => (
+              <mesh
+                ref={ref}
+                key={index}
+                geometry={(mesh as any).geometry}
+                material={(mesh as any).material}
+                position={position}
+                scale={scale || [1, 1, 1]}
+                rotation={rotation || [0, 0, 0]}
+                castShadow
+                toneMapped={false} // Add toneMapped property
+              >
+                {isOutlined && (
+                  <Outlines
+                    thickness={outlineThickness || 1}
+                    color={outlineColor || "white"}
+                    angle={180}
+                    screenspace={true}
+                  />
+                )}
+              </mesh>
+            ))
+          }
+        </>
+      }
     </>
   );
 };

@@ -24,7 +24,7 @@ export const SceneObject = () => {
       {/* {camera === 2 && <OrbitControls />} */}
 
       {/* Background */}
-      <mesh scale={[5, 5, -5]} position={[60, 100, 80]}> 
+      <mesh scale={[10, 10, -10]} position={[150, 100, 80]}> 
         <planeGeometry attach="geometry" args={[50, 50]} /> 
         <meshBasicMaterial attach="material" map={backgroundTexture} />
       </mesh>

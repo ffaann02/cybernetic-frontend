@@ -14,7 +14,7 @@ import {
   LensFlare,
   Pixelation,
   Scanline,
-  Vignette,
+  Vignette,xw
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import * as THREE from "three";

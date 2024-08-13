@@ -7,7 +7,7 @@ import CSM from "three-custom-shader-material";
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
-  varying vec3 vPosition; // use the world position instead of the uv
+  varying vec3 vPosition;
   void main() {
     vUv = uv;
     vPosition = position;
@@ -19,12 +19,11 @@ const fragmentShader = patchShaders(/* glsl */ `
   uniform float uThickness;
   uniform vec3 uColor;
   uniform float uProgress;
-  
+  uniform float uNoiseScale;
   
   void main() {
     gln_tFBMOpts opts = gln_tFBMOpts(1.0, 0.3, 2.0, 5.0, 1.0, 5, false, false);
-    // float noise = gln_sfbm(vUv, opts); // THE ORIGINAL CODE FROM THE TUTORIAL
-    float noise = gln_sfbm(vPosition, opts); //  use the world position instead of the uv for a better effect working on all objects
+    float noise = gln_sfbm(vPosition * uNoiseScale, opts); // Scale the noise
     noise = gln_normalize(noise);
 
     float progress = uProgress;
@@ -42,19 +41,22 @@ export function DissolveMaterial({
   color = "#eb5a13",
   intensity = 50,
   duration = 1.2,
+  noiseScale = 1.0, // Add the noiseScale prop
   visible = true,
-  // onFadeOut,
+  onFadeOut,
 }) {
   const uniforms = React.useRef({
-    uThickness: { value: 0.1 },
-    uColor: { value: new THREE.Color("#eb5a13").multiplyScalar(20) },
+    uThickness: { value: thickness },
+    uColor: { value: new THREE.Color(color).multiplyScalar(intensity) },
     uProgress: { value: 0 },
+    uNoiseScale: { value: noiseScale }, // Add noiseScale to uniforms
   });
 
   React.useEffect(() => {
     uniforms.current.uThickness.value = thickness;
     uniforms.current.uColor.value.set(color).multiplyScalar(intensity);
-  }, [thickness, color, intensity]);
+    uniforms.current.uNoiseScale.value = noiseScale; // Update the noiseScale uniform
+  }, [thickness, color, intensity, noiseScale]);
 
   useFrame((_state, delta) => {
     easing.damp(
@@ -65,11 +67,9 @@ export function DissolveMaterial({
       delta
     );
 
-    // if (uniforms.current.uProgress.value < 0.1 && onFadeOut) {
-    //   onFadeOut();
-    // }
-
-    // console.log(uniforms.current.uProgress.value)
+    if (uniforms.current.uProgress.value < 0.1 && onFadeOut) {
+      onFadeOut();
+    }
 
     if (uniforms.current.uProgress.value > 1) {
       console.log("Fade out");

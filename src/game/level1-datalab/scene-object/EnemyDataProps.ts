@@ -13,7 +13,7 @@ export const enemyPartrolProps = [
         data: {
             data_type: "enemy",
             name: "Robotic Slime - enemy",
-            element: "fire",
+            element: "water",
             size: "tiny",
             color: "orange",
             speed: 8,
@@ -57,11 +57,11 @@ export const enemyPartrolProps = [
         }
     },
     {
-        name: "Golem",
+        name: "Spider",
         waypoints: [
             [-35, 1.2, 10],
-            [-22, 1.2, 10],
-            [-22, 1.2, 0],
+            [-25, 1.2, 10],
+            [-25, 1.2, 0],
         ],
         angle: 45,
         idleTime: 2,
@@ -71,7 +71,7 @@ export const enemyPartrolProps = [
         data: {
             data_type: "enemy",
             name: "Robotic Slime - enemy",
-            element: "fire",
+            element: "lightning",
             size: "tiny",
             color: "",
             speed: 8,
