@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useContext } from "react";
 import { ItemWithUrl } from "../game/shared-object/object/ItemWithUrl";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
@@ -6,6 +6,8 @@ import { OrbitControls } from "@react-three/drei";
 import { Carousel } from "primereact/carousel";
 import { IoGameController } from "react-icons/io5";
 import { Tag } from "primereact/tag";
+import { GameContext } from "../contexts/GameContext";
+import { MdExitToApp } from "react-icons/md";
 
 export interface UserLevel {
   userId: string;
@@ -25,7 +27,9 @@ const levelTemplate = (
     >
       <div
         className={`w-full h-full bg-white rounded-xl ${
-          isSelected ? "opacity-100 border-4 border-yellow-200" : "border-2 border-cyan-400"
+          isSelected
+            ? "opacity-100 border-4 border-yellow-200"
+            : "border-2 border-cyan-400"
         }
         relative flex flex-col opacity-50 hover:shadow-lg transition-all duration-200 ease-linear`}
       >
@@ -55,6 +59,7 @@ const levelTemplate = (
 
 const LevelSelectionNew: React.FC = () => {
   const backgroundTexture = useLoader(TextureLoader, "/images/sky.jpg");
+  const { setScene } = useContext(GameContext);
 
   const levels = [
     {
@@ -79,20 +84,41 @@ const LevelSelectionNew: React.FC = () => {
     },
     {
       name: "Maze",
-      image: "/images/level5.jpg",
+      image: "/images/level-cover/level5-cover.png",
+
       tags: ["Reinforcement Learning"],
     },
     {
       name: "Conqueror",
-      image: "/images/level6.jpg",
+      image: "/images/level-cover/level6-cover.png",
+
       tags: ["Multi Modal", "Neural Network"],
     },
   ].map((level, index) => ({ ...level, level: index + 1 }));
 
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
 
+  const handleStartGame = () => {
+    if (selectedLevel) {
+      console.log(`Start game at level ${selectedLevel}`);
+      setScene("level-selection", `game-level-${selectedLevel}`);
+    }
+  };
+
+  const handleBackToHome = () => {
+    setScene("level-selection", "home");
+  };
+
   return (
     <>
+      <button
+        onClick={handleBackToHome}
+        className="absolute top-4 left-4 flex z-[9999] bg-cyan-400/50 p-2 border-2 border-cyan-200 
+        rounded-lg hover:bg-cyan-200/50 gap-x-1 hover:gap-x-2 transition-all duration-200 ease-linear"
+      >
+        <MdExitToApp className="text-4xl text-cyan-200" />
+        <p className="my-auto ml-2 text-2xl text-slate-200">Back to Home</p>
+      </button>
       <div className="absolute w-full h-full px-20 py-32 z-50">
         <div className="w-full h-fit pb-4 bg-cyan-400/50 rounded-2xl border-2 border-cyan-200">
           <p
@@ -115,7 +141,7 @@ const LevelSelectionNew: React.FC = () => {
               }
             />
             <button
-              //   onClick={handleSelectStoryMode}
+              onClick={handleStartGame}
               className="text-4xl mt-4 px-6 w-fit mx-auto bg-cyan-400/50 py-3 rounded-xl font-semibold text-cyan-200 border-2 border-cyan-200
     hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear flex items-center justify-center"
             >
@@ -135,10 +161,7 @@ const LevelSelectionNew: React.FC = () => {
         <directionalLight position={[5, 4, 0]} intensity={0.2} />
         <Suspense fallback={null}>
           <mesh scale={[1.5, 1.5, 1.5]} position={[0, 0, -20]}>
-            {" "}
-            {/* Adjust the scale to zoom in or out */}
             <planeGeometry attach="geometry" args={[50, 50]} />{" "}
-            {/* Adjust args for aspect ratio */}
             <meshBasicMaterial attach="material" map={backgroundTexture} />
           </mesh>
         </Suspense>

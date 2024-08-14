@@ -45,7 +45,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
 
     const { axiosFetch } = useAxios();
 
-    const { playerRigidBody, isHidden, setIsEnemyHit, setEnemyHitName, setEnergy } = useContext(GameContext);
+    const { playerRigidBody, isHidden, setIsEnemyHit, setEnemyHitName, setEnergy, isPaused } = useContext(GameContext);
     const { element, speed, color, detection_range, weakness } = data;
 
     const { animationState, setAnimationState } = useEnemyAnimation();
@@ -77,17 +77,18 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
     const lastHitPlayerTime = useRef(Date.now());
 
     useFrame(() => {
-        if (foundPlayer.current === false && !isPlayingSound) {
+        if (foundPlayer.current === false && !isPlayingSound && !isPaused) {
             moveBetweenWaypoints();
         }
         else {
             setAnimationState(EnemyAnimationState.Running);
             if (isPlayingSound && speakerRef.current) {
-                // speakerRef.current.play();
                 moveToSpeaker();
             }
             else {
-                moveToPlayer();
+                if(!isPaused) {
+                    moveToPlayer();
+                }
             }
         }
     });

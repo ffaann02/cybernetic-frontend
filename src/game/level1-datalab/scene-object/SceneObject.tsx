@@ -65,7 +65,9 @@ const SceneObject = ({
     setIsSubmitClicked,
     craneRedBox,
     allowGreenPad,
-    allowRedPad
+    allowRedPad,
+    currentRock,
+    setCurrentRock
   } = useLevel1Context();
 
   const [lastPressTime, setLastPressTime] = useState(0);
@@ -84,6 +86,10 @@ const SceneObject = ({
     setIsInteracting,
     setIsUsingSecurityCamera,
     isUsingSearch,
+    isCarryingObject,
+    setIsCarryingObject,
+    greenBoxRef,
+    redBoxRef,
   } = useContext(GameContext);
 
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
@@ -178,6 +184,7 @@ const SceneObject = ({
         setLastPressTime(currentTime);
       }
     }
+
     if (craneRedBox && craneRedBox.current && isSubmitClicked) {
       const currentPosition = vec3(craneRedBox.current.translation());
 
@@ -228,6 +235,7 @@ const SceneObject = ({
         });
       }
     }
+
   });
 
   const [doorStatuses, setDoorStatuses] = useState([

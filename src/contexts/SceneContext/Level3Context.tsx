@@ -24,6 +24,8 @@ interface Level3ContextData {
   setIsOpenTrainComputer: (isOpenTrainComputer: boolean) => void;
   kaboom: boolean;
   setKaboom: (kaboom: boolean) => void;
+  nextLevelDoor: boolean;
+  setNextLevelDoor: (nextLevelDoor: boolean) => void;
 }
 
 // Create the Level1Context
@@ -57,6 +59,7 @@ export const Level3ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const [isOpenCD, setIsOpenCD] = useState(false);
   const [isOpenTrainComputer, setIsOpenTrainComputer] = useState(false);
   const [kaboom, setKaboom] = useState(false);
+  const [nextLevelDoor, setNextLevelDoor] = useState(false);
 
   const contextValue: Level3ContextData = {
     level,
@@ -81,6 +84,8 @@ export const Level3ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     setIsOpenTrainComputer,
     kaboom,
     setKaboom,
+    nextLevelDoor,
+    setNextLevelDoor,
   };
 
   return (

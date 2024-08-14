@@ -14,7 +14,7 @@ import {
   LensFlare,
   Pixelation,
   Scanline,
-  Vignette,xw
+  Vignette,
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
@@ -71,9 +71,11 @@ const Home: React.FC<HomeProps> = () => {
   const { debug, setScene, setGameState, previousScene } = useContext(GameContext);
 
   const handleSelectStoryMode = () => {
-    if (setGameState) {
-      setGameState((prevState) => ({ ...prevState, currentScene: "level-selection" }));
-    }
+    // if (setGameState) {
+    //   setGameState((prevState) => ({ ...prevState, currentScene: "level-selection" }));
+    // }
+    console.log("TEST");
+    setScene("home","level-selection");
   };
 
   return (

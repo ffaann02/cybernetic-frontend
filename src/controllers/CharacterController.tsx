@@ -77,6 +77,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     setEnergy,
     isDeath,
     setIsDeath,
+    setIsPaused
   } = useContext(GameContext);
 
   const [direction, setDirection] = useState<"left" | "right">("right");
@@ -116,6 +117,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
   const jumpSound = useAudio("/soundfx/character/jump.mp3", 0.5);
 
   const [codingCooldown, setCodingCooldown] = useState(false);
+  const [lastPressTime, setLastPressTime] = useState(0);
 
   const handleMovement = (delta: number) => {
     const onAirFraction = isOnFloor.current ? 1 : 0.3;
@@ -204,9 +206,20 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     //   setIsInteracting((prev) => !prev);
     //   setTimeout(() => setCodingCooldown(false), 500); // Adjust cooldown time as needed
     // }
-    if (escPressed) {
-      setIsCoding(false);
-      setIsInteracting(false);
+    // if (escPressed) {
+    //   setIsCoding(false);
+    //   setIsInteracting(false);
+    //   setIsPaused((prev)=>!prev)
+    // }
+
+    if(escPressed){
+      const currentTime = new Date().getTime();
+      if (currentTime - lastPressTime > 200) {
+        setIsCoding(false);
+        setIsInteracting(false);
+        setIsPaused((prev)=>!prev)
+        setLastPressTime(currentTime);
+      }
     }
 
     let newPos; // Declare newPos outside the if block

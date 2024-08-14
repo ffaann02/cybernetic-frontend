@@ -32,6 +32,7 @@ const SceneObject = ({
     setCurrentHit,
     setIsInteracting,
     setIsUsingSecurityCamera,
+    setIsShowLevelResult
   } = useContext(GameContext);
   const {
     isOpenGlassClassifier,
@@ -94,21 +95,49 @@ const SceneObject = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
           />
-          <Door
-            doorname="secure-door-next-level"
-            destinationObject={door01_destination}
-            rigidBody={playerRigidBody}
-            position={[-36, 10, -11.5]}
+          <RigidBody
+            colliders="trimesh"
+            mass={0}
+            type="fixed"
+            name="secure-door-next-level"
+            position={[-36,9.15,-10]}
             rotation={[
               degreeNumberToRadian(0),
               degreeNumberToRadian(0),
               degreeNumberToRadian(0),
             ]}
-            status={"close"}
-            type="switch-room"
-            setCurrentRoom={setCurrentRoom}
-            nextRoom={2}
-          />
+            scale={[2, 3, 3]}
+            onCollisionEnter={({ other }) => {
+              if (
+                other.rigidBodyObject &&
+                other.rigidBodyObject.name === "player"
+              ) {
+                setIsShowLevelResult(true);
+              }
+            }}
+            onCollisionExit={({ other }) => {
+              setCurrentHit("");
+              // setIsShowLevelResult(false);
+            }}
+          >
+            <mesh position={[0, 1.05, 0]}>
+              <boxGeometry args={[0.3, 2.08, 0.9]} />
+              <meshStandardMaterial
+                // color={!kaboom ? "red" : "green"}
+                color="green"
+                transparent={true}
+                opacity={0.5}
+              />
+            </mesh>
+            <Item
+              item={{
+                name: "door-border",
+                position: [0, 0, 0],
+                fileType: "glb",
+              }}
+              isOutlined={true}
+            />
+          </RigidBody>
           <Room1 />
           <MapRoom1 />
         </Room>

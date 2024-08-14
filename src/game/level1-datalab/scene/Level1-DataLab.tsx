@@ -42,6 +42,8 @@ const Level1DataLab: React.FC<HomeProps> = () => {
     imageCollectedList,
     setImageCollectedList,
     dataCollectNotify,
+    setShowDialog,
+    showDialog
   } = useLevel1Context();
   const [enemyPatrolInScene, setEnemyPatrolInScene] =
     useState(enemyPartrolProps);

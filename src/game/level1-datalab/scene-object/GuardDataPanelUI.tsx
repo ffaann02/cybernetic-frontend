@@ -140,12 +140,12 @@ const GuardDataPanelUI = ({
     }
   }
 
+
   return (
     <div
-      className={`bg-black/70 h-full w-full fixed bottom-0 z-[10000] ${showDialog ? "flex" : "hidden"
-        } justify-center items-center`}
+      className={`bg-black/70 h-full w-full fixed bottom-0 z-[10000] justify-center items-center ${showDialog ? "flex":"hidden"}`}
     >
-      <div className="flex max-w-4xl gap-x-4 relative">
+      <div className="flex max-w-4xl gap-x-4 relative m-auto">
         <div className="w-[50%] -left-[40%] -bottom-[25%] h-fit absolute -z-0">
           <img
             className="w-full p-2 rounded-full"
@@ -257,7 +257,7 @@ const GuardDataPanelUI = ({
               </div>
             </div>
           </Fieldset>
-          <div className="absolute top-14 right-3 z-50 text-sm">
+          <div className="absolute top-16 right-3 z-50 text-sm">
             <button
               className="px-3 py-2 rounded-lg bg-red-500/90 hover:bg-red-500/70 flex gap-x-2 items-center"
               onClick={() => {

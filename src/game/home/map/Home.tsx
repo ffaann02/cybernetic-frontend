@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { SkeletonUtils } from "three-stdlib";
 
 export const Map = () => {
-  const map = useGLTF("models/map.glb");
+  const map = useGLTF("models/BossRoom.glb");
 
   const clone = useMemo(() => {
     const clonedScene = SkeletonUtils.clone(map.scene);
@@ -28,4 +28,4 @@ export const Map = () => {
   );
 };
 
-useGLTF.preload("models/map.glb");
+useGLTF.preload("models/BossRoom.glb");
