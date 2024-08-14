@@ -80,7 +80,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     setEnergy,
     isDeath,
     setIsDeath,
-    setIsPaused
+    setIsPaused,
     searchAimDirection,
   } = useContext(GameContext);
 

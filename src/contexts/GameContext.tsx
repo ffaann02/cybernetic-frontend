@@ -270,7 +270,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     isPaused,
     setIsPaused,
     isShowLevelResult,
-    setIsShowLevelResult
+    setIsShowLevelResult,
     searchDataNotify,
     searchAimDirection,
     searchResult,
