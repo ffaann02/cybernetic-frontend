@@ -28,6 +28,7 @@ const SceneObject = ({
     setCurrentHit,
     setIsInteracting,
     setIsUsingSecurityCamera,
+    setIsShowLevelResult
   } = useContext(GameContext);
   const {
     isOpenAudioInput,
@@ -41,7 +42,9 @@ const SceneObject = ({
     isOpenTrainComputer,
     setIsOpenTrainComputer,
     kaboom,
-    setKaboom
+    setKaboom,
+    nextLevelDoor,
+    setNextLevelDoor,
   } = useLevel3Context();
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
 
@@ -83,26 +86,51 @@ const SceneObject = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
           />
-          <Door
-            doorname="secure-door-next-level"
-            destinationObject={door01_destination}
-            rigidBody={playerRigidBody}
+          <RigidBody
+            colliders="trimesh"
+            mass={0}
+            type="fixed"
+            name="secure-door-next-level"
             position={[-14, 0, -19.5]}
             rotation={[
               degreeNumberToRadian(0),
               degreeNumberToRadian(90),
               degreeNumberToRadian(0),
             ]}
-            status={kaboom ? "open" : "close"}
-            type="switch-room"
-            setCurrentRoom={setCurrentRoom}
-            nextRoom={2}
-          />
-          <Room1
-            parentLight={parentLight}
-            speakerMeshRef={speakerMeshRef}
-          />
-          <MapRoom1/>
+            scale={[2, 3, 3]}
+            onCollisionEnter={({ other }) => {
+              if (
+                other.rigidBodyObject &&
+                other.rigidBodyObject.name === "player" && kaboom
+              ) {
+                // console.log("hello");
+                setIsShowLevelResult(true);
+              }
+            }}
+            onCollisionExit={({ other }) => {
+              setCurrentHit("");
+              // setIsShowLevelResult(false);
+            }}
+          >
+            <mesh position={[0, 1.1, 0]}>
+              <boxGeometry args={[0.3, 2, 0.9]} />
+              <meshStandardMaterial
+                color={!kaboom ? "red" : "green"}
+                transparent={true}
+                opacity={0.5}
+              />
+            </mesh>
+            <Item
+              item={{
+                name: "door-border",
+                position: [0, 0, 0],
+                fileType: "glb",
+              }}
+              isOutlined={true}
+            />
+          </RigidBody>
+          <Room1 parentLight={parentLight} speakerMeshRef={speakerMeshRef} />
+          <MapRoom1 />
         </Room>
       )}
 
@@ -123,9 +151,8 @@ const SceneObject = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={1}
           />
-          <Room2
-          />
-          <MapRoom2/>
+          <Room2 />
+          <MapRoom2 />
         </Room>
       )}
 

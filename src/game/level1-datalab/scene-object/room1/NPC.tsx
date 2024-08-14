@@ -1,8 +1,8 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { degreeNumberToRadian } from "../../../../utils";
-import Guard from "../Guard";
 import { useContext } from "react";
 import { GameContext } from "../../../../contexts/GameContext";
+import { GoodBot } from "../../../../GoodBot";
 
 const NPC = () => {
 
@@ -16,11 +16,11 @@ const NPC = () => {
         lockRotations
         lockTranslations
         type="fixed"
-        position={[-20, 3.5, 2]}
-        scale={[9, 9, 9]}
+        position={[-20, 0, 2]}
+        scale={[1.5, 1.5, 1.5]}
         rotation={[
           degreeNumberToRadian(0),
-          degreeNumberToRadian(-45),
+          degreeNumberToRadian(45),
           degreeNumberToRadian(0),
         ]}
         onCollisionEnter={({ other }) => {
@@ -35,8 +35,8 @@ const NPC = () => {
           setCurrentHit("");
         }}
       >
-        <CuboidCollider args={[0.15, 0.4, 0.35]} position={[0, 0, 0]} />
-        <Guard/>
+        <CuboidCollider args={[1, 2, 1]} position={[0, 2, 0]} />
+        <GoodBot animation_index={1} />
       </RigidBody>
     </>
   );

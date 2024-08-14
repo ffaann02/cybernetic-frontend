@@ -55,6 +55,13 @@ interface Level1ContextData {
   setDropedObject: (data: LaserTargetObjectProps[]) => void;
   currentLaserTarget: string | null;
   setCurrentLaserTarget: (target: string | null) => void;
+  rock1Ref: React.RefObject<null>;
+  rock2Ref: React.RefObject<null>;
+  rock3Ref: React.RefObject<null>;
+  currentRock: number;
+  setCurrentRock: (rock: number) => void;
+  greenBoxRef: React.RefObject<null>;
+  redBoxRef: React.RefObject<null>;
 }
 
 // Create the Level1Context
@@ -109,6 +116,15 @@ export const Level1ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const [dropedObject, setDropedObject] = useState<LaserTargetObjectProps[]>([]);
   const [currentLaserTarget, setCurrentLaserTarget] = useState<string | null>(null);
 
+  const rock1Ref = useRef();
+  const rock2Ref = useRef();
+  const rock3Ref = useRef();
+
+  const [currentRock, setCurrentRock] = useState(0);
+
+  const greenBoxRef = useRef();
+  const redBoxRef = useRef();
+
 
   const contextValue: Level1ContextData = {
     level,
@@ -161,6 +177,13 @@ export const Level1ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     setDropedObject,
     currentLaserTarget,
     setCurrentLaserTarget,
+    rock1Ref,
+    rock2Ref,
+    rock3Ref,
+    currentRock,
+    setCurrentRock,
+    greenBoxRef,
+    redBoxRef,
   };
 
   return (

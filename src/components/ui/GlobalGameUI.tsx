@@ -7,6 +7,15 @@ import { IoIosHome } from "react-icons/io";
 import { useLocation } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { CiStar } from "react-icons/ci";
+import { IoGameController, IoSettingsOutline } from "react-icons/io5";
+import { VscDebugRestart } from "react-icons/vsc";
+import { LuPlayCircle } from "react-icons/lu";
+import { TiCloudStorage, TiHomeOutline } from "react-icons/ti";
+import { FaRegClock } from "react-icons/fa";
+import { HiOutlineStar } from "react-icons/hi";
+import { PiTrophy } from "react-icons/pi";
+import { GrLinkNext } from "react-icons/gr";
+import { LiaBrainSolid } from "react-icons/lia";
 
 const AskForInputKeyDown = ({ title }: { title: string }) => {
   return (
@@ -25,7 +34,6 @@ const AskForInputKeyDownSecondary = ({ title }: { title: string }) => {
 };
 
 const GlobalGameUI = () => {
-
   const [showDeathContainer, setShowDeathContainer] = useState(false);
   const [showPlayAgain, setShowPlayAgain] = useState(false);
   const [showEnemySplash, setShowEnemySplash] = useState(false);
@@ -46,6 +54,11 @@ const GlobalGameUI = () => {
     enemyHitName,
     setIsEnemyHit,
     setEnemyHitName,
+    isPaused,
+    setIsPaused,
+    isShowLevelResult,
+    setIsShowLevelResult,
+    setEnergy,
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -78,37 +91,215 @@ const GlobalGameUI = () => {
     }
   }, [isEnemyHit, enemyHitName]);
 
+  const handlePlayAgain = () => {
+    // console.log("TEST");
+    // console.log(currentScene);
+    setScene("home", currentScene);
+    setIsPaused(false);
+    setIsShowLevelResult(false);
+    setEnergy(10);
+  };
+
+  const handleBackToHome = () => {
+    setScene(currentScene, "home");
+    setIsPaused(false);
+    setIsShowLevelResult(false);
+  };
+
+  const handleSetting = () => {
+    setScene(currentScene, "home");
+    setIsPaused(false);
+  };
+
+  const handleResume = () => {
+    setIsPaused(false);
+    setIsShowLevelResult(false);
+  };
+
+  const handlePlayNextLevel = () => {
+    const match = currentScene.match(/game-level-(\d+)/);
+    const levelNumber = match ? match[1] : null;
+
+    console.log(levelNumber); // Output: 3
+    setScene(currentScene, `game-level-${parseInt(levelNumber) + 1}`);
+    setIsPaused(false);
+    setIsShowLevelResult(false);
+  };
+
   return (
     <>
+      {isPaused && (
+        <div className="absolute z-[99999] w-full h-screen bg-black/70 mx-auto flex">
+          <div className="max-w-2xl w-full h-fit bg-cyan-400/50 m-auto border rounded-2xl pb-10">
+            <div className="px-20 mt-6">
+              <img src="/images/Logo_V1.png" />
+            </div>
+            <div className="px-10 grid grid-cols-3 mt-10 gap-x-4">
+              <div
+                className="px-3 py-3 bg-cyan-400/50 w-full rounded-2xl flex justify-between text-white border-2 border-slate-100/50
+              hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear cursor-pointer"
+                onClick={handlePlayAgain}
+              >
+                <VscDebugRestart className="text-5xl" />
+                <p className="text-2xl my-auto ml-3 whitespace-nowrap">
+                  Play Again
+                </p>
+              </div>
+              <div
+                className="px-3 py-3 bg-cyan-400/50 w-full rounded-2xl flex justify-between text-white border-2 border-slate-100/50
+              hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear cursor-pointer"
+                onClick={handleBackToHome}
+              >
+                <TiHomeOutline className="text-5xl" />
+                <p className="text-2xl my-auto ml-3">Home</p>
+              </div>
+              <div
+                className="px-3 py-3 bg-cyan-400/50 w-full rounded-2xl flex justify-between text-white border-2 border-slate-100/50
+              hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear cursor-pointer"
+              >
+                <IoSettingsOutline className="text-5xl" />
+                <p className="text-2xl my-auto ml-3">Setting</p>
+              </div>
+            </div>
+            <div className="w-full flex justify-center mt-3 px-10">
+              <button
+                // onClick={handleSelectStoryMode}
+                onClick={handleResume}
+                className="text-4xl bg-cyan-400/50 w-full px-4 py-3 rounded-xl font-semibold text-cyan-200 border-2 border-cyan-200
+    hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear flex items-center justify-center"
+              >
+                <LuPlayCircle className="text-5xl mr-2" />
+                RESUME
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isShowLevelResult && (
+        <div className="absolute z-[99999] w-full h-screen bg-black/70 mx-auto flex">
+          <div className="max-w-2xl w-full h-fit bg-cyan-400/50 m-auto border rounded-2xl pb-4">
+            {/* <div className="px-20 mt-6">
+              <img src="/images/Logo_V1.png" />
+            </div> */}
+            <div className="px-10 pt-3">
+              <p className="text-3xl text-white text-center flex mx-auto justify-center gap-x-2 mb-2">
+                <HiOutlineStar className="text-5xl" />
+                <span className="my-auto">SCORE</span>
+              </p>
+              <div className="flex w-full justify-between px-3 py-2 border rounded-lg bg-blue-400/20">
+                <div>
+                  <p className="text-2xl text-white text-left">TOTAL SCORE</p>
+                  <p className="text-5xl text-white text-left">1,029</p>
+                </div>
+              </div>
+              <p className="text-3xl text-white text-center flex mx-auto justify-center gap-x-2 mt-4 mb-2">
+                <FaRegClock />
+                <span className="my-auto">TIME</span>
+              </p>
+              <div className="flex w-full justify-between px-3 py-2 border rounded-lg bg-blue-400/20">
+                <div className="w-full flex flex-col gap-y-2">
+                  <div className="flex w-full justify-between">
+                    <p className="text-2xl text-white text-left my-auto">
+                      TOTAL PLAY TIME
+                    </p>
+                    <p className="text-5xl text-white">1,029</p>
+                  </div>
+                  <div className="flex w-full justify-between">
+                    <p className="text-xl text-white text-left my-auto">
+                      TRAIN AI TIME
+                    </p>
+                    <p className="text-3xl text-white">30 second</p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-3xl text-white text-center flex mx-auto justify-center gap-x-2 mt-4 mb-2">
+                <PiTrophy className="text-5xl" />
+                <span className="my-auto">REWARDS</span>
+              </p>
+              <div className="flex w-full justify-between px-3 py-3 border rounded-lg bg-blue-400/20">
+                <div className="w-full flex gap-x-4">
+                  <div className="flex flex-col w-fit px-3 py-2 rounded-2xl bg-orange-400/50 border border-orange-200">
+                    <TiCloudStorage className="text-5xl text-white mx-auto" />
+                    <p className="text-white">Cloud Storage</p>
+                  </div>
+                  <div className="flex flex-col w-fit px-3 py-2 rounded-2xl bg-orange-400/50 border border-orange-200">
+                    <LiaBrainSolid className="text-5xl text-white mx-auto" />
+                    <p className="text-white">New Algorithm</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="px-10 grid grid-cols-3 mt-10 gap-x-4">
+              <div
+                className="px-3 py-3 bg-cyan-400/50 w-full rounded-2xl flex justify-between text-white border-2 border-slate-100/50
+              hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear cursor-pointer"
+                onClick={handlePlayAgain}
+              >
+                <VscDebugRestart className="text-5xl" />
+                <p className="text-2xl my-auto ml-3 whitespace-nowrap">
+                  Play Again
+                </p>
+              </div>
+              <div
+                onClick={handlePlayNextLevel}
+                className="px-3 py-3 bg-cyan-400/50 w-full rounded-2xl flex justify-between text-white border-2 border-slate-100/50
+              hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear cursor-pointer"
+              >
+                <GrLinkNext className="text-5xl" />
+                <p className="text-2xl my-auto ml-3">Continue</p>
+              </div>
+              <div
+                className="px-3 py-3 bg-cyan-400/50 w-full rounded-2xl flex justify-between text-white border-2 border-slate-100/50
+              hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear cursor-pointer"
+                onClick={handleBackToHome}
+              >
+                <TiHomeOutline className="text-5xl" />
+                <p className="text-2xl my-auto ml-3">Home</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showStar && (
         <div className="absolute z-50 flex items-center justify-center h-screen w-screen animate-heartBeat">
           <CiStar className="absolute text-[10rem] text-yellow-400/50 animate-ping" />
         </div>
       )}
       {showDeathContainer && <div id="death-container"></div>}
-      {showEnemySplash === true &&
+      {showEnemySplash === true && (
         <>
-          {enemyHitName === "Slime" &&
+          {enemyHitName === "Slime" && (
             <div className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-green-600/60">
               <div className=" opacity-60 animate-heartBeat">
-                <img src={`/images/effect/slimesplash.png`} alt="enemy" className="w-[80vh] h-[80vh] animate-jello" />
+                <img
+                  src={`/images/effect/slimesplash.png`}
+                  alt="enemy"
+                  className="w-[80vh] h-[80vh] animate-jello"
+                />
               </div>
             </div>
-          }
-          {enemyHitName === "Spider" &&
+          )}
+          {enemyHitName === "Spider" && (
             <div className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-white/60">
               <div className=" opacity-60 animate-heartBeat">
-                <img src={`/images/effect/spidersplash.png`} alt="enemy" className="w-[80vh] h-[80vh] animate-jello" />
+                <img
+                  src={`/images/effect/spidersplash.png`}
+                  alt="enemy"
+                  className="w-[80vh] h-[80vh] animate-jello"
+                />
               </div>
             </div>
-          }
-          {enemyHitName === "Golem" &&
-            <div className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-red-600/40"
-              style={{ backdropFilter: "blur(4px)" }}>
-            </div>
-          }
+          )}
+          {enemyHitName === "Golem" && (
+            <div
+              className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-red-600/40"
+              style={{ backdropFilter: "blur(4px)" }}
+            ></div>
+          )}
         </>
-      }
+      )}
       {showPlayAgain && (
         <div
           className={`absolute ${
@@ -123,7 +314,8 @@ const GlobalGameUI = () => {
             className="text-3xl w-80 bg-cyan-400/80 px-4 py-3 border-2 text-slate-600 duration-200 hover:text-white
             font-semibold justify-between rounded-xl flex tracking-wider hover:bg-cyan-500/80 hover:scale-105 transition-all easer-linear"
             onClick={() => {
-              location.reload();
+              // location.reload();
+              handlePlayAgain();
               setShowPlayAgain(false);
             }}
           >
@@ -289,6 +481,14 @@ const GlobalGameUI = () => {
             </div>
           </>
         ))}
+
+      {currentHit === "Level4-CharacterStorage" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Open Storage" />
+        ) : (
+          <AskForInputKeyDown title="Press E to Close Storage" />
+        ))}
+
       {currentHit === "GlassComputerLevel2" &&
         (!isUsingSecurityCamera ? (
           <AskForInputKeyDown title="Press E to Access Computer" />
@@ -337,6 +537,37 @@ const GlobalGameUI = () => {
         ) : (
           <AskForInputKeyDown title="Press E to Drop A Glass" />
         ))}
+
+      {currentHit.includes("WeightRock") && (
+        <>
+          {!isCarryingObject ? (
+            <AskForInputKeyDown title="Press E to Lift A Rock" />
+          ) : (
+            <AskForInputKeyDown title="Press E to Drop A Rock" />
+          )}
+        </>
+      )}
+
+      {currentHit === "GreenBox" && (
+        <>
+          {!isCarryingObject ? (
+            <AskForInputKeyDown title="Press E to Lift A Box" />
+          ) : (
+            <AskForInputKeyDown title="Press E to Drop A Box" />
+          )}
+        </>
+      )}
+
+      {currentHit === "RedBox" && (
+        <>
+          {!isCarryingObject ? (
+            <AskForInputKeyDown title="Press E to Lift A Box" />
+          ) : (
+            <AskForInputKeyDown title="Press E to Drop A Box" />
+          )}
+        </>
+      )}
+
       {currentHit === "ComputerTestGlass" &&
         (!isInteracting ? (
           <AskForInputKeyDown title="Press E to Access Computer" />

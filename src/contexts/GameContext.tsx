@@ -61,6 +61,10 @@ interface GameContextProps {
   searchDataNotify: React.RefObject<any>;
   showStar: boolean;
   setShowStar: React.Dispatch<React.SetStateAction<boolean>>;
+  isPaused: boolean;
+  setIsPaused: React.Dispatch<React.SetStateAction<boolean>>;
+  isShowLevelResult: boolean;
+  setIsShowLevelResult: React.Dispatch<React.SetStateAction<boolean>>;
   searchAimDirection?: any;
   searchResult?: any;
   setSearchResult?: React.Dispatch<React.SetStateAction<any>>;
@@ -68,8 +72,8 @@ interface GameContextProps {
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-2",
-  previousScene: "level-selection",
+  currentScene: "game-level-4",
+  previousScene: "",
   speed: 7.5,
   debug: false,
   sceneList: [
@@ -135,6 +139,10 @@ const initialGameContext: GameContextProps = {
   controlMap: [],
   showStar: false,
   setShowStar: () => {},
+  isPaused: false,
+  setIsPaused: () => {},
+  isShowLevelResult: false,
+  setIsShowLevelResult: () => {},
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -183,6 +191,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [enemyHitName, setEnemyHitName] = useState<string>("");
   const searchDataNotify = useRef(null);
   const [showStar, setShowStar] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isShowLevelResult, setIsShowLevelResult] = useState(false);
   const searchAimDirection = useRef(null);
   const [searchResult, setSearchResult] = useState(null);
   
@@ -257,6 +267,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setEnemyHitName,
     showStar,
     setShowStar,
+    isPaused,
+    setIsPaused,
+    isShowLevelResult,
+    setIsShowLevelResult,
     searchDataNotify,
     searchAimDirection,
     searchResult,

@@ -9,7 +9,9 @@ import { useFrame } from "@react-three/fiber";
 import { GameContext } from "../../../../contexts/GameContext";
 import { GoodBot } from "../../../../GoodBot";
 import { Controls } from "../../../../controllers/CharacterController";
-import LaserTargetObject, { LaserTargetObjectProps } from "../room2/LaserTargetObject";
+import LaserTargetObject, {
+  LaserTargetObjectProps,
+} from "../room2/LaserTargetObject";
 import { useLevel1Context } from "../../../../contexts/SceneContext/Level1Context";
 
 const Room2 = ({
@@ -32,6 +34,7 @@ const Room2 = ({
     setDropedObject,
     currentLaserTarget,
     setCurrentLaserTarget,
+    setCurrentRock,
   } = useLevel1Context();
 
   const cameraRef = useRef();
@@ -115,7 +118,8 @@ const Room2 = ({
     },
   ]);
 
-  const { currentHit, setCurrentHit } = useContext(GameContext);
+  const { currentHit, setCurrentHit, isCarryingObject, setIsCarryingObject } =
+    useContext(GameContext);
 
   const [currentPlatformCarrying, setCurrentPlatformCarrying] = useState([]);
   const [playerIsOnCrane, setPlayerIsOnCrane] = useState(false);
@@ -203,6 +207,40 @@ const Room2 = ({
     }
   };
 
+  // const onPlayerExitEachGlass =
+  //   (glassId) =>
+  //   ({ other }) => {
+  //     if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
+  //       const glassRef = vodkaRefs.current[glassId];
+  //       const glassPosition = vec3(glassRef.current.translation());
+  //       setCurrentHit("");
+  //     }
+  //   };
+
+  const onPlayerEnterRock =
+    (rockId) =>
+    ({ other }) => {
+      if (other.rigidBodyObject) {
+        const { name } = other.rigidBodyObject;
+        if (name === "player") {
+          setCurrentRock(rockId);
+          setCurrentHit(`WeightRock${rockId}`);
+        }
+      }
+    };
+
+  const onPlayerExitRock =
+    (rockId) =>
+    ({ other }) => {
+      if (other.rigidBodyObject) {
+        const { name } = other.rigidBodyObject;
+        if (name === "player") {
+          setCurrentRock(0);
+          setCurrentHit("");
+        }
+      }
+    };
+
   useEffect(() => {
     if (Array.isArray(currentPlatformCarrying)) {
       const totalWeight = currentPlatformCarrying.reduce(
@@ -217,19 +255,21 @@ const Room2 = ({
   const LootBox01Ref = useRef();
   const LootBox01CraneRef = useRef();
 
-
   useFrame((state, delta) => {
-
-    if (currentHit?.includes("Computer-camera-01-trigger") && currentLaserTarget !== "") {
+    if (
+      currentHit?.includes("Computer-camera-01-trigger") &&
+      currentLaserTarget !== ""
+    ) {
       if (gPressed) {
         const distance = currentHit.split(":")[1];
         console.log("get data: ", distance);
         setNumericalCollectedList((prevList) => {
-          const duplicate = prevList.find((data) => data.name === currentLaserTarget);
+          const duplicate = prevList.find(
+            (data) => data.name === currentLaserTarget
+          );
           if (duplicate) {
             return prevList;
-          }
-          else {
+          } else {
             const data = {
               name: currentLaserTarget,
               value: distance,
@@ -262,22 +302,26 @@ const Room2 = ({
             ),
           });
         }
-      }
-      else if (spacePressed) {
+      } else if (spacePressed) {
         const currentTime = new Date().getTime();
         if (currentTime - lastPressTime > 500) {
           setLastPressTime(currentTime);
-          const findObjectToDrop = objectData.find((object) => object.item.name === currentLaserTarget);
+          const findObjectToDrop = objectData.find(
+            (object) => object.item.name === currentLaserTarget
+          );
           setDropedObject((prev) => {
             if (findObjectToDrop) {
               console.log("findObjectToDrop: ", findObjectToDrop);
               return [...prev, findObjectToDrop];
-            }
-            else{
+            } else {
               return prev;
             }
-          })
-          setObjectData(objectData.filter((object) => object.item.name !== currentLaserTarget));
+          });
+          setObjectData(
+            objectData.filter(
+              (object) => object.item.name !== currentLaserTarget
+            )
+          );
           setCurrentHit("Computer-camera-01");
         }
       }
@@ -410,7 +454,7 @@ const Room2 = ({
         setCurrentHit("CameraData");
       }
     }
-  }
+  };
 
   const handleCameraDataExit = ({ other }) => {
     if (other.rigidBodyObject) {
@@ -419,7 +463,7 @@ const Room2 = ({
         setCurrentHit("");
       }
     }
-  }
+  };
 
   const handlePlayerEnterGoodBotNPC = ({ other }) => {
     if (other.rigidBodyObject) {
@@ -439,7 +483,7 @@ const Room2 = ({
         setCurrentHit("");
       }
     }
-  }
+  };
 
   return (
     <>
@@ -449,7 +493,8 @@ const Room2 = ({
         dropedObject={dropedObject}
         setDropedObject={setDropedObject}
         setObjectCollectedList={setObjectCollectedList}
-        dataCollectNotify={dataCollectNotify} />
+        dataCollectNotify={dataCollectNotify}
+      />
 
       <RigidBody
         name="Platform01"
@@ -515,11 +560,15 @@ const Room2 = ({
         onCollisionEnter={handlePlayerEnterGoodBotNPC}
         onCollisionExit={handlePlayerExitGoodBotNPC}
       >
-        <CuboidCollider args={[1.5, 4, 5]} position={[2, 3, 2.5]} rotation={[
-          degreeNumberToRadian(0),
-          degreeNumberToRadian(45),
-          degreeNumberToRadian(0),
-        ]} />
+        <CuboidCollider
+          args={[1.5, 4, 5]}
+          position={[2, 3, 2.5]}
+          rotation={[
+            degreeNumberToRadian(0),
+            degreeNumberToRadian(45),
+            degreeNumberToRadian(0),
+          ]}
+        />
         <GoodBot animation_index={1} />
       </RigidBody>
       <RigidBody
@@ -1048,51 +1097,63 @@ const Room2 = ({
       </RigidBody>
       <RigidBody
         key={"rock1"}
+        colliders={false}
+        type="dynamic"
         name="WeightRock1"
         position={[-30, 8, 20]}
         scale={[150, 150, 150]}
         mass={20}
+        onCollisionEnter={onPlayerEnterRock(1)}
+        onCollisionExit={onPlayerExitRock(1)}
       >
+        <CuboidCollider args={[0.007, 0.007, 0.007]} position={[0, 0, 0]} />
         <Item
           item={{
             name: "WeightRock1",
             position: [0, 0, 0],
             fileType: "glb",
-            rotation: 0,
             scale: [1, 1, 1],
           }}
         />
       </RigidBody>
       <RigidBody
+        colliders={false}
+        type="dynamic"
         name="WeightRock2"
         key={"rock2"}
         position={[-30, 8, 20]}
         scale={[1, 1, 1]}
         mass={20}
+        onCollisionEnter={onPlayerEnterRock(2)}
+        onCollisionExit={onPlayerExitRock(2)}
       >
+        <CuboidCollider args={[0.9, 0.9, 0.9]} position={[0, 0, 0]} />
         <Item
           item={{
             name: "WeightRock2",
             position: [0, 0, 0],
             fileType: "glb",
-            rotation: 0,
             scale: [1, 1, 1],
           }}
         />
       </RigidBody>
       <RigidBody
+        colliders={false}
+        type="dynamic"
         name="WeightRock3"
         key={"rock3"}
         position={[-24, 8, 10]}
         scale={[300, 300, 300]}
         mass={20}
+        onCollisionEnter={onPlayerEnterRock(3)}
+        onCollisionExit={onPlayerExitRock(3)}
       >
+        <CuboidCollider args={[0.004, 0.004, 0.004]} position={[0, 0, 0]} />
         <Item
           item={{
             name: "WeightRock3",
             position: [0, 0, 0],
             fileType: "glb",
-            rotation: 0,
             scale: [1, 1, 1],
           }}
         />
@@ -1210,58 +1271,54 @@ const Room2 = ({
           }}
         />
       </RigidBody>
-      {
-        laserColor === "red" && (
-          <RigidBody
-            type="fixed"
-            colliders={"trimesh"} // Conditionally set collider
-            name={laserName} // Use dynamic name based on the laser's color
-            lockRotations
-            lockTranslations
-            position={[-12, 4.65, -10]}
-            rotation={[
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(-31),
-              degreeNumberToRadian(0),
-            ]}
-          >
-            <Box args={[10, 9.5, 0.0001]} castShadow>
-              <meshStandardMaterial
-                attach="material"
-                color={laserColor} // Use state variable for color
-                transparent
-                opacity={1}
-                emissive={laserColor} // Add emissive color
-                emissiveIntensity={1} // Set emissive intensity
-              />
-              <FakeGlowMaterial glowColor={laserColor} />
-            </Box>
-          </RigidBody>
-        )
-      }
-      {
-        laserColor === "green" && (
-          <Box
-            position={[-12, 4.65, -10]}
-            args={[10, 9.5, 0.0001]}
-            castShadow
-            rotation={[
-              degreeNumberToRadian(0),
-              degreeNumberToRadian(-31),
-              degreeNumberToRadian(0),
-            ]}
-          >
+      {laserColor === "red" && (
+        <RigidBody
+          type="fixed"
+          colliders={"trimesh"} // Conditionally set collider
+          name={laserName} // Use dynamic name based on the laser's color
+          lockRotations
+          lockTranslations
+          position={[-12, 4.65, -10]}
+          rotation={[
+            degreeNumberToRadian(0),
+            degreeNumberToRadian(-31),
+            degreeNumberToRadian(0),
+          ]}
+        >
+          <Box args={[10, 9.5, 0.0001]} castShadow>
             <meshStandardMaterial
               attach="material"
-              color={"green"} // Use state variable for color
+              color={laserColor} // Use state variable for color
               transparent
               opacity={1}
+              emissive={laserColor} // Add emissive color
               emissiveIntensity={1} // Set emissive intensity
             />
-            <FakeGlowMaterial glowColor={"green"} falloff={1} opacity={0.5} />
+            <FakeGlowMaterial glowColor={laserColor} />
           </Box>
-        )
-      }
+        </RigidBody>
+      )}
+      {laserColor === "green" && (
+        <Box
+          position={[-12, 4.65, -10]}
+          args={[10, 9.5, 0.0001]}
+          castShadow
+          rotation={[
+            degreeNumberToRadian(0),
+            degreeNumberToRadian(-31),
+            degreeNumberToRadian(0),
+          ]}
+        >
+          <meshStandardMaterial
+            attach="material"
+            color={"green"} // Use state variable for color
+            transparent
+            opacity={1}
+            emissiveIntensity={1} // Set emissive intensity
+          />
+          <FakeGlowMaterial glowColor={"green"} falloff={1} opacity={0.5} />
+        </Box>
+      )}
       <RigidBody
         name="countdown-computer"
         type="fixed"

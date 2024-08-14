@@ -33,6 +33,7 @@ import { Level6ContextProvider } from "./contexts/SceneContext/Level6Context";
 import LevelSelectionNew from "./non-gameplay-scene/LevelSelectionNew";
 import { Level4ContextProvider } from "./contexts/SceneContext/Level4Context";
 import Level4OCR from "./game/level4-ocr/scene/Level4OCR";
+import { Suspense } from "react";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -44,105 +45,113 @@ function App() {
             {showDebugTools && <DebugToolsBar />}
             <Router>
               <GlobalGameUI />
-              <Routes>
-                <Route element={<RequireAuth />}>
+              <Suspense fallback={null}>
+                <Routes>
+                  <Route element={<RequireAuth />}>
+                    <Route
+                      path="/"
+                      element={
+                        <div className="h-screen">
+                          <LevelProvider>
+                            <SceneRouter>
+                              <Scene title="welcome" scene={<Welcome />} />
+                              <Scene title="home" scene={<Home />} />
+                              <Scene
+                                title="enemy-environment"
+                                scene={<EnemyEnvironment />}
+                              />
+                              <Scene
+                                title="tutorial"
+                                scene={
+                                  <TutorialContextProvider>
+                                    <Tutorial />
+                                  </TutorialContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="level-selection"
+                                scene={<LevelSelectionNew />}
+                              />
+                              <Scene
+                                title="game-level-1"
+                                scene={
+                                  <Level1ContextProvider>
+                                    <Level1DataLab />
+                                  </Level1ContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="game-level-2"
+                                scene={
+                                  <Level2ContextProvider>
+                                    <Level2Classify />
+                                  </Level2ContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="game-level-3"
+                                scene={
+                                  <Level3ContextProvider>
+                                    <Level3SoundGEN />
+                                  </Level3ContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="game-level-4"
+                                scene={
+                                  <Level4ContextProvider>
+                                    <Level4OCR />
+                                  </Level4ContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="game-level-5"
+                                scene={
+                                  <Level5ContextProvider>
+                                    <Level5Final />
+                                  </Level5ContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="game-level-6"
+                                scene={
+                                  <Level6ContextProvider>
+                                    <Level6Reinforcement />
+                                  </Level6ContextProvider>
+                                }
+                              />
+                              <Scene title="slime-lab" scene={<SlimeLab />} />
+                            </SceneRouter>
+                          </LevelProvider>
+                        </div>
+                      }
+                    />
+                  </Route>
                   <Route
-                    path="/"
+                    path="/online-game1/:roomId"
                     element={
                       <div className="h-screen">
-                        <LevelProvider>
-                          <SceneRouter>
-                            <Scene title="welcome" scene={<Welcome />} />
-                            <Scene title="home" scene={<Home />} />
-                            <Scene
-                              title="enemy-environment"
-                              scene={<EnemyEnvironment />}
-                            />
-                            <Scene
-                              title="tutorial"
-                              scene={
-                                <TutorialContextProvider>
-                                  <Tutorial />
-                                </TutorialContextProvider>
-                              }
-                            />
-                            <Scene
-                              title="level-selection"
-                              scene={<LevelSelectionNew />}
-                            />
-                            <Scene
-                              title="game-level-1"
-                              scene={
-                                <Level1ContextProvider>
-                                  <Level1DataLab />
-                                </Level1ContextProvider>
-                              }
-                            />
-                            <Scene
-                              title="game-level-2"
-                              scene={
-                                <Level2ContextProvider>
-                                  <Level2Classify />
-                                </Level2ContextProvider>
-                              }
-                            />
-                            <Scene
-                              title="game-level-3"
-                              scene={
-                                <Level3ContextProvider>
-                                  <Level3SoundGEN />
-                                </Level3ContextProvider>
-                              }
-                            />
-                            <Scene
-                              title="game-level-4"
-                              scene={
-                                <Level4ContextProvider>
-                                  <Level4OCR/>
-                                </Level4ContextProvider>
-                              }
-                            />
-                            <Scene
-                              title="game-level-5"
-                              scene={
-                                <Level5ContextProvider>
-                                  <Level5Final />
-                                </Level5ContextProvider>
-                              }
-                            />
-                            <Scene
-                              title="game-level-6"
-                              scene={
-                                <Level6ContextProvider>
-                                  <Level6Reinforcement />
-                                </Level6ContextProvider>
-                              }
-                            />
-                            <Scene title="slime-lab" scene={<SlimeLab />} />
-                          </SceneRouter>
-                        </LevelProvider>
+                        <Scene title="welcome" scene={<OnlineGame1 />} />
                       </div>
                     }
                   />
-                </Route>
-                <Route
-                  path="/online-game1/:roomId"
-                  element={
-                    <div className="h-screen">
-                      <Scene title="welcome" scene={<OnlineGame1 />} />
-                    </div>
-                  }
-                />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/create-character" element={<CreateCharacter />} />
-                {/* Private Route */}
-                <Route element={<RequireAuth />}>
-                  <Route path="/online-lobby" element={<OnlineLobby />} />
-                  <Route path="/online-room/:roomid" element={<OnlineRoom />} />
-                </Route>
-                <Route path="*" element={<div>404</div>} />
-              </Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route
+                    path="/create-character"
+                    element={<CreateCharacter />}
+                  />
+                  {/* Private Route */}
+                  <Route element={<RequireAuth />}>
+                    <Route path="/online-lobby" element={<OnlineLobby />} />
+                    <Route
+                      path="/online-room/:roomid"
+                      element={<OnlineRoom />}
+                    />
+                  </Route>
+                  <Route path="*" element={<div>404</div>} />
+                </Routes>
+              </Suspense>
             </Router>
           </div>
         </SettingProvider>

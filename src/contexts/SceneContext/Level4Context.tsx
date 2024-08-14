@@ -1,4 +1,5 @@
-import React, { createContext, useContext } from "react";
+import { is } from "@react-three/fiber/dist/declarations/src/core/utils";
+import React, { createContext, useContext, useState } from "react";
 
 // Define the shape of your context data
 interface Level4ContextData {
@@ -6,6 +7,10 @@ interface Level4ContextData {
   setLevel: (level: number) => void;
   isOpenOcrPassword: boolean; 
   setIsOpenOcrPassword: (isOpenOcrPassword: boolean) => void;
+  isOpenCharacterStorage: boolean;
+  setIsOpenCharacterStorage: (isOpenCharacterStorage: boolean) => void;
+  isPass: boolean;
+  setIsPass: (isPass: boolean) => void;
 }
 
 // Create the Level4Context
@@ -26,14 +31,20 @@ export const useLevel4Context = () => {
 export const Level4ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const [level, setLevel] = React.useState<number>(1);
-  const [isOpenOcrPassword, setIsOpenOcrPassword] = React.useState<boolean>(false);
+  const [level, setLevel] = useState<number>(1);
+  const [isOpenOcrPassword, setIsOpenOcrPassword] = useState<boolean>(false);
+  const [isOpenCharacterStorage, setIsOpenCharacterStorage] = useState<boolean>(false);
+  const [isPass, setIsPass] = useState<boolean>(false);
 
   const contextValue: Level4ContextData = {
     level,
     setLevel,
     isOpenOcrPassword,
     setIsOpenOcrPassword,
+    isOpenCharacterStorage,
+    setIsOpenCharacterStorage,
+    isPass,
+    setIsPass
   };
 
   return (
