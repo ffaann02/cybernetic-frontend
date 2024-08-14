@@ -122,6 +122,7 @@ const GolemController: React.FC<Props> = ({
     return (
         <>
             <RigidBody
+                name='enemy_golem'
                 ref={golemRigidBody}
                 type='dynamic'
                 lockRotations

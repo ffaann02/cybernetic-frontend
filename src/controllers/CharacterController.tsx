@@ -16,6 +16,8 @@ import {
 } from "../hooks/useCharacterAnimation";
 import useAudio from "../hooks/useAudio";
 import io from "socket.io-client";
+import { degreeNumberToRadian } from "../utils";
+import SearchController from "./SearchController";
 
 export enum Controls {
   forward = "forward",
@@ -49,7 +51,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
   onlinePosition
 }) => {
   const controls = useRef<any>(null);
-  const firstPerson = useRef<any>(null);
+  const firstPerson = useRef<CameraControls>(null);
+  // const aimDirection = useRef(new THREE.Vector3(2.25, 0, -1)); // Initial aim direction
   const character = useRef<any>(null);
   const isOnFloor = useRef(true);
   const jumpCooldown = useRef(false);
@@ -77,6 +80,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     setEnergy,
     isDeath,
     setIsDeath,
+    searchAimDirection,
   } = useContext(GameContext);
 
   const [direction, setDirection] = useState<"left" | "right">("right");
@@ -128,7 +132,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isInteracting &&
       !isUsingSecurityCamera &&
       !isUsingTurret &&
-      !isDeath
+      !isDeath &&
+      !isUsingSearch
     ) {
       impulse.z -= speed * delta * onAirFraction;
     }
@@ -138,7 +143,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isInteracting &&
       !isUsingSecurityCamera &&
       !isUsingTurret &&
-      !isDeath
+      !isDeath &&
+      !isUsingSearch
     ) {
       impulse.z += speed * delta * onAirFraction;
       // console.log(vec3(playerRigidBody.current.translation()).z);
@@ -149,7 +155,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isInteracting &&
       !isUsingSecurityCamera &&
       !isUsingTurret &&
-      !isDeath
+      !isDeath &&
+      !isUsingSearch
     ) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
@@ -161,7 +168,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isInteracting &&
       !isUsingSecurityCamera &&
       !isUsingTurret &&
-      !isDeath
+      !isDeath &&
+      !isUsingSearch
     ) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
@@ -224,8 +232,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       // console.log(currentPosition);
       const distance = Math.sqrt(
         Math.pow(newPos.x - currentPosition.x, 2) +
-          Math.pow(newPos.y - currentPosition.y, 2) +
-          Math.pow(newPos.z - currentPosition.z, 2)
+        Math.pow(newPos.y - currentPosition.y, 2) +
+        Math.pow(newPos.z - currentPosition.z, 2)
       );
       // console.log(`Distance: ${distance}`);
 
@@ -244,20 +252,20 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
           direction: direction,
           animation: "Jumping",
         };
-        
+
         socket.emit("update_player", { roomId, userData });
         if (newPos && playerRigidBody.current && isOnline) {
           // console.log(onlinePos);
           playerRigidBody.current.setTranslation(newPos, true);
-        } 
+        }
       }
-      else if(!isSelf){
+      else if (!isSelf) {
         playerRigidBody.current.setTranslation(onlinePos);
       }
       if (newPos && playerRigidBody.current && !isOnline) {
         // console.log(onlinePos);
         playerRigidBody.current.setTranslation(newPos, true);
-      } 
+      }
     } else {
       // Handle the case where rigidBody.current is null
       console.error("rigidBody.current is null");
@@ -304,32 +312,62 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       );
     }
 
-    if (isUsingSearch && firstPerson.current) {
+    if (isUsingSearch && firstPerson.current && playerRigidBody.current) {
       const playerWorldPos = vec3(playerRigidBody.current.translation());
-      // Define the base aim point, which could be directly in front of the camera
-      let aimX = playerWorldPos.x + 2.25;
-      let aimY = playerWorldPos.y + 5.25; // Base elevation
-      let aimZ = playerWorldPos.z + 4.5; // Base depth
 
-      const cameraRotationSpeed = 2; // Adjust this value as needed for sensitivity
+      // Define the camera position on the player's head
+      const cameraHeight = 5; // Adjust as needed to match head level
+      const cameraPosX = playerWorldPos.x;
+      const cameraPosY = playerWorldPos.y + cameraHeight;
+      const cameraPosZ = playerWorldPos.z;
 
-      // Adjust aim point based on keyboard input
+      const cameraRotationSpeed = 0.02; // Adjust this value for sensitivity
+
+      // Create a new vector to update aim direction based on keyboard input
+      const deltaAim = new THREE.Vector3();
+
       if (rotateLeftPressed) {
-        aimX -= cameraRotationSpeed;
+        deltaAim.x += cameraRotationSpeed;
       }
       if (rotateRightPressed) {
-        aimX += cameraRotationSpeed;
+        deltaAim.x -= cameraRotationSpeed;
       }
       if (rotateUpPressed) {
-        aimY += cameraRotationSpeed;
+        deltaAim.y += cameraRotationSpeed;
       }
       if (rotateDownPressed) {
-        console.log("hello down");
-        aimY -= cameraRotationSpeed;
+        deltaAim.y -= cameraRotationSpeed;
       }
 
-      // Use setLookAt to orient the camera towards the new aim point
-      firstPerson.current.setLookAt(aimX, aimY, aimZ, aimX, aimY, aimZ, true);
+      if (searchAimDirection && searchAimDirection.current) {
+        // Update the aim direction by applying the rotation
+        searchAimDirection.current.applyAxisAngle(new THREE.Vector3(0, 1, 0), deltaAim.x);
+
+        // Calculate camera's right direction for proper up-down rotation
+        const cameraRight = new THREE.Vector3().crossVectors(
+          searchAimDirection.current,
+          new THREE.Vector3(0, 1, 0)
+        ).normalize();
+
+        // Rotate around the camera's right axis for up-down movement
+        searchAimDirection.current.applyAxisAngle(cameraRight, deltaAim.y);
+
+        // Calculate the aim point based on the player's position and updated aim direction
+        const aimPoint = new THREE.Vector3(cameraPosX, cameraPosY, cameraPosZ).add(
+          searchAimDirection.current
+        );
+
+        // Use setLookAt to orient the camera towards the new aim point
+        firstPerson.current.setLookAt(
+          cameraPosX,
+          cameraPosY,
+          cameraPosZ,
+          aimPoint.x,
+          aimPoint.y,
+          aimPoint.z,
+          true
+        );
+      }
     }
   };
 
@@ -397,11 +435,13 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
         }}
       >
         <group ref={character}>
-          <Character2D direction={direction} animation={animationState} />
+          {!isUsingSearch &&
+            <Character2D direction={direction} animation={animationState} />
+          }
           <CapsuleCollider
             args={[
               1, // radius
-               1, // height
+              1, // height
             ]}
             position={[0, 4, 0]}
           />
@@ -411,6 +451,9 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
           <meshStandardMaterial transparent={true} opacity={0} />
         </mesh>
       </RigidBody>
+      {isUsingSearch &&
+        <SearchController firstPersonCameraRef={firstPerson} />
+      }
     </group>
   );
 };

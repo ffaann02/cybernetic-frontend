@@ -38,6 +38,8 @@ import FlameBox from "./FlameBox";
 import Spike from "./Spike";
 import GlassBridge from "../../../shared-object/object/GlassBridge";
 import { useLevel2Context } from "../../../../contexts/SceneContext/Level2Context";
+import GolemPatrollController from "../../../../controllers/GolemPatrollController";
+import { GolemPatrollLevel2 } from "./GolemPatrollLevel2";
 
 const bloomColor = new Color("#ff0000");
 bloomColor.multiplyScalar(1.2);
@@ -92,6 +94,8 @@ const Room1 = ({
       timestamp: Date.now(),
     },
   ]);
+  const [golemInScene, setGolemInScene] = useState(GolemPatrollLevel2);
+
   const onPlayerEnterGlassComputer = ({ other }) => {
     console.log("test");
     if (other.rigidBodyObject.name === "player") {
@@ -190,7 +194,21 @@ const Room1 = ({
     <>
       <ambientLight intensity={0.5} color={"lightblue"} />
       <Spike />
-      
+      {golemInScene.map((golem, index) => (
+        <GolemPatrollController
+          key={index}
+          id={index}
+          name={golem.name}
+          waypoints={golem.waypoints}
+          angle={golem.angle}
+          idleTime={golem.idleTime}
+          chaseTimeLimit={golem.chaseTimeLimit}
+          patrolType={golem.patrolType}
+          showPath={golem.showPath}
+          data={golem.data}
+          setEnemyPatrolInScene={setGolemInScene}
+        />
+        ))}
       {isActivateScanner && (
         <RigidBody
           name="UFO-Glass-Scanner-Real"
@@ -202,7 +220,7 @@ const Room1 = ({
           ref={UFO}
           scale={[50, 0.2, 50]}
         >
-                    <mesh scale={[0.5, 50, 0.5]} position={[0, -4, 0]}>
+          <mesh scale={[0.5, 50, 0.5]} position={[0, -4, 0]}>
             <sphereGeometry args={[0.5, 24, 24]} />
             <FakeGlowMaterial
               glowColor={glowColor1}

@@ -14,17 +14,22 @@ import { Controls } from "../../../controllers/CharacterController";
 import { useFrame } from "@react-three/fiber";
 import { useLevel4Context } from "../../../contexts/SceneContext/Level4Context";
 import OcrPasswordUI from "../ui/OcrPasswordUI";
+import GolemController from "../../../controllers/GolemController";
+import { GolemPatrolLevel4 } from "../scene/GolemPatrolLevel4";
+import GolemPatrollController from "../../../controllers/GolemPatrollController";
 
 export const Room = memo(({ children }) => {
   return <>{children}</>;
 });
 
-export const SceneObject = ({}) => {
+export const SceneObject = ({ }) => {
   const { currentHit, setCurrentHit, setIsInteracting } =
     useContext(GameContext);
   const { isOpenOcrPassword, setIsOpenOcrPassword } = useLevel4Context();
   const [lastPressTime, setLastPressTime] = useState(0);
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
+
+  const [golemInScene, setGolemInScene] = useState(GolemPatrolLevel4);
 
   const onPlayerEnterSecretPassword = ({ other }) => {
     if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
@@ -65,9 +70,28 @@ export const SceneObject = ({}) => {
         shadow-camera-top={20}
         shadow-camera-bottom={-20}
       />
+      {golemInScene.map((golem, index) => (
+        <GolemPatrollController
+          key={index}
+          id={index}
+          name={golem.name}
+          scale={golem.scale}
+          waypoints={golem.waypoints}
+          angle={golem.angle}
+          idleTime={golem.idleTime}
+          chaseTimeLimit={golem.chaseTimeLimit}
+          patrolType={golem.patrolType}
+          showPath={golem.showPath}
+          data={golem.data}
+          setEnemyPatrolInScene={setGolemInScene}
+        />
+      ))}
+      <CuboidCollider args={[2, 6, 10]} position={[-14.5, 2, 17.5]} />
+      <CuboidCollider args={[2, 6, 10]} position={[-24.5, 2, 17.5]} />
+      <CuboidCollider args={[2, 6, 10]} position={[-35, 2, 17.5]} />
       <RigidBody
         type="fixed"
-        colliders={"trimesh"}
+        colliders={false}
         position={[-36, 0, 10]}
         scale={[12, 8, 14]}
         lockRotations

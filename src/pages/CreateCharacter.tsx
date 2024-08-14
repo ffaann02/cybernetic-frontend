@@ -7,10 +7,19 @@ import { useFirebaseStorage } from "../hooks/useFirebaseStorage";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
 import { useRef, useState } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import useAxios from "../hooks/useAxios";
+import axiosInstance from "../api/axios";
 
 const CreateCharacter = () => {
 
   const { uploadImage } = useFirebaseStorage();
+  const { getItem, setItem } = useLocalStorage();
+  const { axiosFetch } = useAxios();
+
+  const localStorageUser = getItem('CYBERNETIC_USER')
+  const userId = localStorageUser?.userId
+
   const idle_frame1 = useRef<HTMLDivElement>(null);
   const idle_frame2 = useRef<HTMLDivElement>(null);
   const idle_frame3 = useRef<HTMLDivElement>(null);
@@ -38,6 +47,10 @@ const CreateCharacter = () => {
   const lift_idle_frame_2 = useRef<HTMLDivElement>(null);
   const lift_idle_frame_3 = useRef<HTMLDivElement>(null);
   const [isExportAnimation, setIsExportAnimation] = useState<boolean>(false);
+
+  const [characterName, setCharacterName] = useState<string>("");
+  const [isUpdateCharacterError, setIsUpdateCharacterError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const IdleExportToPng = async () => {
     setIsExportAnimation(true);
@@ -83,9 +96,10 @@ const CreateCharacter = () => {
         ctx.drawImage(img3, img1.width * 2, 0);
         ctx.drawImage(img4, img1.width * 3, 0);
 
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async (blob) => {
           if (blob) {
             saveAs(blob, "idle.png");
+            await uploadImage(blob, "idle.png", `character/${userId}`);
           }
         }, "image/png");
         setIsExportAnimation(false);
@@ -137,9 +151,10 @@ const CreateCharacter = () => {
         ctx.drawImage(img2, img1.width, 0);
         ctx.drawImage(img3, img1.width * 2, 0);
 
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async (blob) => {
           if (blob) {
             saveAs(blob, "lift-idle.png");
+            await uploadImage(blob, "lift-idle.png", `character/${userId}`);
           }
         }, "image/png");
         setIsExportAnimation(false);
@@ -196,9 +211,10 @@ const CreateCharacter = () => {
         ctx.drawImage(img5, img1.width * 4, 0);
         ctx.drawImage(img6, img1.width * 5, 0);
 
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async (blob) => {
           if (blob) {
             saveAs(blob, "running.png");
+            await uploadImage(blob, "running.png", `character/${userId}`);
           }
         }, "image/png");
         setIsExportAnimation(false);
@@ -255,9 +271,10 @@ const CreateCharacter = () => {
         ctx.drawImage(img5, img1.width * 4, 0);
         ctx.drawImage(img6, img1.width * 5, 0);
 
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async (blob) => {
           if (blob) {
             saveAs(blob, "lift-running.png");
+            await uploadImage(blob, "lift-running.png", `character/${userId}`);
           }
         }, "image/png");
         setIsExportAnimation(false);
@@ -312,7 +329,7 @@ const CreateCharacter = () => {
           if (blob) {
             console.log(blob);
             saveAs(blob, "jump.png");
-            await uploadImage(blob, "jump.png", "character/u111362252");
+            await uploadImage(blob, "jump.png", `character/${userId}`);
           }
         }, "image/png");
       }
@@ -322,14 +339,40 @@ const CreateCharacter = () => {
   };
 
 
-  const handleCreateCharacter = () => {
+  const handleCreateCharacter = async () => {
     console.log("Create Character");
-    setIsExportAnimation(true);
-    IdleExportToPng();
-    LiftIdleExportToPng();
-    RunningExportToPng();
-    LiftRunningExportToPng();
-    setIsExportAnimation(false);
+    try {
+      const response = await axiosFetch({
+        axiosInstance,
+        url: '/user/character/update',
+        method: 'post',
+        requestConfig: {
+          userId: userId,
+          characterName: characterName,
+          heighestLevel: 1,
+        }
+      })
+      setIsUpdateCharacterError(false);
+      const data = {
+        userId: userId,
+        email: localStorageUser?.email,
+        characterName: characterName,
+      }
+      setItem("CYBERNETIC_USER", data)
+      console.log(response);
+      setIsExportAnimation(true);
+      IdleExportToPng();
+      LiftIdleExportToPng();
+      RunningExportToPng();
+      LiftRunningExportToPng();
+      setIsExportAnimation(false);
+    } catch (error) {
+      setIsUpdateCharacterError(true);
+      if (error.response) {
+        setErrorMessage(error.response.data.error);
+      }
+      console.log(error);
+    }
   };
 
   return (
@@ -340,7 +383,7 @@ const CreateCharacter = () => {
       m-auto grid grid-cols-3 rounded-3xl pl-4 pr-0 py-5 gap-x-6 bg-black/50"
         >
           <div className="col-span-1 flex border rounded-xl bg-white/10">
-            <CharacterPreview 
+            <CharacterPreview
               idle_frame1={idle_frame1}
               idle_frame2={idle_frame2}
               idle_frame3={idle_frame3}
@@ -369,20 +412,28 @@ const CreateCharacter = () => {
               RunningExportToPng={RunningExportToPng}
               LiftRunningExportToPng={LiftRunningExportToPng}
               JumpExportToPng={JumpExportToPng}
+              characterName={characterName}
+              setCharacterName={setCharacterName}
             />
           </div>
           <div className="col-span-2 h-full flex flex-col">
             <ToolsBar />
-            <div className="flex mt-auto mb-0 gap-x-4 ml-auto mr-10">
-              <button className="bg-slate-200/50 px-4 py-3 rounded-2xl border font-bold text-slate-600 w-fit flex ">
-                <FaEraser className="text-2xl my-auto" />
-                <p className="ml-3 text-xl">Clear Setting</p>
-              </button>
-              <button className="bg-cyan-400/50 px-4 py-3 rounded-2xl border text-xl font-bold text-cyan-100 w-fit flex"
-                onClick={handleCreateCharacter}>
-              <IoMdCheckmarkCircleOutline className="text-2xl my-auto" />
-              <p className="ml-3 text-xl">Create Character</p>
-              </button>
+            <div className="mt-auto ml-auto">
+              {isUpdateCharacterError &&
+                <div className="w-full flex justify-end">
+                  <p className="text-red-400 text-lg mr-14">{errorMessage}</p>
+                </div>}
+              <div className="flex mt-auto mb-0 gap-x-4 ml-auto mr-10">
+                <button className="bg-slate-200/50 px-4 py-3 rounded-2xl border font-bold text-slate-600 w-fit flex ">
+                  <FaEraser className="text-2xl my-auto" />
+                  <p className="ml-3 text-xl">Clear Setting</p>
+                </button>
+                <button className="bg-cyan-400/50 px-4 py-3 rounded-2xl border text-xl font-bold text-cyan-100 w-fit flex"
+                  onClick={handleCreateCharacter}>
+                  <IoMdCheckmarkCircleOutline className="text-2xl my-auto" />
+                  <p className="ml-3 text-xl">Create Character</p>
+                </button>
+              </div>
             </div>
           </div>
         </div>
