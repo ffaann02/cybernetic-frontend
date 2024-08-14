@@ -3,6 +3,7 @@ import CharacterHead from "../../create-character/cut/CharacterHead";
 import { Dialog } from "primereact/dialog";
 import { GameContext } from "../../../contexts/GameContext";
 import { Toast } from "primereact/toast";
+import * as THREE from "three";
 
 const PlayerMainUI = () => {
   const {
@@ -13,9 +14,13 @@ const PlayerMainUI = () => {
     cooldowns,
     setCooldowns,
     currentScene,
-    energy, 
+    energy,
     setEnergy,
-    isDeath
+    isDeath,
+    searchAimDirection,
+    searchResult,
+    setSearchResult,
+    searchDataNotify,
   } = useContext(GameContext);
 
   const [starterItem, setStarterItem] = useState([
@@ -84,7 +89,9 @@ const PlayerMainUI = () => {
             );
             break;
           case "data-extractor":
-            setIsUsingSearch(true);
+            setSearchResult(null);
+            searchAimDirection.current = new THREE.Vector3(0, 0, -1),
+              setIsUsingSearch(true);
             setTimeout(
               () => setIsUsingSearch(false),
               starterItem[itemIndex].life_time * 1000
@@ -163,29 +170,46 @@ const PlayerMainUI = () => {
 
   return (
     <div
-      className={`absolute bottom-0 w-full ${isDeath ? "opacity-0" : "opacity-100"} z-[9998] px-0 py-10 ${currentScene?.includes("game") || currentScene==="tutorial" ? "block":"hidden"} ${
-        isUsingSearch ? "h-full" : "h-fit"
-      }`}
+      className={`absolute bottom-0 w-full ${isDeath ? "opacity-0" : "opacity-100"} z-[9998] px-0 py-10 ${currentScene?.includes("game") || currentScene === "tutorial" ? "block" : "hidden"} ${isUsingSearch ? "h-full" : "h-fit"
+        }`}
       id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}
     >
       <Toast ref={aimHitEnemyToast} />
+      <Toast ref={searchDataNotify} position="top-right"/>
       {isUsingSearch && (
-        <div
-          className="absolute max-w-2xl h-[42rem] w-full flex justify-center items-center 
-    top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5rem] border-cyan-400/50 z-[900]"
-          id={isUsingSearch ? "circle-hole-active" : "circle-hole-inactive"}
-        >
-          <div className="rounded-full border-l-4 border-r-4 border-green-400/50 px-1.5 py-2 animate-spin">
-            <div className="bg-red-600/50 w-10 h-10 rounded-full"></div>
+        <>
+          <div
+            className={`absolute max-w-2xl h-[42rem] w-full flex justify-center items-center 
+            top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5rem]
+            ${searchResult !== null ? "border-green-400/50 z-[900]" : "border-cyan-400/50 z-[900]"}`}
+            id={isUsingSearch ? "circle-hole-active" : "circle-hole-inactive"}
+          >
+            {/* {(searchResult !== null && searchResult.name) &&
+              <p>{searchResult.name}</p>
+            } */}
+            <div className="rounded-full border-l-4 border-r-4 border-green-400/50 px-1.5 py-2 animate-spin">
+              <div className="bg-red-600/50 w-10 h-10 rounded-full"></div>
+            </div>
           </div>
-        </div>
+          <div className="absolute max-w-2xl h-full w-full flex justify-center items-end z-[1000]
+    top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            {(searchResult !== null && searchResult.name) &&
+              <div className="text-white text-center">
+                <p className="text-2xl font-semibold text-green-400">Found: {searchResult.name}</p>
+                {searchResult.parameter && searchResult.parameter.element && searchResult.parameter.weakness &&
+                  <p className="text-xl">Element: {searchResult.parameter.element}, Weakness: {searchResult.parameter.weakness}</p>
+                }
+              </div>
+            }
+          </div>
+        </>
       )}
       <div className="relative h-full">
         <div className="absolute left-10 bottom-2 w-fit">
           {/* <img src={playerImage} className="mt-[4%]" /> */}
           <div className="w-full relative">
             <div className="w-32">
-              <img src="images/Profile.png"/>
+              <img src="images/Profile.png" />
             </div>
             <div className="text-white absolute left-[120%] bottom-[80%] ">{energy}/10</div>
             <div className="absolute left-[120%] bottom-[20%] flex flex-col gap-y-4 bg-blue-400/50 rounded-md">
@@ -205,9 +229,8 @@ const PlayerMainUI = () => {
           {starterItem.map((item) => (
             <button
               key={item.name}
-              className={`relative h-24 w-24 ${
-                cooldowns[item.activate_key] > 0 ? "bg-gray-400" : "bg-white/60"
-              } rounded-lg border-b-4 border-b-cyan-400 hover:bg-cyan-400/50`}
+              className={`relative h-24 w-24 ${cooldowns[item.activate_key] > 0 ? "bg-gray-400" : "bg-white/60"
+                } rounded-lg border-b-4 border-b-cyan-400 hover:bg-cyan-400/50`}
               disabled={cooldowns[item.activate_key] > 0}
             >
               <img src={item.icon} className="h-16 w-6 mx-auto mt-2 py-2" />
@@ -224,9 +247,8 @@ const PlayerMainUI = () => {
               <div
                 className="absolute w-full bg-white/60 bottom-0 rounded-xl rotate-180 transition-all ease-linear duration-200"
                 style={{
-                  height: `${
-                    (cooldowns[item.activate_key] / item.cooldown) * 100
-                  }%`,
+                  height: `${(cooldowns[item.activate_key] / item.cooldown) * 100
+                    }%`,
                 }}
               />
             </button>

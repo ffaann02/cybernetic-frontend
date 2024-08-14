@@ -146,7 +146,6 @@ const Room2 = ({
         ]);
       }
       if (name.includes("enemy")) {
-        console.log("enemy enter: ", name);
         setCurrentPlatformCarrying((prev) => [...prev, { name, weight: 16 }]);
       }
     }

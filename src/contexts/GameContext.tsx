@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
 import { Controls } from "../controllers/CharacterController";
+import * as THREE from "three";
 
 interface GameContextProps {
   currentScene: string;
@@ -57,13 +58,16 @@ interface GameContextProps {
   setIsEnemyHit?: React.Dispatch<React.SetStateAction<boolean>>;
   enemyHitName?: string;
   setEnemyHitName?: React.Dispatch<React.SetStateAction<string>>;
-  searchDataNotify?: React.RefObject<any>;
+  searchDataNotify: React.RefObject<any>;
   showStar: boolean;
   setShowStar: React.Dispatch<React.SetStateAction<boolean>>;
   isPaused: boolean;
   setIsPaused: React.Dispatch<React.SetStateAction<boolean>>;
   isShowLevelResult: boolean;
   setIsShowLevelResult: React.Dispatch<React.SetStateAction<boolean>>;
+  searchAimDirection?: any;
+  searchResult?: any;
+  setSearchResult?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const initialGameContext: GameContextProps = {
@@ -189,6 +193,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [showStar, setShowStar] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isShowLevelResult, setIsShowLevelResult] = useState(false);
+  const searchAimDirection = useRef(null);
+  const [searchResult, setSearchResult] = useState(null);
   
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
@@ -265,6 +271,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     setIsPaused,
     isShowLevelResult,
     setIsShowLevelResult
+    searchDataNotify,
+    searchAimDirection,
+    searchResult,
+    setSearchResult,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

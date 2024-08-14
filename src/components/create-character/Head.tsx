@@ -1,6 +1,6 @@
 import HeadOrange from "../../assets/orange-variant/Head.svg";
 
-const Head = ({ choice = 2 }) => {
+const Head = ({ choice = 1 }) => {
   return (
     <div>
       {choice === 1 && (
