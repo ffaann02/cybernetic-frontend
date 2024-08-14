@@ -54,6 +54,8 @@ const CharacterPreview = ({
   RunningExportToPng,
   LiftRunningExportToPng,
   JumpExportToPng,
+  characterName,
+  setCharacterName,
 }) => {
   const [currentFrame, setCurrentFrame] = useState<number>(0);
 
@@ -124,6 +126,15 @@ const CharacterPreview = ({
     <>
       <div className="flex flex-col rounded-lg">
         <div className="pl-4 pr-2 mt-3 flex justify-between">
+          <h1 className="text-2xl text-white my-auto">Name: </h1>
+          <input
+            type="text"
+            className="px-3 py-1 rounded-xl border bg-white/15 text-white/40 hover:bg-white/30 hover:text-white/60"
+            value={characterName}
+            onChange={(e) => setCharacterName(e.target.value)}
+          />
+        </div>
+        <div className="pl-4 pr-2 mt-3 flex justify-between">
           <h1 className="text-2xl text-white my-auto">Animation: </h1>
           <div className="flex gap-4 ml-3">
             <select
@@ -135,11 +146,10 @@ const CharacterPreview = ({
                 <option
                   key={anim.name}
                   value={anim.name}
-                  className={`${
-                    animation === anim.name
-                      ? "bg-cyan-400 text-slate-600"
-                      : "bg-white/15 text-white/40 hover:bg-white/30 hover:text-white/60"
-                  }`}
+                  className={`${animation === anim.name
+                    ? "bg-cyan-400 text-slate-600"
+                    : "bg-white/15 text-white/40 hover:bg-white/30 hover:text-white/60"
+                    }`}
                 >
                   {anim.title}
                 </option>

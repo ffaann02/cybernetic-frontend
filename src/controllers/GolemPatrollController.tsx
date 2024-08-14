@@ -1,12 +1,13 @@
-import React, { useRef, useState, useContext, useEffect } from 'react';
-import { RigidBody } from '@react-three/rapier';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { GameContext } from '../contexts/GameContext';
 import { EnemyAnimationState, useEnemyAnimation } from '../hooks/useEnemyAnimation';
-import useAxios from '../hooks/useAxios';
-import axiosInstanceAiService from '../api/aiService';
+import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
 import Enemy2D from '../animation/Enemy2D';
+import { RigidBody } from '@react-three/rapier';
+import FakeGlowMaterial from '../components/FakeGlowMaterial';
+import { degreeNumberToRadian } from '../utils';
+import { Sphere } from '@react-three/drei';
 
 export interface EnemyData {
     data_type: string,
@@ -25,9 +26,10 @@ export interface EnemyData {
     image_url: string
 }
 
-interface EnemyPatrolControllerProps {
+interface Props {
     id: number;
     name: string;
+    scale?: number;
     waypoints: number[][];
     angle: number;
     idleTime: number;
@@ -36,23 +38,22 @@ interface EnemyPatrolControllerProps {
     showPath?: boolean;
     data: EnemyData;
     setEnemyPatrolInScene: React.Dispatch<React.SetStateAction<any[]>>;
-    isPlayingSound?: boolean;
-    speakerRef?: any;
     showLight?: boolean;
 }
 
-const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene, isPlayingSound, speakerRef, showLight = true }) => {
+const GolemPatrollController: React.FC<Props> = ({
+    id, name, scale, waypoints, angle, idleTime, chaseTimeLimit, patrolType, showPath, data, setEnemyPatrolInScene, showLight = true
+}) => {
 
-    const { axiosFetch } = useAxios();
-
-    const { playerRigidBody, isHidden, setIsEnemyHit, setEnemyHitName, setEnergy } = useContext(GameContext);
+    const { playerRigidBody, isHidden, isDeath, setIsEnemyHit, setEnemyHitName, setEnergy } = useContext(GameContext);
     const { element, speed, color, detection_range, weakness } = data;
 
     const { animationState, setAnimationState } = useEnemyAnimation();
     const [direction, setDirection] = useState<'left' | 'right'>('right');
-    const rigidBody = useRef<any>(null);
+    const golemRigidBody = useRef<any>(null);
 
     const [currentWaypointIndex, setCurrentWaypointIndex] = useState(0);
+
     const [movingForward, setMovingForward] = useState(true);
 
     const [movingSpeed, setMovingSpeed] = useState(speed);
@@ -77,18 +78,13 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
     const lastHitPlayerTime = useRef(Date.now());
 
     useFrame(() => {
-        if (foundPlayer.current === false && !isPlayingSound) {
+        if (foundPlayer.current === false) {
+            // console.log("Player not detected");
             moveBetweenWaypoints();
         }
         else {
             setAnimationState(EnemyAnimationState.Running);
-            if (isPlayingSound && speakerRef.current) {
-                // speakerRef.current.play();
-                moveToSpeaker();
-            }
-            else {
-                moveToPlayer();
-            }
+            attackPlayer();
         }
     });
 
@@ -103,10 +99,10 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
     }, [isChasing]);
 
     const moveBetweenWaypoints = () => {
-        if (!rigidBody.current) return;
+        if (!golemRigidBody.current) return;
 
         const currentWaypoint = waypoints[currentWaypointIndex];
-        const position = rigidBody.current.translation();
+        const position = golemRigidBody.current.translation();
 
         // Calculate direction to the next waypoint
         const directionVec = new THREE.Vector3(
@@ -126,7 +122,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
         if (!isStopped) {
             // Move the rigid body towards the current waypoint
             setAnimationState(EnemyAnimationState.Running);
-            rigidBody.current.setLinvel({
+            golemRigidBody.current.setLinvel({
                 x: directionVec.x * movingSpeed,
                 y: directionVec.y * movingSpeed,
                 z: directionVec.z * movingSpeed,
@@ -138,7 +134,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
             // Stop briefly at the waypoint
             if (!isStopped) {
                 setAnimationState(EnemyAnimationState.Idle);
-                rigidBody.current.setLinvel({ x: 0, y: 0, z: 0 });
+                golemRigidBody.current.setLinvel({ x: 0, y: 0, z: 0 });
                 setIsStopped(true);
 
                 flashlightRef.current.intensity = 0;
@@ -202,7 +198,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
             const angle = Math.acos(forward.dot(toPlayer));
 
             // Check if the player is within the detection range and angle
-            if (distance < (detectionRange * enemyScale) && angle < detectionAngle && isHidden === false) {
+            if (distance < (detectionRange * enemyScale) && angle < detectionAngle && !isHidden && !isDeath) {
                 console.log("Player detected!");
                 foundPlayer.current = true;
                 setIsChasing(true); // Start chasing the player
@@ -239,11 +235,11 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
         }
     }
 
-    const moveToPlayer = () => {
+    const attackPlayer = () => {
         if (playerRigidBody && playerRigidBody.current) {
 
             const playerPosition = playerRigidBody.current.translation();
-            const enemyPosition = rigidBody.current.translation();
+            const enemyPosition = golemRigidBody.current.translation();
 
             // Calculate direction to the next waypoint
             const directionVec = new THREE.Vector3(
@@ -259,12 +255,24 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
             // Set direction state
             setDirection(directionVec.x < 0 ? 'left' : 'right');
 
-            // Move the rigid body towards the current waypoint
-            rigidBody.current.setLinvel({
-                x: directionVec.x * movingSpeed,
-                y: directionVec.y * movingSpeed,
-                z: directionVec.z * movingSpeed,
+            setAnimationState(EnemyAnimationState.Attack);
+            golemRigidBody.current.setLinvel({
+                x: 0,
+                y: 0,
+                z: 0,
             });
+            const currentTime = Date.now()
+            const elapsedTime = currentTime - lastHitPlayerTime.current
+            if (elapsedTime > 1000 && !isHidden && !isDeath) {
+                lastHitPlayerTime.current = currentTime;
+                const impulse = new THREE.Vector3();
+                playerRigidBody.current.applyImpulse(
+                    new THREE.Vector3(impulse.x, 15 * 75, impulse.z)
+                );
+                setIsEnemyHit(true);
+                setEnemyHitName('Golem');
+                setEnergy((prev) => prev - 4);
+            }
 
             updateFlashLightTarget(enemyPosition, directionVec);
             updateFlashlight(enemyPosition, length + 4);
@@ -278,47 +286,6 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     flashlightRef.current.intensity = 100;
                     flashlightRef.current.color.set('white');
                 }
-            }
-        }
-        else {
-            console.log('Player rigid body is not available');
-        }
-    }
-
-    const moveToSpeaker = () => {
-        if (speakerRef && speakerRef.current) {
-
-            const playerPosition = speakerRef.current.translation();
-            const enemyPosition = rigidBody.current.translation();
-
-            // Calculate direction to the next waypoint
-            const directionVec = new THREE.Vector3(
-                playerPosition.x - enemyPosition.x,
-                playerPosition.y - enemyPosition.y,
-                playerPosition.z - enemyPosition.z,
-            );
-
-            // Normalize direction
-            const length = directionVec.length();
-            directionVec.normalize();
-
-            // Set direction state
-            setDirection(directionVec.x < 0 ? 'left' : 'right');
-
-            // Move the rigid body towards the current waypoint
-            rigidBody.current.setLinvel({
-                x: directionVec.x * movingSpeed,
-                y: directionVec.y * movingSpeed,
-                z: directionVec.z * movingSpeed,
-            });
-
-            updateFlashLightTarget(enemyPosition, directionVec);
-            updateFlashlight(enemyPosition, length + 4);
-
-            if (chaseTimer <= 0) {
-                foundPlayer.current = false;
-                setIsChasing(false);
-                setChaseTimer(chaseTimeLimit); // Reset timer
             }
         }
         else {
@@ -349,169 +316,25 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
         return newWaypoints;
     }
 
-    const AffectBeforeEvolve = (time: number) => {
-        return new Promise((resolve) => {
-            let elapsedTime = 0; // Elapsed time in seconds
-            const interval = setInterval(() => {
-                elapsedTime += 0.1; // Increment elapsed time by 0.1 seconds
-                const opacity = 0.7 + 1.8 * Math.sin(elapsedTime * 8); // Sine wave calculation for smooth oscillation
-                setEnemyOpacity(opacity);
-                if (elapsedTime >= time) {
-                    setEnemyOpacity(2);
-                    return resolve(clearInterval(interval))
-                }
-            }, 100); // Update every 0.1 seconds
-        })
-    }
-
-    const evolve = async () => {
-        await AffectBeforeEvolve(2);
-        switch (element) {
-            case 'fire':
-                // Fire element: Increase size
-                setEnemyScale((prev) => prev + 0.5);
-                break;
-            case 'water':
-                // Water element: Duplicate itself with new waypointsds
-                const newWaypoints = newWayPoint();
-                setEnemyPatrolInScene((prev) => {
-                    const prop = {
-                        name: name,
-                        waypoints: newWaypoints,
-                        angle: angle,
-                        idleTime: idleTime,
-                        chaseTimeLimit: chaseTimeLimit,
-                        patrolType: patrolType,
-                        showPath: showPath,
-                        data: data,
-                        showLight: false,
-                    }
-                    const newEnemyDataInScene = [...prev];
-                    newEnemyDataInScene.push(prop);
-                    return newEnemyDataInScene;
-                });
-                break;
-            case 'earth':
-                // Earth element: Increase mass and armor
-                setEnemyScale((prev) => prev + 0.5); // Example to increase scale, you might want to apply other changes
-                break;
-            case 'lightning':
-                // Lightning element: Increase speed
-                setMovingSpeed((prev) => prev * 1.5);
-                break;
-            case 'metal':
-                // Metal element: Add extra armor
-                setEnemyScale((prev) => prev + 0.2); // Example to increase scale, adjust as needed
-                break;
-            default:
-                console.log("Unknown element type");
-                break;
-        }
-    }
-
-
-    const mineProcessing = async () => {
-        if (isCollisionProcessed.current === false) {
-            isCollisionProcessed.current = true;
-            const modifiedData = Object.fromEntries(
-                Object.entries(data).map(([key, value]) => [
-                    key,
-                    typeof value === 'number' ? value.toString() : value
-                ]).filter(([key]) => key !== 'weakness')
-            );
-
-            try {
-                console.log(modifiedData);
-                const response = await axiosFetch({
-                    axiosInstance: axiosInstanceAiService,
-                    method: "post",
-                    url: `/classification/predict`,
-                    requestConfig: {
-                        userId: "u111362252",
-                        model: {
-                            name: "enemy_weakness",
-                            targetVariable: "weakness"
-                        },
-                        data: modifiedData
-                    },
-                });
-                console.log(response);
-                if (response.weakness === weakness) {
-                    console.log("Prediction is correct");
-                }
-                else {
-                    await evolve();
-                    console.log("Prediction is incorrect");
-                }
-            } catch (error) {
-                console.log(error);
-            }
-
-            setTimeout(() => {
-                console.log("Mine processing completed");
-                isCollisionProcessed.current = false
-            }, 1000); // Reset the flag after 1 second
-        }
-
-    }
-
-    const onObjectEnterEnemy = ({ other }) => {
-        if (
-            other.rigidBodyObject &&
-            other.rigidBodyObject.name.includes("mine")
-        ) {
-            mineProcessing();
-        }
-        if (other.rigidBodyObject && other.rigidBodyObject.name === "Kaboom-Level3") {
-            console.log("Kaboom!");
-        }
-    }
-
     return (
         <>
             <RigidBody
                 type='dynamic'
-                ref={rigidBody}
+                ref={golemRigidBody}
                 colliders={false}
                 name='enemy_patrol'
                 lockRotations
                 position={[waypoints[0][0], waypoints[0][1], waypoints[0][2]]}
-                userData={{ 
+                userData={{
                     name: name,
                     parameter: data,
-                }}
-                onCollisionEnter={({ other }) => {
-                    if (
-                        other.rigidBodyObject &&
-                        other.rigidBodyObject.name.includes("mine")
-                    ) {
-                        mineProcessing();
-                    }
-                    if (other.rigidBodyObject &&
-                        other.rigidBodyObject.name === "Kaboom-Level3") {
-                        console.log("Kaboom!");
-                        setEnemyPatrolInScene((prevEnemies) => (
-                            prevEnemies.filter((enemy) => (enemy.id !== id))
-                        ))
-                    }
-                    if (other.rigidBodyObject &&
-                        other.rigidBodyObject.name === "player" && isChasing && !isHidden) {
-                        const currentTime = Date.now()
-                        const elapsedTime = currentTime - lastHitPlayerTime.current
-                        if(elapsedTime > 1000) {
-                            lastHitPlayerTime.current = currentTime;
-                            setIsEnemyHit(true);
-                            setEnemyHitName(name);
-                            setEnergy((prev) => prev - 3);
-                        }
-                    }
                 }}>
                 <Enemy2D
                     name={name}
                     animation={animationState}
                     direction={direction}
-                    color={color}
-                    scale={enemyScale}
+                    color={"white"}
+                    scale={scale ? scale : 1.5}
                     opacityOptional={enemyOpacity} />
             </RigidBody>
             {flashLightTargetRef && showLight &&
@@ -519,7 +342,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     ref={flashlightRef}
                     intensity={0}
                     decay={0.4}
-                    distance={detection_range}
+                    distance={detection_range + 5}
                     color="white"
                     target={flashLightTargetRef.current?.children[0]}
                     visible={true}
@@ -541,7 +364,7 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                 </>
             }
         </>
-    );
+    )
 }
 
-export default EnemyPatrolController;
+export default GolemPatrollController

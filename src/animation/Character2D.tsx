@@ -13,6 +13,7 @@ import deathSprite from "/images/Death.png";
 import { AnimationState } from "../hooks/useCharacterAnimation";
 import { GameContext } from "../contexts/GameContext";
 import FakeGlowMaterial from "../components/FakeGlowMaterial";
+import { useAuth } from "../hooks/useAuth";
 
 const Character2D = ({
   direction,
@@ -21,18 +22,29 @@ const Character2D = ({
   direction: "left" | "right";
   animation: AnimationState;
 }) => {
+
   const { isHidden, isDeath } = useContext(GameContext);
+  const { user } = useAuth();
+
+  const getSpriteFromFirebase = (spriteName: string) => {
+    const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET_LINK;
+    const path = `/character/${user?.userId}/${spriteName}.png`;
+    const url = `${storageBucket}${path}`;
+    // console.log(url);
+    return url;
+  }
+
   // Load textures
-  const idleSpriteTexture = useLoader(THREE.TextureLoader, idleSprite);
-  const runningSpriteTexture = useLoader(THREE.TextureLoader, runningSprite);
+  const idleSpriteTexture = useLoader(THREE.TextureLoader, getSpriteFromFirebase("idle"));
+  const runningSpriteTexture = useLoader(THREE.TextureLoader, getSpriteFromFirebase("running"));
   const jumpSpriteTexture = useLoader(THREE.TextureLoader, jumpSprite);
   const pickUpRunningSpriteTexture = useLoader(
     THREE.TextureLoader,
-    pickUpRunningSprite
+    getSpriteFromFirebase("lift-running")
   );
   const pickUpIdleSpriteTexture = useLoader(
     THREE.TextureLoader,
-    pickUpIdleSprite
+    getSpriteFromFirebase("lift-idle")
   );
   const deathSpriteTexture = useLoader(THREE.TextureLoader, deathSprite);
 
@@ -46,10 +58,10 @@ const Character2D = ({
   // Initialize animators
   const [animators] = useState<{ [key in AnimationState]: PlainAnimator }>({
     idle: new PlainAnimator(idleSpriteTexture, 4, 1, 4, 4),
-    running: new PlainAnimator(runningSpriteTexture, 9, 1, 9, 9),
+    running: new PlainAnimator(runningSpriteTexture, 6, 1, 6, 6),
     jumping: new PlainAnimator(jumpSpriteTexture, 3, 1, 3, 4),
-    picking: new PlainAnimator(pickUpRunningSpriteTexture, 9, 1, 9, 9),
-    picking_idle: new PlainAnimator(pickUpIdleSpriteTexture, 4, 1, 4, 4),
+    picking: new PlainAnimator(pickUpRunningSpriteTexture, 6, 1, 6, 6),
+    picking_idle: new PlainAnimator(pickUpIdleSpriteTexture, 3, 1, 3, 3),
     death: new PlainAnimator(deathSpriteTexture, 10, 1, 10, 3),
   });
 
