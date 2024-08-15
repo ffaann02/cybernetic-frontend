@@ -28,7 +28,7 @@ const Object = ({ items }: { items: any }) => {
     console.log(other.rigidBodyObject.name);
     if (other.rigidBodyObject) {
       if (other.rigidBodyObject.name === "RedBox") {
-        console.log("helloawdawd");
+        console.log("RedBox Enter");
         setAllowRedPad(true);
       }
     }
@@ -37,6 +37,7 @@ const Object = ({ items }: { items: any }) => {
   const onColliderRedPadExit = ({ other }) => {
     if (other.rigidBodyObject) {
       if (other.rigidBodyObject.name === "RedBox") {
+        console.log("RedBox Exit");
         setAllowRedPad(false);
       }
     }
@@ -45,6 +46,7 @@ const Object = ({ items }: { items: any }) => {
   const onColliderGreenPadEnter = ({ other }) => {
     if (other.rigidBodyObject.name) {
       if (other.rigidBodyObject.name === "GreenBox") {
+        console.log("GreenBox Enter");
         setAllowGreenPad(true);
       }
     }
@@ -52,8 +54,8 @@ const Object = ({ items }: { items: any }) => {
 
   const onColliderGreenPadExit = ({ other }) => {
     if (other.rigidBodyObject) {
-      console.log(other.rigidBodyObject.name);
       if (other.rigidBodyObject.name === "GreenBox") {
+        console.log("GreenBox Exit");
         setAllowGreenPad(false);
       }
     }
@@ -157,7 +159,7 @@ const Object = ({ items }: { items: any }) => {
     <>
       <RigidBody
         ref={redBoxRef}
-        name="GreenBox"
+        name="RedBox"
         type="dynamic"
         colliders={false}
         onCollisionEnter={onPlayerEnterRedBox}

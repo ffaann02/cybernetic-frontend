@@ -34,6 +34,7 @@ import LevelSelectionNew from "./non-gameplay-scene/LevelSelectionNew";
 import { Level4ContextProvider } from "./contexts/SceneContext/Level4Context";
 import Level4OCR from "./game/level4-ocr/scene/Level4OCR";
 import { Suspense } from "react";
+import { EnemyLabContextProvider } from "./contexts/SceneContext/EnemyLabContext";
 function App() {
   const showDebugTools = useDebugTools();
 
@@ -107,20 +108,26 @@ function App() {
                               <Scene
                                 title="game-level-5"
                                 scene={
+                                  <Level6ContextProvider>
+                                    <Level6Reinforcement />
+                                  </Level6ContextProvider>
+                                }
+                              />
+                              <Scene
+                                title="game-level-6"
+                                scene={
                                   <Level5ContextProvider>
                                     <Level5Final />
                                   </Level5ContextProvider>
                                 }
                               />
                               <Scene
-                                title="game-level-6"
+                                title="slime-lab"
                                 scene={
-                                  <Level6ContextProvider>
-                                    <Level6Reinforcement />
-                                  </Level6ContextProvider>
-                                }
-                              />
-                              <Scene title="slime-lab" scene={<SlimeLab />} />
+                                  <EnemyLabContextProvider>
+                                    <SlimeLab />
+                                  </EnemyLabContextProvider>
+                                } />
                             </SceneRouter>
                           </LevelProvider>
                         </div>

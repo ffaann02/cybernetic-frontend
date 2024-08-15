@@ -1,5 +1,6 @@
 export const enemyPartrolProps = [
     {
+        id: 1,
         name: "Slime",
         waypoints: [
             [-40, 1.2, 20],
@@ -28,6 +29,7 @@ export const enemyPartrolProps = [
         }
     },
     {
+        id: 2,
         name: "Spider",
         waypoints: [
             [-20, 1.2, 10],

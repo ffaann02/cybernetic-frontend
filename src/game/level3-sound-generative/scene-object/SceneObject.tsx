@@ -28,7 +28,8 @@ const SceneObject = ({
     setCurrentHit,
     setIsInteracting,
     setIsUsingSecurityCamera,
-    setIsShowLevelResult
+    setIsShowLevelResult,
+    setPlayTimeInLevel,
   } = useContext(GameContext);
   const {
     isOpenAudioInput,
@@ -45,12 +46,26 @@ const SceneObject = ({
     setKaboom,
     nextLevelDoor,
     setNextLevelDoor,
+    lastUpdateTimeRef,
+    level3PlayTime,
+    setLevel3PlayTime,
   } = useLevel3Context();
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
 
   const [lastPressTime, setLastPressTime] = useState(0);
   const parentLight = useRef();
   const speakerMeshRef = useRef();
+
+  useFrame(() => {
+    const currentTimer = Date.now();
+    if (lastUpdateTimeRef.current !== null) {
+      const deltaTime = currentTimer - lastUpdateTimeRef.current;
+      if (deltaTime > 500) {
+        lastUpdateTimeRef.current = currentTimer // Update the last update time
+        setLevel3PlayTime((prev) => prev + 0.5);
+      }
+    }
+  })
 
   return (
     <>
@@ -104,6 +119,7 @@ const SceneObject = ({
                 other.rigidBodyObject.name === "player" && kaboom
               ) {
                 // console.log("hello");
+                setPlayTimeInLevel(level3PlayTime);
                 setIsShowLevelResult(true);
               }
             }}

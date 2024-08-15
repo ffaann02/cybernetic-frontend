@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 
 // Define the shape of your context data
 interface Level2ContextData {
@@ -23,6 +23,9 @@ interface Level2ContextData {
   glassParameters: any[];
   setGlassParameters: (params: any[]) => void;
   dataCollectNotify: React.MutableRefObject<any>;
+  level2PlayTime: number;
+  setLevel2PlayTime: (time: number) => void;
+  lastUpdateTimeRef: any;
 }
 
 // Create the Level1Context
@@ -55,6 +58,9 @@ export const Level2ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const [glassParameters, setGlassParameters] = useState([]);
   const dataCollectNotify = useRef(null);
 
+  const [level2PlayTime, setLevel2PlayTime] = useState<number>(0);
+  const lastUpdateTimeRef = useRef(Date.now());
+
   const contextValue: Level2ContextData = {
     level,
     setLevel,
@@ -77,6 +83,9 @@ export const Level2ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     glassParameters,
     setGlassParameters,
     dataCollectNotify,
+    level2PlayTime,
+    setLevel2PlayTime,
+    lastUpdateTimeRef,
   };
 
   return (

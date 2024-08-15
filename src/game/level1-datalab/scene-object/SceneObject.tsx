@@ -67,7 +67,10 @@ const SceneObject = ({
     allowGreenPad,
     allowRedPad,
     currentRock,
-    setCurrentRock
+    setCurrentRock,
+    level1PlayTime,
+    setLevel1PlayTime,
+    lastUpdateTimeRef,
   } = useLevel1Context();
 
   const [lastPressTime, setLastPressTime] = useState(0);
@@ -90,6 +93,8 @@ const SceneObject = ({
     setIsCarryingObject,
     greenBoxRef,
     redBoxRef,
+    setIsShowLevelResult,
+    setPlayTimeInLevel,
   } = useContext(GameContext);
 
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
@@ -99,6 +104,16 @@ const SceneObject = ({
   const door01_destination = useRef<any>(null);
 
   useFrame(() => {
+    const currentTimer = Date.now();
+    if (lastUpdateTimeRef.current !== null) {
+      const deltaTime = currentTimer - lastUpdateTimeRef.current;
+      if (deltaTime > 500) {
+        lastUpdateTimeRef.current = currentTimer // Update the last update time
+        setLevel1PlayTime((prev) => prev + 0.5);
+      }
+    }
+
+
     if (ePressed && currentHit === "level1-data-guard-red") {
       const currentTime = new Date().getTime();
       if (currentTime - lastPressTime > 200) {
@@ -205,10 +220,10 @@ const SceneObject = ({
       const currentTime = new Date().getTime();
       if (currentTime - lastPressTime > 200) {
         let imageLink = "";
-        if (gPressed){
+        if (gPressed) {
           imageLink = "/images/slime_default.png";
         }
-        else{
+        else {
           imageLink = "/images/SpiderHead.png"
         }
         setLastPressTime(currentTime);
@@ -217,20 +232,20 @@ const SceneObject = ({
           closable: false,
           life: 2000,
           content: (props) => (
-              <div className="flex relative z-[100000] rounded-lg px-2.5 py-2 gap-x-2">
-                <img
-                  src={imageLink}
-                  className="w-16 h-16 bg-white rounded-xl"
-                />
-                <div className="">
-                  <p className="text-2xl font-semibold text-white">
-                    Data Collected!
-                  </p>
-                  <p className="text-lg font-semibold text-white">
-                    {gPressed ? "Slime" : "Spider"} data collected.
-                  </p>
-                </div>
+            <div className="flex relative z-[100000] rounded-lg px-2.5 py-2 gap-x-2">
+              <img
+                src={imageLink}
+                className="w-16 h-16 bg-white rounded-xl"
+              />
+              <div className="">
+                <p className="text-2xl font-semibold text-white">
+                  Data Collected!
+                </p>
+                <p className="text-lg font-semibold text-white">
+                  {gPressed ? "Slime" : "Spider"} data collected.
+                </p>
               </div>
+            </div>
           ),
         });
       }
@@ -322,7 +337,51 @@ const SceneObject = ({
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
           />
-          <Door
+          <RigidBody
+            colliders="trimesh"
+            mass={0}
+            type="fixed"
+            name="secure-door-next-level"
+            position={[-8, 0, -14]}
+            rotation={[
+              degreeNumberToRadian(0),
+              degreeNumberToRadian(90),
+              degreeNumberToRadian(0),
+            ]}
+            scale={[2, 3, 3]}
+            onCollisionEnter={({ other }) => {
+              if (
+                other.rigidBodyObject &&
+                other.rigidBodyObject.name === "player" && (allowGreenPad === true && allowRedPad === true)
+              ) {
+                // console.log("hello");
+                setPlayTimeInLevel(level1PlayTime);
+                setIsShowLevelResult(true);
+              }
+            }}
+            onCollisionExit={({ other }) => {
+              setCurrentHit("");
+              // setIsShowLevelResult(false);
+            }}
+          >
+            <mesh position={[0, 1.1, 0]}>
+              <boxGeometry args={[0.3, 2, 0.9]} />
+              <meshStandardMaterial
+                color={(allowGreenPad === true && allowRedPad === true) ? "green" : "red"}
+                transparent={true}
+                opacity={0.5}
+              />
+            </mesh>
+            <Item
+              item={{
+                name: "door-border",
+                position: [0, 0, 0],
+                fileType: "glb",
+              }}
+              isOutlined={true}
+            />
+          </RigidBody>
+          {/* <Door
             doorname="secure-door-01"
             destinationObject={door01_destination}
             rigidBody={playerRigidBody}
@@ -338,7 +397,7 @@ const SceneObject = ({
             type="switch-room"
             setCurrentRoom={setCurrentRoom}
             nextRoom={2}
-          />
+          /> */}
         </>
       )}
       <RigidBody

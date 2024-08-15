@@ -1,6 +1,18 @@
 import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
 import { Controls } from "../controllers/CharacterController";
 import * as THREE from "three";
+import useAxios from "../hooks/useAxios";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import axiosInstance from "../api/axios";
+
+export interface InventoryData {
+  id: number;
+  name: string;
+  quantity: number;
+  image: string;
+  data: any;
+  timestamp: number; // Add a timestamp to track when the item was added
+}
 
 interface GameContextProps {
   currentScene: string;
@@ -8,8 +20,8 @@ interface GameContextProps {
   speed: number;
   debug: boolean;
   setGameState?:
-    | React.Dispatch<React.SetStateAction<GameContextProps>>
-    | undefined;
+  | React.Dispatch<React.SetStateAction<GameContextProps>>
+  | undefined;
   setScene?: (currentScene: string, nextScene: string) => void;
   sceneList: string[];
   currentCamera: number;
@@ -68,12 +80,21 @@ interface GameContextProps {
   searchAimDirection?: any;
   searchResult?: any;
   setSearchResult?: React.Dispatch<React.SetStateAction<any>>;
+  isOpenInventory: boolean;
+  setIsOpenInventory: React.Dispatch<React.SetStateAction<boolean>>;
+  inventoryItem: InventoryData[];
+  setInventoryItem: React.Dispatch<React.SetStateAction<InventoryData[]>>;
+  inventoryType: { name: string, value: string }[];
+  inventoryData: InventoryData[];
+  setInventoryData: React.Dispatch<React.SetStateAction<InventoryData[]>>;
+  playTimeInLevel: number;
+  setPlayTimeInLevel: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const initialGameContext: GameContextProps = {
   // currentScene: "tutorial",
-  currentScene: "game-level-4",
-  previousScene: "",
+  currentScene: "slime-lab",
+  previousScene: "level-selection",
   speed: 7.5,
   debug: false,
   sceneList: [
@@ -97,52 +118,52 @@ const initialGameContext: GameContextProps = {
   currentHit: "",
   isCoding: false,
   isInteracting: false,
-  setIsCoding: () => {},
-  setIsInteracting: () => {},
+  setIsCoding: () => { },
+  setIsInteracting: () => { },
   isChatting: false,
-  setIsChatting: () => {},
+  setIsChatting: () => { },
   isHidden: false,
-  setIsHidden: () => {},
+  setIsHidden: () => { },
   isUsingSearch: false,
-  setIsUsingSearch: () => {},
+  setIsUsingSearch: () => { },
   isPlanting: false,
-  setIsPlanting: () => {},
+  setIsPlanting: () => { },
   dataStorage: {},
-  setDataStorage: () => {},
+  setDataStorage: () => { },
   mines: [],
-  setMines: () => {},
+  setMines: () => { },
   cooldowns: { J: 0, K: 0, L: 0 },
-  setCooldowns: () => {},
+  setCooldowns: () => { },
   isFadingBetweenRoom: false,
-  setIsFadingBetweenRoom: () => {},
+  setIsFadingBetweenRoom: () => { },
   isUsingSecurityCamera: false,
-  setIsUsingSecurityCamera: () => {},
+  setIsUsingSecurityCamera: () => { },
   turretData: {},
-  setTurretData: () => {},
+  setTurretData: () => { },
   isCarryingObject: false,
   playerRigidBody: null,
-  setIsCarryingObject: () => {},
+  setIsCarryingObject: () => { },
   energy: 10,
-  setEnergy: () => {},
+  setEnergy: () => { },
   isDeath: false,
-  setIsDeath: () => {},
+  setIsDeath: () => { },
   isUsingTurret: false,
-  setIsUsingTurret: () => {},
+  setIsUsingTurret: () => { },
   isPlayerInBossArea: false,
-  setIsPlayerInBossArea: () => {},
+  setIsPlayerInBossArea: () => { },
   bossParameter: {},
-  setBossParameter: () => {},
+  setBossParameter: () => { },
   isEnemyHit: false,
-  setIsEnemyHit: () => {},
+  setIsEnemyHit: () => { },
   enemyHitName: "",
-  setEnemyHitName: () => {},
+  setEnemyHitName: () => { },
   controlMap: [],
   showStar: false,
-  setShowStar: () => {},
+  setShowStar: () => { },
   isPaused: false,
-  setIsPaused: () => {},
+  setIsPaused: () => { },
   isShowLevelResult: false,
-  setIsShowLevelResult: () => {},
+  setIsShowLevelResult: () => { },
 };
 
 export const GameContext = createContext<GameContextProps>(initialGameContext);
@@ -160,6 +181,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       { name: Controls.ESC, keys: ["Escape"] },
       { name: Controls.L, keys: ["KeyL"] },
       { name: Controls.G, keys: ["KeyG"] },
+      { name: Controls.I, keys: ["KeyI"] },
     ],
     []
   );
@@ -195,7 +217,49 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [isShowLevelResult, setIsShowLevelResult] = useState(false);
   const searchAimDirection = useRef(null);
   const [searchResult, setSearchResult] = useState(null);
-  
+  const [isOpenInventory, setIsOpenInventory] = useState(false);
+  const [inventoryType, setInventoryType] = useState<{ name: string, value: string }[]>([
+    { name: "Item", value: "item" },
+    { name: "Data", value: "data" },
+  ]);
+  const initItems: Array<InventoryData | null> = [
+    {
+      id: 1,
+      name: "Invisible suit",
+      quantity: 12,
+      image: "https://cdn-icons-png.flaticon.com/512/5102/5102093.png",
+      data: null,
+      timestamp: Date.now(),
+    },
+    {
+      id: 2,
+      name: "Frantic search",
+      quantity: 11,
+      image: "https://cdn-icons-png.flaticon.com/512/639/639375.png",
+      data: null,
+      timestamp: Date.now(),
+    },
+    {
+      id: 3,
+      name: "Landmine bomber",
+      quantity: 13,
+      image: "https://cdn-icons-png.flaticon.com/512/4612/4612069.png",
+      data: null,
+      timestamp: Date.now(),
+    },
+  ];
+  const initialInventoryItem = [...initItems, ...Array(15).fill(null)];
+  const [inventoryItem, setInventoryItem] = useState<Array<InventoryData[] | null>>(initialInventoryItem);
+  const [inventoryData, setInventoryData] = useState<Array<InventoryData[] | null>>(
+    Array(36).fill(null)
+  );
+  const [playTimeInLevel, setPlayTimeInLevel] = useState<number>(0);
+
+  const { axiosFetch } = useAxios();
+  const { getItem } = useLocalStorage();
+  const localStorageUser = getItem('CYBERNETIC_USER')
+  const userId = localStorageUser?.userId;
+
   const setScene = (currentScene: string, nextScene: string) => {
     setGameState((prevState) => ({
       ...prevState,
@@ -204,12 +268,31 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }));
   };
 
-  useEffect(()=>{
-    if(energy<=0 && !isDeath){
+  useEffect(() => {
+    if (energy <= 0 && !isDeath) {
       console.log("death");
       setIsDeath(true);
     }
-  },[energy, isDeath])
+  }, [energy, isDeath])
+
+  const getUserLevelCheckpoint = async() => {
+    try{
+      const response = await axiosFetch({
+        axiosInstance: axiosInstance,
+        url: `/user/character?userId=${userId}`,
+        method: 'get',
+      })
+      const spawnLevel = response.character.heighestLevel;
+      console.log(spawnLevel);
+      setScene(gameState.currentScene, `game-level-${spawnLevel}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getUserLevelCheckpoint();
+  }, [])
 
   const value = {
     currentScene: gameState.currentScene,
@@ -275,6 +358,15 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     searchAimDirection,
     searchResult,
     setSearchResult,
+    isOpenInventory,
+    setIsOpenInventory,
+    inventoryItem,
+    setInventoryItem,
+    inventoryType,
+    inventoryData,
+    setInventoryData,
+    playTimeInLevel,
+    setPlayTimeInLevel,
   };
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

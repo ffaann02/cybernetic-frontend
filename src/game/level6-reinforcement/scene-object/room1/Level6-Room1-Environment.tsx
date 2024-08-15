@@ -56,16 +56,20 @@ const Level6Room1Environment = ({
       }
     }
 
-    if (escPressed && currentHit === "ComputerMazeSolver" && isUsingSecurityCamera === true) {
+    if (ePressed && currentHit === "ComputerMazeSolver" && isUsingSecurityCamera === true) {
       const currentTime = Date.now()
       if (currentTime - lastPressTime > 200) {
         if (isMazeSolverReachEnd) {
           setLastPressTime(currentTime)
+          setIsInteracting(false)
+          setCurrentHit("")
           setIsUsingSecurityCamera(false)
           setIsMazeSolverStartMoving(false)
         }
         else {
           setLastPressTime(currentTime)
+          setIsInteracting(false)
+          setCurrentHit("")
           setIsUsingSecurityCamera(false)
           setIsMazeSolverStartMoving(false)
           setSolvingTime(0)

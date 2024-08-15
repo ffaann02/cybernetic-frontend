@@ -54,6 +54,7 @@ const Level2Classify: React.FC<HomeProps> = () => {
       { name: Controls.interact, keys: ["KeyR"] },
       { name: Controls.ESC, keys: ["Escape"] },
       { name: Controls.L, keys: ["KeyL"] },
+      { name: Controls.I, keys: ["KeyI"] },
     ],
     []
   );

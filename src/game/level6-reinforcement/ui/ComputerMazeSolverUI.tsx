@@ -13,13 +13,6 @@ const ComputerMazeSolverUI = ({
     const { currentHit, isInteracting, isUsingSecurityCamera, setIsUsingSecurityCamera } = useContext(GameContext);
     const { setIsMazeSolverStartMoving, mazeSolverParameter, setMazeSolverParameter } = useLevel6Context();
 
-    const handleSimulate = () => {
-        setIsUsingSecurityCamera(true)
-        setTimeout(() => {
-            setIsMazeSolverStartMoving(true);
-        }, 1500);
-    }
-
     const handleSlider = (property) => (e) => {
         const value = Number(e.target.value);
         setMazeSolverParameter({
@@ -79,9 +72,6 @@ const ComputerMazeSolverUI = ({
                                         discription="Epsilon (Exploration Rate): Determines the probability of choosing a random action versus the best-known action."
                                     />
                                     <div className='w-full flex justify-end gap-4'>
-                                        <button className='px-2 py-2 border rounded-md' onClick={handleSimulate}>
-                                            <span className='text-white'>Simulate</span>
-                                        </button>
                                         <button className='px-2 py-2 border rounded-md' onClick={handleTrainMazeSolver}>
                                             <span className='text-white'>Train</span>
                                         </button>

@@ -18,6 +18,7 @@ import useAudio from "../hooks/useAudio";
 import io from "socket.io-client";
 import { degreeNumberToRadian } from "../utils";
 import SearchController from "./SearchController";
+import { useCharacterInventory } from "../hooks/useCharacterInventory";
 
 export enum Controls {
   forward = "forward",
@@ -31,6 +32,7 @@ export enum Controls {
   L = "L",
   E = "E",
   G = "G",
+  I = "I",
 }
 
 interface CharacterControllerProps {
@@ -82,6 +84,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     setIsDeath,
     setIsPaused,
     searchAimDirection,
+    isOpenInventory,
+    setIsOpenInventory,
+    isPaused,
+    isShowLevelResult,
   } = useContext(GameContext);
 
   const [direction, setDirection] = useState<"left" | "right">("right");
@@ -102,6 +108,7 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
   );
   const escPressed = useKeyboardControls((state) => state[Controls.ESC]);
   const skillLPressed = useKeyboardControls((state) => state[Controls.L]);
+  const openInventoryPressed = useKeyboardControls((state) => state[Controls.I]);
 
   const rotateLeftPressed = useKeyboardControls(
     (state) => state[Controls.left]
@@ -123,6 +130,8 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
   const [codingCooldown, setCodingCooldown] = useState(false);
   const [lastPressTime, setLastPressTime] = useState(0);
 
+  const { isInventoryItemRemaining, decreaseInventoryItemQuantityByName } = useCharacterInventory();
+
   const handleMovement = (delta: number) => {
     const onAirFraction = isOnFloor.current ? 1 : 0.3;
 
@@ -135,7 +144,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isUsingSecurityCamera &&
       !isUsingTurret &&
       !isDeath &&
-      !isUsingSearch
+      !isUsingSearch &&
+      !isOpenInventory &&
+      !isPaused &&
+      !isShowLevelResult
     ) {
       impulse.z -= speed * delta * onAirFraction;
     }
@@ -146,7 +158,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isUsingSecurityCamera &&
       !isUsingTurret &&
       !isDeath &&
-      !isUsingSearch
+      !isUsingSearch &&
+      !isOpenInventory &&
+      !isPaused &&
+      !isShowLevelResult
     ) {
       impulse.z += speed * delta * onAirFraction;
       // console.log(vec3(playerRigidBody.current.translation()).z);
@@ -158,7 +173,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isUsingSecurityCamera &&
       !isUsingTurret &&
       !isDeath &&
-      !isUsingSearch
+      !isUsingSearch &&
+      !isOpenInventory &&
+      !isPaused &&
+      !isShowLevelResult
     ) {
       setDirection("left");
       impulse.x -= speed * delta * onAirFraction;
@@ -171,7 +189,10 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isUsingSecurityCamera &&
       !isUsingTurret &&
       !isDeath &&
-      !isUsingSearch
+      !isUsingSearch &&
+      !isOpenInventory &&
+      !isPaused &&
+      !isShowLevelResult
     ) {
       setDirection("right");
       impulse.x += speed * delta * onAirFraction;
@@ -188,11 +209,14 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
       !isUsingSearch &&
       !isUsingSecurityCamera &&
       !isUsingTurret &&
-      !isDeath
+      !isDeath &&
+      !isOpenInventory &&
+      !isPaused && 
+      !isShowLevelResult
     ) {
       jumpCooldown.current = true;
       jumpSound();
-      setAnimationState(AnimationState.Jumping);
+      // setAnimationState(AnimationState.Jumping);
       setTimeout(() => {
         jumpCooldown.current = false;
         setAnimationState(AnimationState.Idle);
@@ -220,12 +244,12 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
     //   setIsPaused((prev)=>!prev)
     // }
 
-    if(escPressed){
+    if (escPressed) {
       const currentTime = new Date().getTime();
       if (currentTime - lastPressTime > 200) {
         setIsCoding(false);
         setIsInteracting(false);
-        setIsPaused((prev)=>!prev)
+        setIsPaused((prev) => !prev)
         setLastPressTime(currentTime);
       }
     }
@@ -396,10 +420,21 @@ const CharacterController: React.FC<CharacterControllerProps> = ({
         // Add any other properties you need for the mine
       };
 
-      // Update the mines state to include the new mine
-      setMines((prevMines) => [...prevMines, newMine]);
-      setUseItemCooldown(true); // Start cooldown
-      setTimeout(() => setUseItemCooldown(false), 1000); // Reset cooldown after 1 second
+      console.log(isInventoryItemRemaining("Landmine bomber"));
+      if (isInventoryItemRemaining("Landmine bomber")) {
+        // Update the mines state to include the new mine
+        setMines((prevMines) => [...prevMines, newMine]);
+        setUseItemCooldown(true); // Start cooldown
+        decreaseInventoryItemQuantityByName("Landmine bomber", 1);
+        setTimeout(() => setUseItemCooldown(false), 1000); // Reset cooldown after 1 second
+      }
+    }
+    if (openInventoryPressed && !isPaused && !isCoding && !isInteracting) {
+      const currentTime = new Date().getTime();
+      if (currentTime - lastPressTime > 200) {
+        setLastPressTime(currentTime);
+        setIsOpenInventory((prev) => !prev);
+      }
     }
   };
 

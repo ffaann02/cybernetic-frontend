@@ -11,14 +11,15 @@ import { GameContext } from '../../../contexts/GameContext';
 import { RigidBody } from '@react-three/rapier';
 import Level5Room2Environment from './room2/Level5Room2Environment';
 import { useLevel5Context } from '../../../contexts/SceneContext/Level5Context';
+import { useFrame } from '@react-three/fiber';
 
 export const Room = memo(({ children }) => {
     return <>{children}</>;
 });
 
-export const Level5FinalEnvironment = ({}) => {
+export const Level5FinalEnvironment = ({ }) => {
 
-    const { playerRigidBody } = useContext(GameContext);
+    const { playerRigidBody, setPlayTimeInLevel } = useContext(GameContext);
     const {
         bossActionDuration,
         setBossChargingCountDown,
@@ -27,12 +28,26 @@ export const Level5FinalEnvironment = ({}) => {
         setBossHealth,
         BossAttackPatternPredictModel,
         setPredictionStat,
+        lastUpdateTimeRef,
+        level5PlayTime,
+        setLevel5PlayTime,
     } = useLevel5Context();
 
     const [currentRoom, setCurrentRoom] = useState(1);
 
     const door01_destination = useRef<any>(null);
     const door02_destination = useRef<any>(null);
+
+    useFrame(() => {
+        const currentTimer = Date.now();
+        if (lastUpdateTimeRef.current !== null) {
+            const deltaTime = currentTimer - lastUpdateTimeRef.current;
+            if (deltaTime > 500) {
+                lastUpdateTimeRef.current = currentTimer // Update the last update time
+                setLevel5PlayTime((prev) => prev + 0.5);
+            }
+        }
+    })
 
     return (
         <>

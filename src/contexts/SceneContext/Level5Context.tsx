@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 interface ModelStat {
     name: string;
@@ -34,6 +34,11 @@ interface Level5ContextData {
     setIsDisplayTrainingModal: (isDisplayTrainingModal: boolean) => void;
     trainningResponse: any;
     setTrainningResponse: (trainningResponse: any) => void;
+    bossItemWasPicked: boolean;
+    setBossItemWasPicked: (bossItemWasPicked: boolean) => void;
+    lastUpdateTimeRef: any;
+    level5PlayTime: number;
+    setLevel5PlayTime: (level5PlayTime: number) => void;
 }
 
 // Create the Level5Context
@@ -99,6 +104,9 @@ export const Level5ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     ]);
     const [isDisplayTrainingModal, setIsDisplayTrainingModal] = useState(false);
     const [trainningResponse, setTrainningResponse] = useState(null);
+    const [bossItemWasPicked, setBossItemWasPicked] = useState(false);
+    const [level5PlayTime, setLevel5PlayTime] = useState<number>(0);
+    const lastUpdateTimeRef = useRef(Date.now());
 
     const contextValue: Level5ContextData = {
         level,
@@ -121,6 +129,11 @@ export const Level5ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
         setIsDisplayTrainingModal,
         trainningResponse,
         setTrainningResponse,
+        bossItemWasPicked,
+        setBossItemWasPicked,
+        lastUpdateTimeRef,
+        level5PlayTime,
+        setLevel5PlayTime,
     };
 
     return (

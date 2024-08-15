@@ -37,6 +37,8 @@ const Level5Room1Environment = ({ }) => {
         setBossHealth,
         BossAttackPatternPredictModel,
         setPredictionStat,
+        bossItemWasPicked,
+        setBossItemWasPicked,
     } = useLevel5Context();
 
     const ePressed = useKeyboardControls((state) => state[Controls.coding]);
@@ -64,7 +66,7 @@ const Level5Room1Environment = ({ }) => {
 
     const [bubbles, setBubbles] = useState([]);
 
-    const [bossItemWasPicked, setBossItemWasPicked] = useState(false);
+    // const [bossItemWasPicked, setBossItemWasPicked] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
