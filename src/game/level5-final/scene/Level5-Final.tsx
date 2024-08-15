@@ -10,6 +10,7 @@ import TurretGunUI from '../ui/TurretGunUI';
 import BossHologramUI from '../ui/BossHologramUI';
 import Level5ModelChoosingUI from '../ui/Level5ModelChoosingUI';
 import { degreeNumberToRadian } from '../../../utils';
+import EndGameUI from '../ui/EndGameUI';
 
 type Props = {}
 
@@ -29,6 +30,7 @@ const Level5Final: React.FC<Props> = () => {
             { name: Controls.ESC, keys: ["Escape"] },
             { name: Controls.L, keys: ["KeyL"] },
             { name: Controls.G, keys: ["KeyG"] },
+            { name: Controls.I, keys: ["KeyI"] },
         ],
         []
     );
@@ -39,6 +41,7 @@ const Level5Final: React.FC<Props> = () => {
             <TurretGunUI />
             <BossHologramUI />
             <Level5ModelChoosingUI />
+            <EndGameUI />
             <KeyboardControls map={controlMap}>
                 <Canvas
                     dpr={[1, 2]}

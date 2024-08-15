@@ -22,6 +22,7 @@ import { HiUsers } from "react-icons/hi";
 import { IoGameController } from "react-icons/io5";
 import { IoIosSettings } from "react-icons/io";
 import { MdExitToApp } from "react-icons/md";
+import { ImLab } from "react-icons/im";
 
 interface HomeProps {}
 
@@ -96,6 +97,14 @@ const Home: React.FC<HomeProps> = () => {
           >
             <IoGameController className="text-5xl mr-2" />
             STORY MODE
+          </button>
+          <button
+            onClick={() => setScene("home", "slime-lab")}
+            className="text-4xl bg-cyan-400/50 py-3 rounded-xl font-semibold text-cyan-200 border-2 border-cyan-200
+    hover:scale-105 hover:bg-cyan-400/80 hover:text-white transition-all duration-200 ease-linear flex items-center justify-center"
+          >
+            <ImLab  className="text-5xl mr-2" />
+            ENEMY LAB
           </button>
           <button
             className="text-4xl flex w-full justify-center bg-cyan-400/50 py-3 rounded-xl font-semibold text-cyan-200 border-2 border-cyan-200

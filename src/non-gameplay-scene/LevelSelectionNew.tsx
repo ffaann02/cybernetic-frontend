@@ -8,6 +8,10 @@ import { IoGameController } from "react-icons/io5";
 import { Tag } from "primereact/tag";
 import { GameContext } from "../contexts/GameContext";
 import { MdExitToApp } from "react-icons/md";
+import { FaLock } from "react-icons/fa";
+import useAxios from "../hooks/useAxios";
+import axiosInstance from "../api/axios";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export interface UserLevel {
   userId: string;
@@ -17,37 +21,49 @@ export interface UserLevel {
 const levelTemplate = (
   level: any,
   selectedLevel: number,
-  setSelectedLevel: (level: number) => void
+  setSelectedLevel: (level: number) => void,
+  heighestLevel: number,
+  inActiveLockLevelCondition: boolean
 ) => {
   const isSelected = selectedLevel === level.level;
   return (
     <div
       className={`flex flex-col items-center justify-center h-[27rem] mx-4 pt-4 cursor-pointer`}
-      onClick={() => setSelectedLevel(level.level)}
+      onClick={() => {
+        if (heighestLevel >= level.level || inActiveLockLevelCondition) {
+          setSelectedLevel(level.level)
+        }
+      }}
     >
       <div
-        className={`w-full h-full bg-white rounded-xl ${
-          isSelected
-            ? "opacity-100 border-4 border-yellow-200"
-            : "border-2 border-cyan-400"
-        }
+        className={`w-full h-full bg-white rounded-xl ${isSelected
+          ? "opacity-100 border-4 border-yellow-200"
+          : (heighestLevel >= level.leve || inActiveLockLevelCondition) 
+              ? "border-2 border-cyan-400"
+              : "border-2 border-slate-400"
+          }
         relative flex flex-col opacity-50 hover:shadow-lg transition-all duration-200 ease-linear`}
       >
-        <div className="z-10 bg-cyan-400/80 -mt-0.5 w-fit px-10 py-1 rounded-b-xl mx-auto">
+        <div className={`z-10 ${(heighestLevel >= level.level || inActiveLockLevelCondition) ? "bg-cyan-400/80" : "bg-slate-400"} -mt-0.5 w-fit px-10 py-1 rounded-b-xl mx-auto`}>
           <p className="text-lg font-semibold text-white">
             Level {level.level}
           </p>
         </div>
         <img
           src={level.image}
-          className="object-cover absolute z-0 h-full rounded-lg"
+          className="object-cover absolute z-0 h-full rounded-lg opacity-100"
         />
+        {!(heighestLevel >= level.level || inActiveLockLevelCondition) &&
+          <div className="absolute w-full h-full flex items-center bg-black/75 rounded-lg">
+            <FaLock className="text-[4rem] mx-auto text-white" />
+          </div>
+        }
         <div className="mt-auto mb-2 px-2 z-10">
           {level.tags.map((tag, index) => (
-            <Tag key={index} severity="info" value={tag} className="mr-2"></Tag>
+            <Tag key={index} severity="info" value={tag} className={`mr-2 ${(heighestLevel >= level.level || inActiveLockLevelCondition) ? "bg-cyan-500/80 " : "bg-slate-400"}`}></Tag>
           ))}
         </div>
-        <div className="bg-cyan-500/80 w-full bottom-0 px-10 py-2 rounded-b-lg mx-auto z-10">
+        <div className={`${(heighestLevel >= level.level || inActiveLockLevelCondition) ? "bg-cyan-500/80 " : "bg-slate-400"} w-full bottom-0 px-10 py-2 rounded-b-lg mx-auto z-10`}>
           <p className="text-xl font-semibold text-slate-100 text-center">
             {level.name}
           </p>
@@ -60,6 +76,32 @@ const levelTemplate = (
 const LevelSelectionNew: React.FC = () => {
   const backgroundTexture = useLoader(TextureLoader, "/images/sky.jpg");
   const { setScene } = useContext(GameContext);
+  const { axiosFetch } = useAxios();
+  const { getItem } = useLocalStorage();
+  const localStorageUser = getItem('CYBERNETIC_USER')
+  const userId = localStorageUser?.userId;
+  const [heighestLevel, setHeighestLevel] = useState<number>(1);
+
+  const inActiveLockLevelCondition = false;
+
+  const getUserLevelCheckpoint = async () => {
+    try {
+      const response = await axiosFetch({
+        axiosInstance: axiosInstance,
+        url: `/user/character?userId=${userId}`,
+        method: 'get',
+      })
+      setHeighestLevel(response.character.heighestLevel);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  useEffect(() => {
+    getUserLevelCheckpoint();
+    console.log("Level Selection New");
+  }, []);
 
   const levels = [
     {
@@ -137,7 +179,7 @@ const LevelSelectionNew: React.FC = () => {
               className=""
               //   responsiveOptions={responsiveOptions}
               itemTemplate={(level) =>
-                levelTemplate(level, selectedLevel, setSelectedLevel)
+                levelTemplate(level, selectedLevel, setSelectedLevel, heighestLevel, inActiveLockLevelCondition)
               }
             />
             <button

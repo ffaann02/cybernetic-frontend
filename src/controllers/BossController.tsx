@@ -49,7 +49,7 @@ const BossController: React.FC<BossControllerProps> = ({
     setPredictionStat,
 }) => {
 
-    const { setCurrentHit, setIsUsingTurret, bossParameter, setBossParameter, isPlayerInBossArea } = useContext(GameContext);
+    const { setCurrentHit, setIsUsingTurret, bossParameter, setBossParameter, isPlayerInBossArea, setEnergy, setIsEnemyHit, setEnemyHitName } = useContext(GameContext);
     const { axiosFetch } = useAxios();
     const rigidBody = useRef<any>(null);
 
@@ -61,6 +61,8 @@ const BossController: React.FC<BossControllerProps> = ({
 
     const [meteoData, setMeteoData] = useState<MeteoDataInterface[]>([]);
     const [particleHit, setParticleHit] = useState([]);
+
+    const lastMeteoHitPlayerTime = useRef(0);
 
     const rows = 6;
     const cols = 10;
@@ -372,6 +374,13 @@ const BossController: React.FC<BossControllerProps> = ({
         if (name === 'player') {
             setCurrentHit('');
             setIsUsingTurret(false);
+            const currentTime = Date.now()
+            const elapsedTime = currentTime - lastMeteoHitPlayerTime.current
+            if(elapsedTime > 500){
+                setEnergy((prev) => prev - 8);
+                setIsEnemyHit(true);
+                setEnemyHitName('Boss');
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 // Define the shape of your context data
 interface Level3ContextData {
@@ -26,6 +26,9 @@ interface Level3ContextData {
   setKaboom: (kaboom: boolean) => void;
   nextLevelDoor: boolean;
   setNextLevelDoor: (nextLevelDoor: boolean) => void;
+  level3PlayTime: number;
+  setLevel3PlayTime: (level3PlayTime: number) => void;
+  lastUpdateTimeRef: any;
 }
 
 // Create the Level1Context
@@ -61,6 +64,9 @@ export const Level3ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const [kaboom, setKaboom] = useState(false);
   const [nextLevelDoor, setNextLevelDoor] = useState(false);
 
+  const [level3PlayTime, setLevel3PlayTime] = useState<number>(0);
+  const lastUpdateTimeRef = useRef(Date.now());
+
   const contextValue: Level3ContextData = {
     level,
     setLevel,
@@ -86,6 +92,9 @@ export const Level3ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     setKaboom,
     nextLevelDoor,
     setNextLevelDoor,
+    level3PlayTime,
+    setLevel3PlayTime,
+    lastUpdateTimeRef,
   };
 
   return (

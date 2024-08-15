@@ -27,7 +27,7 @@ export const useCharacterAnimation = () => {
     jumpCooldown: boolean
   ) => {
     if (jumpPressed && !jumpCooldown && isOnFloor) {
-      setAnimationState(AnimationState.Jumping);
+      // setAnimationState(AnimationState.Jumping);
     } else if (
       (forwardPressed || backwardPressed || leftPressed || rightPressed) &&
       !isCarryingObject

@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 // Define the shape of your context data
 interface Level6ContextData {
@@ -30,6 +30,9 @@ interface Level6ContextData {
     setMazeWallReDissolve: (mazeWallReDissolve: boolean) => void;
     plotImageBase64: string;
     setPlotImageBase64: (plotImageBase64: string) => void;
+    lastUpdateTimeRef: any;
+    level6PlayTime: number;
+    setLevel6PlayTime: (level6PlayTime: number) => void;
 }
 
 // Create the Level6Context
@@ -70,6 +73,9 @@ export const Level6ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     const [mazeWallReDissolve, setMazeWallReDissolve] = React.useState<boolean>(true);
     const [plotImageBase64, setPlotImageBase64] = React.useState<string>('');
 
+    const [level6PlayTime, setLevel6PlayTime] = useState<number>(0);
+    const lastUpdateTimeRef = useRef(Date.now());
+
     const contextValue: Level6ContextData = {
         level,
         setLevel,
@@ -99,6 +105,9 @@ export const Level6ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
         setMazeWallReDissolve,
         plotImageBase64,
         setPlotImageBase64,
+        lastUpdateTimeRef,
+        level6PlayTime,
+        setLevel6PlayTime,
     };
 
     return (

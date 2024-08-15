@@ -4,6 +4,7 @@ import { Dialog } from "primereact/dialog";
 import { GameContext } from "../../../contexts/GameContext";
 import { Toast } from "primereact/toast";
 import * as THREE from "three";
+import { useCharacterInventory } from "../../../hooks/useCharacterInventory";
 
 const PlayerMainUI = () => {
   const {
@@ -54,15 +55,16 @@ const PlayerMainUI = () => {
   ]);
 
   const [progress, setProgress] = useState(0);
-  const [openInventory, setOpenInventory] = useState(false);
+  // const [openInventory, setOpenInventory] = useState(false);
+  const { isInventoryItemRemaining, decreaseInventoryItemQuantityByName } = useCharacterInventory();
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       const key = event.key.toUpperCase();
-      if (key === "I" || key === "Escape") {
-        setOpenInventory((prevState) => !prevState); // Toggle Sidebar visibility
-        return; // Prevent further execution if the key is "I"
-      }
+      // if (key === "I" || key === "Escape") {
+      //   setOpenInventory((prevState) => !prevState); // Toggle Sidebar visibility
+      //   return; // Prevent further execution if the key is "I"
+      // }
       const itemIndex = starterItem.findIndex(
         (item) => item.activate_key === key
       );
@@ -82,20 +84,26 @@ const PlayerMainUI = () => {
 
         switch (starterItem[itemIndex].name) {
           case "stealth-cloak":
-            setIsHidden(true);
-            setTimeout(
-              () => setIsHidden(false),
-              starterItem[itemIndex].life_time * 1000
-            );
+            if (isInventoryItemRemaining("Invisible suit")) {
+              setIsHidden(true);
+              decreaseInventoryItemQuantityByName("Invisible suit", 1);
+              setTimeout(
+                () => setIsHidden(false),
+                starterItem[itemIndex].life_time * 1000
+              );
+            }
             break;
           case "data-extractor":
-            setSearchResult(null);
-            searchAimDirection.current = new THREE.Vector3(0, 0, -1),
-              setIsUsingSearch(true);
-            setTimeout(
-              () => setIsUsingSearch(false),
-              starterItem[itemIndex].life_time * 1000
-            );
+            if (isInventoryItemRemaining("Frantic search")) {
+              setSearchResult(null);
+              searchAimDirection.current = new THREE.Vector3(0, 0, -1),
+                setIsUsingSearch(true);
+              decreaseInventoryItemQuantityByName("Frantic search", 1);
+              setTimeout(
+                () => setIsUsingSearch(false),
+                starterItem[itemIndex].life_time * 1000
+              );
+            }
             break;
           case "bomb":
             setIsPlanting(true);
@@ -175,7 +183,7 @@ const PlayerMainUI = () => {
       id={isUsingSearch ? "aim-blur-active" : "air-not-inactive"}
     >
       <Toast ref={aimHitEnemyToast} />
-      <Toast ref={searchDataNotify} position="top-right"/>
+      <Toast ref={searchDataNotify} position="top-right" />
       {isUsingSearch && (
         <>
           <div
