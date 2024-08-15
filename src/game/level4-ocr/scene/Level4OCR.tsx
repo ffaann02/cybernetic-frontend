@@ -18,6 +18,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useLevel4Context } from "../../../contexts/SceneContext/Level4Context";
 import OcrPasswordUI from "../ui/OcrPasswordUI";
 import CharacterStorageUI from "../ui/CharacterStorageUI";
+import TrainOcrComputerUI from "../ui/TrainOcrComputerUI";
 
 type Props = {};
 
@@ -25,7 +26,7 @@ const Level4OCR: React.FC<Props> = () => {
   const { user } = useAuth();
   const { debug, currentCamera } = useContext(GameContext);
   const { axiosFetch } = useAxios();
-  const { isOpenOcrPassword, isOpenCharacterStorage } = useLevel4Context();
+  const { isOpenOcrPassword, isOpenCharacterStorage, isOpenTrainComputer } = useLevel4Context();
   const controlMap = useMemo(
     () => [
       { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
@@ -46,6 +47,7 @@ const Level4OCR: React.FC<Props> = () => {
     <>
       {isOpenOcrPassword && <OcrPasswordUI/>}
       {isOpenCharacterStorage && <CharacterStorageUI/>}
+      {isOpenTrainComputer && <TrainOcrComputerUI/>}
       <KeyboardControls map={controlMap}>
         <Canvas
           dpr={[1, 2]}

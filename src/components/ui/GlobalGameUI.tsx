@@ -489,6 +489,20 @@ const GlobalGameUI = () => {
           <AskForInputKeyDown title="Press E to Close Storage" />
         ))}
 
+      {currentHit === "Level4-TrainComputer" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer" />
+        ) : (
+          <AskForInputKeyDown title="Press E to Leave Computer" />
+        ))}
+
+      {currentHit === "Online1-Computer" &&
+        (!isInteracting ? (
+          <AskForInputKeyDown title="Press E to Enter Computer" />
+        ) : (
+          <AskForInputKeyDown title="Press E to Leave Computer" />
+        ))}
+
       {currentHit === "GlassComputerLevel2" &&
         (!isUsingSecurityCamera ? (
           <AskForInputKeyDown title="Press E to Access Computer" />

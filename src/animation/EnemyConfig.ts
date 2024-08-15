@@ -134,7 +134,7 @@ export const enemyConfigs: { [key: string]: EnemyConfig } = {
             position: [0, 2, 0],
         },
         collider: {
-            args: [0.5, 2.0],
+            args: [0.7, 1.0],
             position: [0, 1.8, 0],
         }
     }
