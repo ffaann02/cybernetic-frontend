@@ -1,5 +1,5 @@
 import { RapierRigidBody } from "@react-three/rapier";
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { LaserTargetObjectProps } from "../../game/level1-datalab/scene-object/room2/LaserTargetObject";
 import { LaserTargetObjectData } from "../../game/level1-datalab/scene-object/room2/LaserTargetObjectData";
 
@@ -62,6 +62,9 @@ interface Level1ContextData {
   setCurrentRock: (rock: number) => void;
   greenBoxRef: React.RefObject<null>;
   redBoxRef: React.RefObject<null>;
+  level1PlayTime: number;
+  setLevel1PlayTime: (time: number) => void;
+  lastUpdateTimeRef: any;
 }
 
 // Create the Level1Context
@@ -125,6 +128,8 @@ export const Level1ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   const greenBoxRef = useRef();
   const redBoxRef = useRef();
 
+  const [level1PlayTime, setLevel1PlayTime] = useState<number>(0);
+  const lastUpdateTimeRef = useRef(Date.now());
 
   const contextValue: Level1ContextData = {
     level,
@@ -184,6 +189,9 @@ export const Level1ContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
     setCurrentRock,
     greenBoxRef,
     redBoxRef,
+    level1PlayTime,
+    setLevel1PlayTime,
+    lastUpdateTimeRef,
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { GameContext } from "../../contexts/GameContext";
+import { GameContext, InventoryData } from "../../contexts/GameContext";
 import PlayerMainUI from "./player-main-ui/PlayerMainUI";
 import TrainAiComputer from "./computer/train-ai-computer/TrainAiComputer";
 import { MdOutlineReplay } from "react-icons/md";
@@ -16,6 +16,9 @@ import { HiOutlineStar } from "react-icons/hi";
 import { PiTrophy } from "react-icons/pi";
 import { GrLinkNext } from "react-icons/gr";
 import { LiaBrainSolid } from "react-icons/lia";
+import useAxios from "../../hooks/useAxios";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import axiosInstance from "../../api/axios";
 
 const AskForInputKeyDown = ({ title }: { title: string }) => {
   return (
@@ -34,6 +37,11 @@ const AskForInputKeyDownSecondary = ({ title }: { title: string }) => {
 };
 
 const GlobalGameUI = () => {
+  const { axiosFetch } = useAxios();
+  const { getItem } = useLocalStorage();
+  const localStorageUser = getItem("CYBERNETIC_USER");
+  const userId = localStorageUser?.userId;
+
   const [showDeathContainer, setShowDeathContainer] = useState(false);
   const [showPlayAgain, setShowPlayAgain] = useState(false);
   const [showEnemySplash, setShowEnemySplash] = useState(false);
@@ -59,7 +67,21 @@ const GlobalGameUI = () => {
     isShowLevelResult,
     setIsShowLevelResult,
     setEnergy,
+    isOpenInventory,
+    inventoryItem,
+    inventoryType,
+    inventoryData,
+    playTimeInLevel,
   } = useContext(GameContext);
+
+  // State for Inventory Hover
+  const [hoveredItem, setHoveredItem] = useState<InventoryData | null>(null);
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [currentInventoryType, setCurrentInventoryType] =
+    useState<string>("item");
 
   useEffect(() => {
     if (isDeath) {
@@ -116,7 +138,7 @@ const GlobalGameUI = () => {
     setIsShowLevelResult(false);
   };
 
-  const handlePlayNextLevel = () => {
+  const handlePlayNextLevel = async () => {
     const match = currentScene.match(/game-level-(\d+)/);
     const levelNumber = match ? match[1] : null;
 
@@ -124,10 +146,171 @@ const GlobalGameUI = () => {
     setScene(currentScene, `game-level-${parseInt(levelNumber) + 1}`);
     setIsPaused(false);
     setIsShowLevelResult(false);
+
+    try {
+      const updatedLevel = parseInt(levelNumber) + 1;
+      const response = await axiosFetch({
+        axiosInstance: axiosInstance,
+        url: "/user/character/update/level",
+        method: "post",
+        requestConfig: {
+          userId: userId,
+          heighestLevel: updatedLevel,
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Handle mouse movement
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  };
+
+  // Handle mouse hover on item
+  const handleMouseEnter = (item: InventoryData) => {
+    setHoveredItem(item);
+  };
+
+  // Handle mouse leave
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
+  const handlePlayerRespawn = async () => {
+    window.location.reload();
   };
 
   return (
     <>
+      {isOpenInventory && (
+        <>
+          <div
+            className="absolute z-[99999] w-full h-screen bg-black/70 flex justify-center items-center"
+            onMouseMove={handleMouseMove}
+          >
+            <div className="bg-cyan-400/50 border border-gray-500 rounded-2xl">
+              <div className="pt-4 text-center">
+                <span className="ml-4 text-white text-xl">Inventory</span>
+              </div>
+              <div className="pt-2 pb-2 ml-4 flex gap-2 justify-start">
+                {inventoryType.map((item, idx) => (
+                  <div key={idx}>
+                    <button
+                      className={`border rounded-md px-4 py-1 
+                        ${
+                          item.value === currentInventoryType
+                            ? "bg-black/20 border-slate-400 text-slate-400"
+                            : "border-white text-white"
+                        }
+                        `}
+                      onClick={() => setCurrentInventoryType(item.value)}
+                      disabled={item.value === currentInventoryType}
+                    >
+                      <span>{item.name}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {currentInventoryType === "item" && (
+                <div className="px-5 pt-2 pb-5 grid grid-cols-9 gap-2">
+                  {inventoryItem.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="relative w-16 h-16 border border-white rounded-md flex justify-center items-center hover:bg-white/50"
+                      onMouseEnter={() => item && handleMouseEnter(item)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      {item ? (
+                        <>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-12 h-12 object-contain"
+                          />
+                          <span className="absolute bottom-1 right-1 text-xs text-white bg-cyan-800 px-1 rounded">
+                            x{item.quantity}
+                          </span>
+                        </>
+                      ) : (
+                        <div className="text-sm text-gray-400"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {currentInventoryType === "data" && (
+                <div className="px-5 pt-2 pb-5 grid grid-cols-9 gap-2">
+                  {inventoryData.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="relative w-16 h-16 border border-white rounded-md flex justify-center items-center hover:bg-white/50"
+                      onMouseEnter={() => item && handleMouseEnter(item)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      {item ? (
+                        <>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-12 h-12 object-contain"
+                          />
+                          <span className="absolute bottom-1 right-1 text-xs text-white bg-cyan-800 px-1 rounded">
+                            x{item.quantity}
+                          </span>
+                        </>
+                      ) : (
+                        <div className="text-sm text-gray-400"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Tooltip that follows the mouse cursor */}
+            {hoveredItem && (
+              <div
+                className="absolute bg-black text-white p-2 rounded shadow-md"
+                style={{
+                  top: mousePosition.y + 15,
+                  left: mousePosition.x + 15,
+                  pointerEvents: "none", // Disable pointer events so it doesn't interfere with hovering
+                }}
+              >
+                <p className="font-bold">{hoveredItem.name}</p>
+                <p className="text-xs">Quantity: {hoveredItem.quantity}</p>
+                {currentInventoryType === "data" && (
+                  <>
+                    {hoveredItem.data.element && hoveredItem.data.weakness && (
+                      <>
+                        <p className="text-xs">
+                          Element: {hoveredItem.data.weakness}
+                        </p>
+                        <p className="text-xs">
+                          Weakness: {hoveredItem.data.element}
+                        </p>
+                      </>
+                    )}
+                  </>
+                )}
+                {currentInventoryType === "item" && (
+                  <>
+                    {hoveredItem.data && hoveredItem.data.description && (
+                      <>
+                        <p className="text-xs">
+                          {hoveredItem.data.description}
+                        </p>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
       {isPaused && (
         <div className="absolute z-[99999] w-full h-screen bg-black/70 mx-auto flex">
           <div className="max-w-2xl w-full h-fit bg-cyan-400/50 m-auto border rounded-2xl pb-10">
@@ -203,13 +386,15 @@ const GlobalGameUI = () => {
                     <p className="text-2xl text-white text-left my-auto">
                       TOTAL PLAY TIME
                     </p>
-                    <p className="text-5xl text-white">1,029</p>
+                    <p className="text-5xl text-white">
+                      {playTimeInLevel} second
+                    </p>
                   </div>
                   <div className="flex w-full justify-between">
                     <p className="text-xl text-white text-left my-auto">
-                      TRAIN AI TIME
+                      TOTAL DEATH
                     </p>
-                    <p className="text-3xl text-white">30 second</p>
+                    <p className="text-3xl text-white">1 time</p>
                   </div>
                 </div>
               </div>
@@ -298,6 +483,12 @@ const GlobalGameUI = () => {
               style={{ backdropFilter: "blur(4px)" }}
             ></div>
           )}
+          {enemyHitName === "Boss" && (
+            <div
+              className=" absolute w-full h-full flex items-center justify-center z-[100000] bg-red-600/40"
+              style={{ backdropFilter: "blur(4px)" }}
+            ></div>
+          )}
         </>
       )}
       {showPlayAgain && (
@@ -315,8 +506,10 @@ const GlobalGameUI = () => {
             font-semibold justify-between rounded-xl flex tracking-wider hover:bg-cyan-500/80 hover:scale-105 transition-all easer-linear"
             onClick={() => {
               // location.reload();
-              handlePlayAgain();
-              setShowPlayAgain(false);
+              handlePlayerRespawn();
+              // console.log("Player Clicked Play Again");
+              // handlePlayAgain();
+              // setShowPlayAgain(false);
             }}
           >
             <MdOutlineReplay className="my-auto mr-2" />
@@ -502,7 +695,6 @@ const GlobalGameUI = () => {
         ) : (
           <AskForInputKeyDown title="Press E to Leave Computer" />
         ))}
-
       {currentHit === "GlassComputerLevel2" &&
         (!isUsingSecurityCamera ? (
           <AskForInputKeyDown title="Press E to Access Computer" />
@@ -625,7 +817,11 @@ const GlobalGameUI = () => {
           <AskForInputKeyDown title="Press E to Enter Computer Maze Solver" />
         ) : (
           <>
-            <AskForInputKeyDown title="Press E to Leave Computer Maze Solver" />
+            {!isUsingSecurityCamera ? (
+              <AskForInputKeyDown title="Press E to Leave Computer Maze Solver" />
+            ) : (
+              <AskForInputKeyDown title="Press E to Cancle Maze Solver" />
+            )}
           </>
         ))}
     </>

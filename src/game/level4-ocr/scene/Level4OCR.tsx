@@ -39,6 +39,7 @@ const Level4OCR: React.FC<Props> = () => {
       { name: Controls.ESC, keys: ["Escape"] },
       { name: Controls.L, keys: ["KeyL"] },
       { name: Controls.G, keys: ["KeyG"] },
+      { name: Controls.I, keys: ["KeyI"] },
     ],
     []
   );

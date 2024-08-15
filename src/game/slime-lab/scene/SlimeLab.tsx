@@ -14,19 +14,16 @@ const SlimeLab = (props: Props) => {
 
   const { debug, currentCamera } = useContext(GameContext);
   const enemyNameChoices = ["Slime", "Spider", "Golem"];
-  const enemyColorChoices = ["white", "green", "red", "blue", "yellow", "orange", "black"];
+  const enemyColorChoices = ["red", "orange", "cyan", "green", "white", "yellow"];
   const [selectedEnemy, setSelectedEnemy] = useState<any>(
     {
       id: 1,
       name: "Slime",
-      color: "blue",
+      color: "green",
       element: "fire",
       size: "small",
       speed: 2,
-      mass: 30,
-      armor: 3,
       weakness: "water",
-      detectionRange: 6
   });
   const predictionModelChoices = [
     { name: "v1", value: "enemy-lab-model-v1" },
@@ -37,44 +34,7 @@ const SlimeLab = (props: Props) => {
     name: "v1",
     value: "enemy-lab-model-v1",
   });
-  const [collectedEnemyData, setCollectedEnemyData] = useState<any[]>([
-    {
-      id: 1,
-      name: "Slime",
-      color: "red",
-      element: "fire",
-      size: "small",
-      speed: 2,
-      mass: 30,
-      armor: 3,
-      weakness: "water",
-      detectionRange: 6
-    },
-    {
-      id: 2,
-      name: "Spider",
-      color: "green",
-      element: "earth",
-      size: "medium",
-      speed: 3,
-      mass: 40,
-      armor: 4,
-      weakness: "fire",
-      detectionRange: 8
-    },
-    {
-      id: 3,
-      name: "Golem",
-      color: "blue",
-      element: "water",
-      size: "large",
-      speed: 1,
-      mass: 50,
-      armor: 5,
-      weakness: "earth",
-      detectionRange: 10
-    }
-  ]);
+  const [collectedEnemyData, setCollectedEnemyData] = useState<any[]>([]);
 
   const controlMap = useMemo(
     () => [
@@ -88,6 +48,7 @@ const SlimeLab = (props: Props) => {
       { name: Controls.ESC, keys: ["Escape"] },
       { name: Controls.L, keys: ["KeyL"] },
       { name: Controls.G, keys: ["KeyG"] },
+      { name: Controls.I, keys: ["KeyI"] },
     ],
     []
   );

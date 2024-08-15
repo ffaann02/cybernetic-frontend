@@ -64,7 +64,6 @@ const MazeTrainingModal: React.FC<Props> = ({
         else {
             setIsDisplayImage(false);
             setIsDisplayTrainingModal(false);
-            setIsInteracting(false);
             setIsUsingSecurityCamera(true)
             setTimeout(() => {
                 setIsMazeSolverStartMoving(true);

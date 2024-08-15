@@ -35,11 +35,19 @@ const EnemyLabComputerUI = ({
     const { currentHit, isUsingSecurityCamera } = useContext(GameContext);
     const { axiosFetch } = useAxios();
 
-    const elementChoices = [
+    const elementChoicesDropdown = [
         { name: "fire", value: "fire" },
         { name: "water", value: "water" },
         { name: "earth", value: "earth" },
         { name: "air", value: "air" },
+        { name: "lightning", value: "lightning" },
+    ];
+    const weaknessChoices = [
+        { name: "fire", value: "fire" },
+        { name: "water", value: "water" },
+        { name: "earth", value: "earth" },
+        { name: "air", value: "air" },
+        { name: "lightning", value: "lightning" },
     ];
     const sizeChoices = [
         { name: "tiny", value: "tiny" },
@@ -48,31 +56,88 @@ const EnemyLabComputerUI = ({
         { name: "large", value: "large" },
     ];
     const speedChoices = Array.from({ length: 10 }, (_, i) => ({ name: i + 1, value: i + 1 }));
-    const massChoices = Array.from({ length: 10 }, (_, i) => ({ name: (i + 1) * 10, value: (i + 1) * 10 }));
-    const armorChoices = Array.from({ length: 10 }, (_, i) => ({ name: i + 1, value: i + 1 }));
-    const energyChoices = Array.from({ length: 10 }, (_, i) => ({ name: (i + 1) * 50, value: (i + 1) * 50 }));
-    const weaknessChoices = [
-        { name: "fire", value: "fire" },
-        { name: "water", value: "water" },
-        { name: "earth", value: "earth" },
-        { name: "air", value: "air" },
-    ];
-    const detectionRangeChoices = Array.from({ length: 10 }, (_, i) => ({ name: i + 1, value: i + 1 }));
-    const [currentPredictionModel, setCurrentPredictionModel] = useState(predictionModelChoices[0]);
 
+    const [currentPredictionModel, setCurrentPredictionModel] = useState(predictionModelChoices[0]);
     const [isDisplayModal, setIsDisplayModal] = useState(false);
     const [predictionResponse, setPredictionResponse] = useState(null);
 
-    const handleCollectData = () => {
-        if (collectedEnemyData.includes(selectedEnemy)) return;
-        const id = collectedEnemyData.length + 1;
-        selectedEnemy.id = id;
-        setCollectedEnemyData((prev) => [...prev, selectedEnemy]);
+    const elementChoices = ["fire", "water", "earth", "air", "lightning"];
+    const elementColorMap = {
+        fire: ['red', 'orange'],
+        water: ['cyan'],
+        earth: ['green'],
+        air: ['white'],
+        lightning: ['yellow'],
+    }
+    const slimeElementSpeedMap = {
+        fire: [3, 4, 5], // Generally faster
+        water: [1, 2], // Generally slower
+        earth: [2, 3], // Medium speed
+        air: [4, 5], // Generally faster
+        lightning: [3, 4, 5] // Generally faster
+    };
+    const slimeSizeChoices = ["tiny", "small", "medium"];
+    const spiderElementSpeedMap = {
+        fire: [3, 4, 5], // Generally faster
+        water: [1, 2], // Generally slower
+        earth: [2, 3], // Medium speed
+        air: [4, 5], // Generally faster
+        lightning: [3, 4, 5] // Generally faster
+    };
+    const spiderSizeChoices = ["tiny", "small", "medium"];
+    const golemElementSpeedMap = {
+        fire: [3, 4, 5], // Generally faster
+        water: [1, 2], // Generally slower
+        earth: [2, 3], // Medium speed
+        air: [4, 5], // Generally faster
+        lightning: [3, 4, 5] // Generally faster
+    };
+    const golemSizeChoices = ["medium", "large", "huge"];
+    const randomParameter = (enemyName: string) => {
+        if (enemyName === "Slime") {
+            const randomElement = elementChoices[Math.floor(Math.random() * elementChoices.length)]
+            const randomSpeed = slimeElementSpeedMap[randomElement][Math.floor(Math.random() * slimeElementSpeedMap[randomElement].length)]
+            const randomColor = elementColorMap[randomElement][Math.floor(Math.random() * elementColorMap[randomElement].length)]
+            const randomSize = slimeSizeChoices[Math.floor(Math.random() * slimeSizeChoices.length)]
+            return {
+                name: enemyName,
+                element: randomElement,
+                speed: randomSpeed,
+                color: randomColor,
+                size: randomSize
+            }
+        }
+        else if (enemyName === "Spider") {
+            const randomElement = elementChoices[Math.floor(Math.random() * elementChoices.length)]
+            const randomSpeed = spiderElementSpeedMap[randomElement][Math.floor(Math.random() * spiderElementSpeedMap[randomElement].length)]
+            const randomColor = elementColorMap[randomElement][Math.floor(Math.random() * elementColorMap[randomElement].length)]
+            const randomSize = spiderSizeChoices[Math.floor(Math.random() * spiderSizeChoices.length)]
+            return {
+                name: enemyName,
+                element: randomElement,
+                speed: randomSpeed,
+                color: randomColor,
+                size: randomSize
+            }
+        }
+        else if (enemyName === "Golem") {
+            const randomElement = elementChoices[Math.floor(Math.random() * elementChoices.length)]
+            const randomSpeed = golemElementSpeedMap[randomElement][Math.floor(Math.random() * golemElementSpeedMap[randomElement].length)]
+            const randomColor = elementColorMap[randomElement][Math.floor(Math.random() * elementColorMap[randomElement].length)]
+            const randomSize = golemSizeChoices[Math.floor(Math.random() * golemSizeChoices.length)]
+            return {
+                name: enemyName,
+                element: randomElement,
+                speed: randomSpeed,
+                color: randomColor,
+                size: randomSize
+            }
+        }
     }
 
-    useEffect(() => {
-        console.log(collectedEnemyData);
-    }, [collectedEnemyData])
+    const handleRandomParameter = () => {
+        setSelectedEnemy(randomParameter(selectedEnemy.name));
+    }
 
     const handlePredict = async () => {
         const modelName = currentPredictionModel.value;
@@ -80,13 +145,10 @@ const EnemyLabComputerUI = ({
         try {
             const modifiedCollectedData = {
                 element: selectedEnemy.element,
+                color: selectedEnemy.color,
                 size: selectedEnemy.size,
                 speed: selectedEnemy.speed,
-                mass: selectedEnemy.mass,
-                armor: selectedEnemy.armor,
-                detectionRange: selectedEnemy.detectionRange,
             };
-            console.log(modifiedCollectedData);
             const response = await axiosFetch({
                 axiosInstance: axiosInstanceAiService,
                 method: "post",
@@ -100,7 +162,8 @@ const EnemyLabComputerUI = ({
                     data: modifiedCollectedData
                 },
             });
-            if(response.weakness === selectedEnemy.weakness) {
+            console.log(response);
+            if (response.weakness === selectedEnemy.weakness) {
                 setPredictionResponse({
                     isError: false,
                     model: currentPredictionModel.name,
@@ -140,9 +203,9 @@ const EnemyLabComputerUI = ({
                     isError={false}
                     isAccurate={predictionResponse.accurate}
                     head="Prediction Result"
-                    title={predictionResponse.accurate ? "Prediction is correct" : "Prediction is not correct" }
+                    title={predictionResponse.accurate ? "Prediction is correct" : "Prediction is not correct"}
                     body={predictionResponse
-                        ? `Prediction Result: ${predictionResponse.predictResult},   Actual Result: ${predictionResponse.actualResult}` 
+                        ? `Prediction Result: ${predictionResponse.predictResult},   Actual Result: ${predictionResponse.actualResult}`
                         : "No prediction result"}
                     onClose={() => {
                         setIsDisplayModal(false)
@@ -159,14 +222,20 @@ const EnemyLabComputerUI = ({
                     <div className='flex justify-center items-center max-w-7xl py-32 gap-x-4 relative '>
                         <div
                             style={{ backdropFilter: 'blur(8px)' }}
-                            className='min-w-[960px] max-w-6xl h-[80vh] rounded-xl border-4 border-white shadow-md shadow-white'>
+                            className='min-w-[960px] max-w-6xl h-[80vh] rounded-xl border-4 border-white shadow-md shadow-white overflow-y-auto'>
                             <div className='bg-cyan-400/50 py-4'>
-                                <h1 className='text-center text-3xl font-bold text-white'>Enemy Lab</h1>
+                                <h1 className='text-center text-3xl font-bold text-white'>Predict Enemy Weakness</h1>
                             </div>
                             <div className='p-6'>
-                                <div className='text-white p-4 bg-black/40 border rounded-md overflow-auto'>
-                                    <div className=' h-[300px]'>
-                                        <p className='mt-2 mb-4 text-yellow-400'>Guide: You can adjust parameters and collect or test your model with this parameters</p>
+                                <div className='flex justify-between'>
+                                    <p className='text-white text-lg mb-1'>Parameters</p>
+                                    <p 
+                                        className='text-cyan-400 font-semibold underline text-lg mb-1 mr-1 cursor-pointer'
+                                        onClick={handleRandomParameter}>Random Parameters
+                                    </p>
+                                </div>
+                                <div className='text-white px-4 py-2 bg-black/40 border rounded-md overflow-auto'>
+                                    <div className='h-full'>
                                         <DropdownComponent
                                             label="Name"
                                             value={selectedEnemy?.name}
@@ -182,7 +251,7 @@ const EnemyLabComputerUI = ({
                                         <DropdownComponent
                                             label="Element"
                                             value={selectedEnemy?.element}
-                                            options={elementChoices}
+                                            options={elementChoicesDropdown}
                                             onChange={(e) => setSelectedEnemy({ ...selectedEnemy, element: e.target.value })}
                                         />
                                         <DropdownComponent
@@ -197,39 +266,22 @@ const EnemyLabComputerUI = ({
                                             options={speedChoices}
                                             onChange={(e) => setSelectedEnemy({ ...selectedEnemy, speed: e.target.value })}
                                         />
-                                        <DropdownComponent
-                                            label="Mass"
-                                            value={selectedEnemy?.mass}
-                                            options={massChoices}
-                                            onChange={(e) => setSelectedEnemy({ ...selectedEnemy, mass: e.target.value })}
-                                        />
-                                        <DropdownComponent
-                                            label="Armor"
-                                            value={selectedEnemy?.armor}
-                                            options={armorChoices}
-                                            onChange={(e) => setSelectedEnemy({ ...selectedEnemy, armor: e.target.value })}
-                                        />
-                                        <DropdownComponent
-                                            label="Energy"
-                                            value={selectedEnemy?.energy}
-                                            options={energyChoices}
-                                            onChange={(e) => setSelectedEnemy({ ...selectedEnemy, energy: e.target.value })}
-                                        />
+                                    </div>
+                                </div>
+                                <p className='text-white text-lg mt-4 mb-1'>Target(Weakness)</p>
+                                <div className='text-white px-4 py-2 bg-black/40 border rounded-md overflow-auto'>
+                                    <div className='h-full'>
                                         <DropdownComponent
                                             label="Weakness"
                                             value={selectedEnemy?.weakness}
                                             options={weaknessChoices}
                                             onChange={(e) => setSelectedEnemy({ ...selectedEnemy, weakness: e.target.value })}
                                         />
-                                        <DropdownComponent
-                                            label="Detection Range"
-                                            value={selectedEnemy?.detectionRange}
-                                            options={detectionRangeChoices}
-                                            onChange={(e) => setSelectedEnemy({ ...selectedEnemy, detectionRange: e.target.value })}
-                                        />
                                     </div>
                                 </div>
-                                <div className='p-2 my-4 rounded-md border text-white bg-black/50'>
+                                <p className='text-white text-lg mt-4'>Version Model</p>
+                                <p className='text-yellow-400 text-sm mb-1'>Note: Your Mine Lander(Skill L) will base on model v1</p>
+                                <div className='p-2 rounded-md border text-white bg-black/50'>
                                     <div className='ml-3 mr-4'>
                                         <DropdownComponent
                                             label="Prediction Model"
@@ -239,14 +291,10 @@ const EnemyLabComputerUI = ({
                                         />
                                     </div>
                                 </div>
-                                <div className='w-full flex justify-end gap-4'>
+                                <div className='w-full flex justify-end gap-4 mt-4'>
                                     <button className={`border border-white text-white rounded-md hover:bg-cyan-400/50 w-3 py-2`}
                                         onClick={handlePredict}>
                                         <span>Predict</span>
-                                    </button>
-                                    <button className={`border border-white text-white rounded-md hover:bg-cyan-400/50 w-3 py-2`}
-                                        onClick={handleCollectData}>
-                                        <span>Collect Data</span>
                                     </button>
                                 </div>
                                 <div className='flex justify-end gap-4 pt-4'>

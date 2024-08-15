@@ -1,7 +1,8 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useContext, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { GameContext } from '../contexts/GameContext';
+import { GameContext, InventoryData } from '../contexts/GameContext';
+import { useCharacterInventory } from '../hooks/useCharacterInventory';
 
 interface Props {
     firstPersonCameraRef: React.MutableRefObject<any>
@@ -12,6 +13,7 @@ const SearchController: React.FC<Props> = ({
 }) => {
 
     const { currentScene, setSearchResult, searchDataNotify } = useContext(GameContext);
+    const { addNewInventoryData } = useCharacterInventory();
     const { scene } = useThree();
     const raycaster = useRef(new THREE.Raycaster());
 
@@ -36,50 +38,56 @@ const SearchController: React.FC<Props> = ({
 
                 if (intersected) {
                     let intersectedObject;
-                    if(currentScene.includes("level-1") || currentScene.includes("level-2") || currentScene.includes("level-3")) {
+                    if (currentScene.includes("level-1") || currentScene.includes("level-2") || currentScene.includes("level-3")) {
                         intersectedObject = intersected.object.parent?.parent;
                     }
                     currentIntersectedObject = intersectedObject || null;
 
                     if (intersectedObject?.name.includes("enemy")) {
                         const currentTime = new Date().getTime();
-                            // console.log(intersectedObject.userData);
-                            const enemyData = intersectedObject.userData;
-                            setSearchResult(enemyData);
-                            let imageLink = "";
-                            if (enemyData.name === "Slime") {
-                                imageLink = "/images/slime_default.png";
-                            }
-                            else if (enemyData.name === "Spider") {
-                                imageLink = "/images/SpiderHead.png"
-                            }
-                            else if (enemyData.name === "Golem") {
-                                imageLink = "/images/GolemHead.png"
-                            }
-                            if (currentTime - lastNotifyTime > 1200) {
-                                searchDataNotify.current.show({
-                                    unstyled: true,
-                                    closable: false,
-                                    life: 2000,
-                                    content: (props) => (
-                                        <div className="flex relative z-[100000] rounded-lg px-2.5 py-2 gap-x-2">
-                                            <img
-                                                src={imageLink}
-                                                className="w-16 h-16 bg-white rounded-xl"
-                                            />
-                                            <div className="">
-                                                <p className="text-2xl font-semibold text-white">
-                                                    Data Collected!
-                                                </p>
-                                                <p className="text-lg font-semibold text-white">
-                                                    {enemyData.name} data collected.
-                                                </p>
-                                            </div>
+                        // console.log(intersectedObject.userData);
+                        const enemyData = intersectedObject.userData;
+                        setSearchResult(enemyData);
+                        let imageLink = "";
+                        if (enemyData.name === "Slime") {
+                            imageLink = "/images/slime_default.png";
+                        }
+                        else if (enemyData.name === "Spider") {
+                            imageLink = "/images/SpiderHead.png"
+                        }
+                        else if (enemyData.name === "Golem") {
+                            imageLink = "/images/GolemHead.png"
+                        }
+                        if (currentTime - lastNotifyTime > 1200) {
+                            addNewInventoryData({
+                                name: enemyData.name,
+                                image: imageLink,
+                                quantity: 1,
+                                data: enemyData.parameter,
+                            });
+                            searchDataNotify.current.show({
+                                unstyled: true,
+                                closable: false,
+                                life: 2000,
+                                content: (props) => (
+                                    <div className="flex relative z-[100000] rounded-lg px-2.5 py-2 gap-x-2">
+                                        <img
+                                            src={imageLink}
+                                            className="w-16 h-16 bg-white rounded-xl"
+                                        />
+                                        <div className="">
+                                            <p className="text-2xl font-semibold text-white">
+                                                Data Collected!
+                                            </p>
+                                            <p className="text-lg font-semibold text-white">
+                                                {enemyData.name} data collected.
+                                            </p>
                                         </div>
-                                    ),
-                                });
-                                setLastNotifyTime(currentTime);
-                            }
+                                    </div>
+                                ),
+                            });
+                            setLastNotifyTime(currentTime);
+                        }
                     }
                 }
             }

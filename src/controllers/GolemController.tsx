@@ -59,7 +59,7 @@ const GolemController: React.FC<Props> = ({
             z: directionVec.z * movingSpeed,
         });
 
-        if (length <= attackAreaRadius + 1) {
+        if (length <= attackAreaRadius + 1 && (playerPosition.y - golemPosition.y < 2)) {
             setAnimationState(EnemyAnimationState.Attack);
             golemRigidBody.current.setLinvel({
                 x: 0,

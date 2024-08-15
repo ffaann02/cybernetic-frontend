@@ -414,12 +414,21 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
     const mineProcessing = async () => {
         if (isCollisionProcessed.current === false) {
             isCollisionProcessed.current = true;
-            const modifiedData = Object.fromEntries(
+            const enemyData = Object.fromEntries(
                 Object.entries(data).map(([key, value]) => [
                     key,
-                    typeof value === 'number' ? value.toString() : value
+                    value
                 ]).filter(([key]) => key !== 'weakness')
             );
+
+            console.log(enemyData);
+            const modifiedData = {
+                element: enemyData.element,
+                color: enemyData.color,
+                size: enemyData.size,
+                speed: enemyData.speed,
+            }
+            console.log(modifiedData);
 
             try {
                 console.log(modifiedData);
@@ -430,7 +439,8 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                     requestConfig: {
                         userId: "u111362252",
                         model: {
-                            name: "enemy_weakness",
+                            // name: "enemy_weakness",
+                            name: "enemy-lab-model-v1",
                             targetVariable: "weakness"
                         },
                         data: modifiedData
@@ -439,6 +449,9 @@ const EnemyPatrolController: React.FC<EnemyPatrolControllerProps> = ({ id, name,
                 console.log(response);
                 if (response.weakness === weakness) {
                     console.log("Prediction is correct");
+                    setEnemyPatrolInScene((prevEnemies) => (
+                        prevEnemies.filter((enemy) => (enemy.id !== id))
+                    ))
                 }
                 else {
                     await evolve();

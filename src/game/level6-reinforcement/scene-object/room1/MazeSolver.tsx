@@ -159,7 +159,7 @@ const MazeSolver = ({
             position={[0, 0, 0]} // Initial position
           >
             <a.group rotation={springProps.rotation}>
-              <group rotation={[0, degreeNumberToRadian(90), 0]}>
+              <group rotation={[0, degreeNumberToRadian(180), 0]}>
                 <GoodBot animation_index={2} />
               </group>
             </a.group>
