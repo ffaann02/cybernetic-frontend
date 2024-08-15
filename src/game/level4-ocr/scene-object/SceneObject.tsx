@@ -25,7 +25,7 @@ export const Room = memo(({ children }) => {
 export const SceneObject = ({ }) => {
   const { currentHit, setCurrentHit, setIsInteracting } =
     useContext(GameContext);
-  const { isOpenOcrPassword, setIsOpenOcrPassword, setIsOpenCharacterStorage } = useLevel4Context();
+  const { isOpenOcrPassword, setIsOpenOcrPassword, setIsOpenCharacterStorage, setIsOpenTrainComputer } = useLevel4Context();
   const [lastPressTime, setLastPressTime] = useState(0);
   const ePressed = useKeyboardControls((state) => state[Controls.coding]);
   const flashDriveRef = useRef(null);
@@ -63,6 +63,15 @@ export const SceneObject = ({ }) => {
       }
     }
 
+    if (ePressed && currentHit === "Level4-TrainComputer") {
+      const currentTime = new Date().getTime();
+      if (currentTime - lastPressTime > 200) {
+        setIsInteracting((prev) => !prev);
+        setIsOpenTrainComputer((prev) => !prev);
+        setLastPressTime(currentTime);
+      }
+    }
+
     if (flashDriveRef.current) {
       const time = clock.getElapsedTime();
       const newY = 3 + Math.sin(time) * 1; // Oscillate between 1.5 and 2.5
@@ -75,12 +84,23 @@ export const SceneObject = ({ }) => {
 
   const onPlayerEnterFlashDrive = ({ other }) => {
     if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
-      console.log("hello");
       setCurrentHit("Level4-CharacterStorage");
     }
   };
 
   const onPlayerExitFlashDrive = ({ other }) => {
+    if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
+      setCurrentHit("");
+    }
+  };
+
+  const onPlayerEnterTrainComputer = ({ other }) => {
+    if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
+      setCurrentHit("Level4-TrainComputer");
+    }
+  };
+
+  const onPlayerExitTrainComputer = ({ other }) => {
     if (other.rigidBodyObject && other.rigidBodyObject.name === "player") {
       setCurrentHit("");
     }
@@ -118,12 +138,12 @@ export const SceneObject = ({ }) => {
           setEnemyPatrolInScene={setGolemInScene}
         />
       ))}
-      <CuboidCollider args={[2, 6, 10]} position={[-14.5, 2, 17.5]} />
+      {/* <CuboidCollider args={[2, 6, 10]} position={[-14.5, 2, 17.5]} />
       <CuboidCollider args={[2, 6, 10]} position={[-24.5, 2, 17.5]} />
-      <CuboidCollider args={[2, 6, 10]} position={[-35, 2, 17.5]} />
+      <CuboidCollider args={[2, 6, 10]} position={[-35, 2, 17.5]} /> */}
       <RigidBody
         type="fixed"
-        colliders={false}
+        colliders={"trimesh"}
         position={[-36, 0, 10]}
         scale={[12, 8, 14]}
         lockRotations
@@ -361,8 +381,8 @@ export const SceneObject = ({ }) => {
           degreeNumberToRadian(230),
           degreeNumberToRadian(0),
         ]}
-        onCollisionEnter={onPlayerEnterFlashDrive}
-        onCollisionExit={onPlayerExitFlashDrive}
+        onCollisionEnter={onPlayerEnterTrainComputer}
+        onCollisionExit={onPlayerExitTrainComputer}
       >
         <CuboidCollider
           args={[0.0024, 0.006, 0.0021]}

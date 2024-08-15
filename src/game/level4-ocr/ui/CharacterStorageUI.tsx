@@ -12,16 +12,8 @@ const CharacterStorageUI = () => {
   const [accuracy, setAccuracy] = useState(null);
   const [isPredicting, setIsPredicting] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState([]);
-  const [labelCounts, setLabelCounts] = useState({
-    "Character 1": 0,
-    "Character 2": 0,
-    "Character 3": 0,
-    "Character 4": 0,
-    "Character 5": 0,
-    "Character 6": 0,
-  });
   const { setIsInteracting, setCurrentHit } = useContext(GameContext);
-  const { isOpenOcrPassword, setIsOpenOcrPassword, setIsOpenCharacterStorage } =
+  const { isOpenOcrPassword, setIsOpenOcrPassword, setIsOpenCharacterStorage,labelCounts, setLabelCounts } =
     useLevel4Context();
 
   const handleClose = () => {
