@@ -5,6 +5,13 @@ import { FaTshirt } from "react-icons/fa";
 import { PiPantsFill, PiBootFill } from "react-icons/pi";
 import { BsBackpack2Fill } from "react-icons/bs";
 import { CreateCharacterContext } from "../../../contexts/CreateCharacterContext";
+import Head from "../../create-character/Head";
+import HeadOrange from "../../../assets/orange-variant/Head.svg";
+import HeadRed from "../../../assets/red-variant/Head.svg";
+import OrangeBody from "../../../assets/orange-variant/Body.svg";
+import RedBody from "../../../assets/red-variant/Body.svg";
+import HeadPreview from "../../create-character/HeadPreview";
+import BodyPreview from "../../create-character/BodyPreview";
 
 export interface Choice {
   id: number;
@@ -127,7 +134,7 @@ const ToolsBar: React.FC = () => {
   const [currentChoices, setCurrentChoices] = useState<{
     [key: string]: Choice;
   }>({});
-  const { setCharacter } = useContext(CreateCharacterContext);
+  const { setCharacter, setChoices } = useContext(CreateCharacterContext);
 
   const changeTool = (tool: Tool) => setCurrentTool(tool);
 
@@ -174,38 +181,120 @@ const ToolsBar: React.FC = () => {
         ))}
       </div>
       <div className="grid grid-cols-4 mt-6 gap-4 pr-6">
-        {/* {currentTool.choices.map((choice: Choice) => (
-          <button
-            key={choice.id}
-            onClick={() => chooseChoice(choice)}
-            className={`text-white col-span-1 w-full h-full border-4 rounded-lg ${
-              currentChoices[currentTool.name]?.id === choice.id
-                ? "border-cyan-200 bg-white/40"
-                : "border-white/20 bg-white/20"
-            } px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
-          >
-            <div className="bg-[#]"></div>
-            <h2 className="mt-2">{choice.name}</h2>
-          </button>
-        ))} */}
-        {colorList.map((color,index) => (
-          <button
-            key={color}
-            onClick={() => chooseChoice({ id: 0, name: color, image: "" })}
-            className={`col-span-1 w-full h-full border-4 rounded-lg ${
-              currentChoices[currentTool.name]?.name === color
-                ? "border-cyan-200 bg-white/40"
-                : "border-white/20 bg-white/20"
-            } px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
-          >
-            <div
-              className="w-20 h-20 rounded-full mx-auto"
-              style={{ backgroundColor: color }}
+        {currentTool.name === "สีผิว" &&
+          colorList.map((color, index) => (
+            <button
+              key={color}
+              onClick={() => chooseChoice({ id: 0, name: color, image: "" })}
+              className={`col-span-1 w-full h-full border-4 rounded-lg ${
+                currentChoices[currentTool.name]?.name === color
+                  ? "border-cyan-200 bg-white/40"
+                  : "border-white/20 bg-white/20"
+              } px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
             >
-            </div>
-            <p className="mt-3 text-white">สีผิวที่ {index+1}</p>
-          </button>
-        ))}
+              <div
+                className="w-20 h-20 rounded-full mx-auto"
+                style={{ backgroundColor: color }}
+              ></div>
+              <p className="mt-3 text-white">สีผิวที่ {index + 1}</p>
+            </button>
+          ))}
+
+        {currentTool.name === "หน้าตา" && (
+          <>
+            <button
+              onClick={() => {
+                setChoices((prevChoices) => ({
+                  ...prevChoices,
+                  head: 1,
+                }));
+              }}
+              className={`col-span-1 w-full h-full border-4 rounded-lg px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
+            >
+              <div className="w-20 h-20 rounded-full mx-auto">
+                <HeadPreview choice={1} />
+              </div>
+              <p className="mt-3 text-white">หน้าตาที่ 1</p>
+            </button>
+            <button
+              onClick={() => {
+                setChoices((prevChoices) => ({
+                  ...prevChoices,
+                  head: 2,
+                }));
+              }}
+              className={`col-span-1 w-full h-full border-4 rounded-lg px-6 pt-4 pb-2 relative transition-all ease-linear duration-100
+                 overflow-hidden`}
+            >
+              <div className="w-20 h-20 rounded-full mx-auto relative">
+                <img src={HeadOrange} className="absolute -top-10" />
+              </div>
+              <p className="mt-3 text-white">หน้าตาที่ 2</p>
+            </button>
+            <button
+              onClick={() => {
+                setChoices((prevChoices) => ({
+                  ...prevChoices,
+                  head: 3,
+                }));
+              }}
+              className={`col-span-1 w-full h-full border-4 rounded-lg px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
+            >
+              <div className="w-20 h-20 rounded-full mx-auto">
+                <img src={HeadRed} />
+              </div>
+              <p className="mt-3 text-white">หน้าตาที่ 3</p>
+            </button>
+          </>
+        )}
+
+        {currentTool.name === "เสื้อ" && (
+          <>
+            <button
+              onClick={() => {
+                setChoices((prevChoices) => ({
+                  ...prevChoices,
+                  body: 1,
+                }));
+              }}
+              className={`col-span-1 w-full h-full border-4 rounded-lg px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
+            >
+              <div className="w-20 h-32 rounded-full mx-auto">
+                <BodyPreview choice={1} />
+              </div>
+              <p className="mt-3 text-white">เสื้อที่ 1</p>
+            </button>
+            <button
+              onClick={() => {
+                setChoices((prevChoices) => ({
+                  ...prevChoices,
+                  body: 2,
+                }));
+              }}
+              className={`col-span-1 w-full h-full border-4 rounded-lg px-6 pt-4 pb-2 relative transition-all ease-linear duration-100
+                 overflow-hidden`}
+            >
+              <div className="w-20 h-20 rounded-full mx-auto relative">
+                <img src={OrangeBody} className="" />
+              </div>
+              <p className="mt-16 text-white">เสื้อที่ 2</p>
+            </button>
+            <button
+              onClick={() => {
+                setChoices((prevChoices) => ({
+                  ...prevChoices,
+                  body: 3,
+                }));
+              }}
+              className={`col-span-1 w-full h-full border-4 rounded-lg px-6 pt-4 pb-2 relative transition-all ease-linear duration-100`}
+            >
+              <div className="w-20 h-20 rounded-full mx-auto relative">
+                <img src={RedBody} className="" />
+              </div>
+              <p className="mt-16 text-white">เสื้อที่ 3</p>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -3,12 +3,12 @@ import OrangeBody from "../../assets/orange-variant/Body.svg";
 import RedBody from "../../assets/red-variant/Body.svg";
 import { CreateCharacterContext } from "../../contexts/CreateCharacterContext";
 
-const Body = ({ choice = 2 }) => {
+const BodyPreview = ({ choice = 1 }) => {
   const { choices, setChoices } = useContext(CreateCharacterContext);
 
   return (
     <div>
-      {choices.body === 1 && (
+      {choice === 1 && (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 273.99 416">
           <defs>
             {/* <style>
@@ -73,9 +73,9 @@ const Body = ({ choice = 2 }) => {
         </svg>
       )}
 
-      {choices.body === 2 && <img src={OrangeBody} alt="Left Top Arm" />}
-      {choices.body === 3 && <img src={RedBody} alt="Left Top Arm" />}
+      {choice === 2 && <img src={OrangeBody} alt="Left Top Arm" />}
+      {choice === 3 && <img src={RedBody} alt="Left Top Arm" />}
     </div>
   );
 };
-export default Body;
+export default BodyPreview;

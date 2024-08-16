@@ -1,9 +1,14 @@
+import { useContext } from "react";
 import OrangeBottomRightArm from "../../assets/orange-variant/Right_Hand.svg";
+import RedBottomRightArm from "../../assets/red-variant/Right-Hand.svg";
+import { CreateCharacterContext } from "../../contexts/CreateCharacterContext";
 
 const Bottom_RightArm = ({ choice = 2 }) => {
+  const { choices, setChoices } = useContext(CreateCharacterContext);
+
   return (
     <div>
-      {choice === 1 && (
+      {choices.body === 1 && (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 207.28 92.37">
           <defs>
             {/* <style>.cls-1{fill:#f6cdaa;}.cls-2{fill:#414042;}.cls-3{fill:#27aae1;}</style> */}
@@ -55,7 +60,8 @@ const Bottom_RightArm = ({ choice = 2 }) => {
           </g>
         </svg>
       )}
-      {choice === 2 && <img src={OrangeBottomRightArm} alt="Left Top Arm" />}
+      {choices.body === 2 && <img src={OrangeBottomRightArm} alt="Left Top Arm" />}
+      {choices.body === 3 && <img src={RedBottomRightArm} alt="Left Top Arm" />}
     </div>
   );
 };
