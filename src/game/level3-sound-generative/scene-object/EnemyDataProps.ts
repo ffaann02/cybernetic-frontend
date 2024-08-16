@@ -1,0 +1,90 @@
+export const enemyPatrolProps = [
+    {
+        id: 1,
+        name: "Slime",
+        waypoints: [
+            [-27, 1.2, 9],
+            [-18, 1.2, -6],
+            [-2, 1.2, 10],
+        ],
+        angle: 45,
+        idleTime: 2,
+        chaseTimeLimit: 5,
+        patrolType: "turnback",
+        showPath: false,
+        data: {
+            data_type: "enemy",
+            name: "Robotic Slime - enemy",
+            element: "water",
+            size: "tiny",
+            color: "blue",
+            speed: 8,
+            mass: 50,
+            armor: 8,
+            attack: "chase",
+            energy: 150,
+            pattern: "",
+            weakness: "water",
+            detection_range: 5,
+            image_url: "/images/slime_default.png"
+        }
+    },
+    {
+        id: 2,
+        name: "Slime",
+        waypoints: [
+            [-11, 1.2, 10],
+            [-14, 1.2, -7],
+        ],
+        angle: 45,
+        idleTime: 0.1,
+        chaseTimeLimit: 6,
+        patrolType: "turnback",
+        showPath: false,
+        data: {
+            data_type: "enemy",
+            name: "Robotic Slime - enemy",
+            element: "fire",
+            size: "tiny",
+            color: "red",
+            speed: 5,
+            mass: 50,
+            armor: 8,
+            attack: "chase",
+            energy: 150,
+            pattern: "",
+            weakness: "water",
+            detection_range: 5,
+            image_url: "/images/slime_default.png"
+        }
+    },
+    {
+        id: 3,
+        name: "Slime",
+        waypoints: [
+            [-24, 1.2, -10],
+            [-2, 1.2, -10],
+        ],
+        angle: 45,
+        idleTime: 0.2,
+        chaseTimeLimit: 6,
+        patrolType: "turnback",
+        showPath: false,
+        data: {
+            data_type: "enemy",
+            name: "Robotic Slime - enemy",
+            element: "lightning",
+            size: "tiny",
+            color: "yellow",
+            speed: 5,
+            mass: 50,
+            armor: 8,
+            attack: "chase",
+            energy: 150,
+            pattern: "",
+            weakness: "water",
+            detection_range: 5,
+            image_url: "/images/slime_default.png"
+        }
+    },
+];

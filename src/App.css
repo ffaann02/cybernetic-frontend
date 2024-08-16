@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
+
 @layer tailwind-base {
   @tailwind base;
 }
@@ -6,8 +8,157 @@
   @tailwind components;
   @tailwind utilities;
 /* } */
-
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
 /* body ::-webkit-scrollbar {
   display: none;
 } */
+
+*{
+  scrollbar-color: lightblue white;
+}
+
+@keyframes borderBottomAndScaleAnimation {
+  0%, 100% {
+    border-bottom-width: 4px;
+    transform: scale(1);
+  }
+  50% {
+    border-bottom-width: 2px;
+    transform: scale(1.05);
+  }
+}
+
+.animate-border-bottom-scale {
+  animation: borderBottomAndScaleAnimation 1s infinite;
+}
+
+a, p, h1, h2, h3, h4, h5, span {
+  margin-top: 2px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+#frame::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#frame {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.p-divider{
+  padding: 0;
+  margin: 0;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+#ui-computer-panel{
+  backdrop-filter: blur(16px);
+}
+
+#aim-blur-active{
+  /* backdrop-filter: blur(16px); */
+  overflow: hidden;
+}
+
+#circle-hole-active{
+  box-shadow: 0 0 0 99999px rgba(0, 0, 0, .5);
+}
+
+#data-storage{
+  scrollbar-color: lightblue white;
+}
+
+.p-menuitem-link{
+  background-color: transparent;
+}
+
+.p-menuitem-link .p-steps-number{
+  margin-top: 6px;
+}
+.p-menuitem-link .p-steps-title{
+  color: white;
+}
+#level-preview-container {
+  backdrop-filter: blur(16px);
+}
+
+.setting-dropdown .p-dropdown-label {
+  color: white; 
+  padding: 16px;
+}
+
+/* Define keyframes for fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Define keyframes for fade-out */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Apply animations with a duration of 3 seconds */
+.fadeIn {
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 1s ease-in-out forwards;
+}
+
+.p-slider-range{
+  margin-top: 0.5px;
+}
+
+.p-slider-handle-active{
+  margin-top: -8px;
+  background-color: #007ad9;
+}
+
+#root{
+  background: rgb(36,55,130);
+background: linear-gradient(0deg, rgb(36, 50, 106) 0%, rgba(58, 58, 181, 0.978) 34%, rgb(24, 24, 72) 100%);
+}
+
+#death-container {
+  width: 388.2px;
+  height: 380px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  background: url("../public/images/Death.png");
+  /*Steps should be equal to number of frames*/
+  animation: death 5s steps(10);
+  z-index: 10000;
+}
+@keyframes death {
+  0% {
+    background-position: 0 0;
+  }
+  /* Use height of image here as y position */
+  100% {
+    background-position: -3882px 0;
+  }
+}
+

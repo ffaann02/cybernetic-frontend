@@ -5,9 +5,16 @@ import "./App.css"
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
+import { Leva } from "leva";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <PrimeReactProvider>
-    <App />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GCP_CLIENT_ID}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </GoogleOAuthProvider>
   </PrimeReactProvider>
 );

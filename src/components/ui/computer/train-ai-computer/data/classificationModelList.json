@@ -1,0 +1,52 @@
+[
+    {
+      "name": "Logistic Regression",
+      "description": "A logistic regression model.",
+      "key": "logistic-regression"
+    },
+    {
+      "name": "Decision Tree",
+      "description": "A decision tree model.",
+      "key": "decision-tree"
+    },
+    {
+      "name": "Random Forest",
+      "description": "A random forest model.",
+      "key": "random-forest"
+    },
+    {
+      "name": "Support Vector Machine",
+      "description": "A support vector machine model.",
+      "key": "svm"
+    },
+    {
+      "name": "K-Nearest Neighbors",
+      "description": "A K-nearest neighbors model.",
+      "key": "knn"
+    },
+    {
+      "name": "Naive Bayes",
+      "description": "A naive bayes model.",
+      "key": "naive-bayes"
+    },
+    {
+      "name": "Neural Network",
+      "description": "A neural network model.",
+      "key": "neural-network"
+    },
+    {
+      "name": "Convolutional Neural Network",
+      "description": "A convolutional neural network model.",
+      "key": "cnn"
+    },
+    {
+      "name": "Recurrent Neural Network",
+      "description": "A recurrent neural network model.",
+      "key": "rnn"
+    },
+    {
+      "name": "Long Short-Term Memory",
+      "description": "A long short-term memory model.",
+      "key": "lstm"
+    }
+  ]
