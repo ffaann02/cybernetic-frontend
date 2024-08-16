@@ -17,6 +17,7 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize, Resolution } from "postprocessing";
 import { MapRoom3 } from "../map/MapRoom3";
 import { useLevel2Context } from "../../../contexts/SceneContext/Level2Context";
+import { Mine } from "../../shared-object/object/Mine";
 
 const SceneObject = ({
   currentRoom,
@@ -34,6 +35,8 @@ const SceneObject = ({
     setIsUsingSecurityCamera,
     setIsShowLevelResult,
     setPlayTimeInLevel,
+    mines,
+    setMines,
   } = useContext(GameContext);
   const {
     isOpenGlassClassifier,
@@ -93,6 +96,10 @@ const SceneObject = ({
         shadow-camera-bottom={-20}
       />
 
+      {mines.map((mine, index) => (
+        <Mine mine={mine} index={index} setMines={setMines} />
+      ))}
+
       {currentRoom === 1 && (
         <Room>
           <Door
@@ -115,7 +122,7 @@ const SceneObject = ({
             mass={0}
             type="fixed"
             name="secure-door-next-level"
-            position={[-36,9.15,-10]}
+            position={[-36, 9.15, -10]}
             rotation={[
               degreeNumberToRadian(0),
               degreeNumberToRadian(0),

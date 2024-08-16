@@ -15,6 +15,7 @@ import Room2 from "./room2/Room2";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { KernelSize, Resolution } from "postprocessing";
 import { useLevel3Context } from "../../../contexts/SceneContext/Level3Context";
+import { Mine } from "../../shared-object/object/Mine";
 
 const SceneObject = ({
   currentRoom,
@@ -30,6 +31,8 @@ const SceneObject = ({
     setIsUsingSecurityCamera,
     setIsShowLevelResult,
     setPlayTimeInLevel,
+    mines,
+    setMines,
   } = useContext(GameContext);
   const {
     isOpenAudioInput,
@@ -83,6 +86,11 @@ const SceneObject = ({
         shadow-camera-top={20}
         shadow-camera-bottom={-20}
       />
+
+      {mines.map((mine, index) => (
+        <Mine mine={mine} index={index} setMines={setMines} />
+      ))}
+
 
       {currentRoom === 1 && (
         <Room>
