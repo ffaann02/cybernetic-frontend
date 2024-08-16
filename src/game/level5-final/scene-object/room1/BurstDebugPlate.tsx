@@ -8,7 +8,7 @@ const Plate = ({ color, position, warningOpacity, setWarningOpacity, collectedBo
 
     return (
         <>
-            {color === "red" ?
+            {/* {color === "red" ?
                 <RigidBody
                     type="fixed"
                     colliders={false}
@@ -27,10 +27,10 @@ const Plate = ({ color, position, warningOpacity, setWarningOpacity, collectedBo
                         <meshStandardMaterial color={"#ff5f5f"} transparent={true} opacity={warningOpacity} />
                     </mesh>
                 </RigidBody>
-                : null}
+                : null} */}
 
             {/* No collected data no prediction */}
-            {/* {(collectedBossData && collectedBossData.length <= 0)
+            {(collectedBossData && collectedBossData.length <= 0)
                 ?
                 <>
                     <RigidBody
@@ -75,7 +75,7 @@ const Plate = ({ color, position, warningOpacity, setWarningOpacity, collectedBo
                         </RigidBody>
                         : null}
                 </>
-            } */}
+            }
         </>
     );
 };

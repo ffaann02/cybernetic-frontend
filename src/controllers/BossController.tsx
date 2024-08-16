@@ -424,14 +424,14 @@ const BossController: React.FC<BossControllerProps> = ({
                 bossState={bossState}
                 meteoPosition={meteoData}
             />
-            {particleHit.length > 0 && particleHit.map((hit, index) => (
+            {/* {particleHit.length > 0 && particleHit.map((hit, index) => (
                 <AblazeParticle
                     key={index}
                     particleId={hit.id}
                     position={hit.position}
                     onEnded={onParticleEnded}
                 />
-            ))}
+            ))} */}
         </group>
     );
 }

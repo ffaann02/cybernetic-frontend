@@ -12,6 +12,7 @@ import { RigidBody } from '@react-three/rapier';
 import { Item } from '../../shared-object/object/Item';
 import { useFrame } from '@react-three/fiber';
 import { useLevel6Context } from '../../../contexts/SceneContext/Level6Context';
+import { Mine } from '../../shared-object/object/Mine';
 
 export const Room = memo(({ children }) => {
     return <>{children}</>;
@@ -22,7 +23,7 @@ export const Level6Environment = ({
     stepMaze,
 }) => {
 
-    const { playerRigidBody, setCurrentHit, setIsShowLevelResult ,setPlayTimeInLevel } = useContext(GameContext);
+    const { playerRigidBody, setCurrentHit, setIsShowLevelResult, setPlayTimeInLevel, mines, setMines } = useContext(GameContext);
     const { lastUpdateTimeRef, level6PlayTime, setLevel6PlayTime } = useLevel6Context();
 
     const [currentRoom, setCurrentRoom] = useState(1);
@@ -33,11 +34,11 @@ export const Level6Environment = ({
     useFrame(() => {
         const currentTimer = Date.now();
         if (lastUpdateTimeRef.current !== null) {
-          const deltaTime = currentTimer - lastUpdateTimeRef.current;
-          if (deltaTime > 500) {
-            lastUpdateTimeRef.current = currentTimer // Update the last update time
-            setLevel6PlayTime((prev) => prev + 0.5);
-          }
+            const deltaTime = currentTimer - lastUpdateTimeRef.current;
+            if (deltaTime > 500) {
+                lastUpdateTimeRef.current = currentTimer // Update the last update time
+                setLevel6PlayTime((prev) => prev + 0.5);
+            }
         }
     })
 
@@ -57,6 +58,12 @@ export const Level6Environment = ({
                 shadow-camera-top={20}
                 shadow-camera-bottom={-20}
             />
+
+            {mines.map((mine, index) => (
+                <Mine mine={mine} index={index} setMines={setMines} />
+            ))}
+
+
             {currentRoom === 1 && (
                 <Room>
                     <RigidBody
@@ -89,7 +96,7 @@ export const Level6Environment = ({
                         <mesh position={[0, 1.1, 0]}>
                             <boxGeometry args={[0.3, 2, 0.9]} />
                             <meshStandardMaterial
-                                color={"green" }
+                                color={"green"}
                                 transparent={true}
                                 opacity={0.5}
                             />
