@@ -11,7 +11,7 @@ export const GolemPatrolLevel4 = [
             [-8, 1.5, 32],
             [-8, 1.5, 6],
         ],
-        angle: 30,
+        angle: 20,
         idleTime: 1,
         chaseTimeLimit: 0.8,
         patrolType: "loop",

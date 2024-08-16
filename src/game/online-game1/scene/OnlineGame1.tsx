@@ -332,7 +332,7 @@ const OnlineGame1: React.FC<Props> = () => {
   }, [showMission]);
 
   const progressBarWidth = (remainingTime / maxTime) * 100;
-  const [isDuelTime, setIsDuelTime] = useState(false);
+  const [isDuelTime, setIsDuelTime] = useState(true);
   const [correctAnswer, setCorrectAnswer] = useState("");
   const [playerPredictions, setPlayerPredictions] = useState([]);
   const [predictionResults, setPredictionResults] = useState([]);
@@ -605,7 +605,7 @@ const OnlineGame1: React.FC<Props> = () => {
           )}
         </div>
       )}
-      {!isRandomPuzzle && !isPlaying && (
+      {!isRandomPuzzle && !isPlaying && !isDuelTime && (
         <>
           <div
             className="absolute w-fit bg-cyan-400/50 border-2 rounded-xl min-h-[10vh] z-50 top-10

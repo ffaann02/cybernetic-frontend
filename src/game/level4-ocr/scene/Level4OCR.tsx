@@ -66,7 +66,7 @@ const Level4OCR: React.FC<Props> = () => {
 
           <Suspense fallback={null}>
             <Physics debug={debug} gravity={[0, -9.81, 0]}>
-              <CharacterController spawnPosition={[-28, 2, 35]} />
+              <CharacterController spawnPosition={[-28, 4, 35]} />
               <SceneObject />
             </Physics>
           </Suspense>

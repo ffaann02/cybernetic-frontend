@@ -164,7 +164,7 @@ const Object = ({ items }: { items: any }) => {
         colliders={false}
         onCollisionEnter={onPlayerEnterRedBox}
         onCollisionExit={onPlayerExitRedBox}
-        position={[-14.5, 16, 0.5]}
+        position={[-22.5, 16, -1]}
         mass={60}
         lockRotations
         lockTranslations={false}
