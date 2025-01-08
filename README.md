@@ -1,30 +1,26 @@
-# React + TypeScript + Vite
+# Cybernetic
+Cybernetics is an innovative web-based game designed to teach the fundamentals of artificial intelligence (AI) in an engaging and interactive way. It combines problem-solving gameplay with AI model development, offering players a unique learning experience through immersive 3D simulations.
+- Award:🥈 1st Runner-Up Award, National Software Contest 2024 (NSC2024), Game Software Category
+- Video Presentation: https://www.youtube.com/watch?v=wcu0eNltNX4
+- Slide and Gameplay: https://shorturl.at/qHXPE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Key Features
+- **AI Model Creation**: Players can design, train, and test their own AI models to solve in-game challenges.
+- **Puzzle-Based Gameplay**: Emphasis on stealth, strategy, and problem-solving rather than combat.
+- **Character Development**: Skills in AI improve as players progress through levels and overcome puzzles.
+- **Browser-Based Accessibility**: No installation required, ensuring a smooth and convenient experience on any device.
+- **Interactive 3D Graphics**: Realistic simulations and animations to enhance player engagement.
 
-Currently, two official plugins are available:
+## Technologies and Tools
+- Frontend:
+  - Client: TypeScript, React, TailwindCSS, PrimeReact
+  - 3D: Three.js, React Three Fiber
+- Backend:
+  - Service Server: Golang, Go Fiber
+  - Realtime Server: SocketIO, Express.js, JavaScript  
+- Database and Cloud: MySQL, Amazon LightSail, MongoDB, Firebase 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Team
+- [Rudfaan Maimahad](https://github.com/ffaann02): Team Leader, Full Stack Developer (Focus on Frontend, Animation, Multiplayer System), Speaker
+- [Chayapol Wongpuwarak](https://github.com/kongkcypw): Full Stack Developer (Focus on Backend, Physics Movement)
+- [Danai Saengbuarmad](https://github.com/DanaiLT): UX & UI Designer, Graphic Designer, Frontend Developer
